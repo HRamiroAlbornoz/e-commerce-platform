@@ -1,0 +1,64 @@
+# Dependencias
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+
+# Variables de entorno
+# El orden importa: se ignora todo .env y despues se rescata el ejemplo.
+.env
+.env.*
+!.env.example
+*.local
+
+# Credenciales que nunca deben entrar al repo, por si alguna
+# herramienta las deja caer en la raiz.
+*serviceAccount*.json
+*-firebase-adminsdk-*.json
+*.pem
+*.p12
+
+# Vercel
+.vercel/
+
+# Firebase
+.firebase/
+*-debug.log
+firebase-debug.*.log
+firestore-debug.*.log
+.runtimeconfig.json
+emulator-data/
+
+# Impeccable
+# El cache de las paginas de decision: PID, puerto y heartbeat del servidor
+# local. Es estado de esta maquina, no del proyecto.
+.impeccable/questions/
+.impeccable/live/
+
+# Testing
+coverage/
+.vitest-cache/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editores y sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+*.swp
+*.swo
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

@@ -1,0 +1,32 @@
+# Normalizacion de finales de linea.
+#
+# Sin este archivo, Git en Windows convierte a CRLF al hacer checkout y a LF al
+# guardar, y eso produce dos problemas: diffs ruidosos donde el unico cambio es
+# invisible, y desacuerdos con las herramientas que esperan LF (Prettier, ESLint,
+# y el runner de CI, que corre en Linux).
+#
+# La decision es LF en todas partes: en el repositorio y tambien en el disco.
+# Cualquier editor moderno en Windows lo maneja sin problema.
+
+* text=auto eol=lf
+
+# Los scripts de shell DEBEN ser LF o no ejecutan en Linux.
+*.sh text eol=lf
+
+# Los de Windows deben ser CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binarios: sin conversion ni intento de diff.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary
+
+# GitHub colapsa este diff por defecto: es generado, no escrito.
+package-lock.json linguist-generated=true
