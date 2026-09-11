@@ -39,6 +39,22 @@ contexto.
 servidor persistente), entra pino. No es una excepción permanente, es una regla con su condición
 explicitada.
 
+## Vulnerabilidades de npm audit — excepción monitoreada
+
+`npm audit` reporta 5 (2 moderadas, 3 altas: `ajv`, `path-to-regexp`, `undici`), todas transitivas de
+`@vercel/node@13.0.0`, que es la **última versión publicada** (no hay upgrade que las resuelva).
+`npm audit fix --force` "arregla" bajando a `@vercel/node@4.0.0`: un retroceso de 9 versiones
+mayores, no una solución.
+
+**No se aplica el fix, y es deliberado, no un olvido.** `@vercel/node` se importa en `api/*.ts`
+como `import type` — solo tipos, borrados en la compilación. El código real de ese paquete (donde
+viven las dependencias vulnerables) nunca corre en la función desplegada: Vercel rutea con su
+propia infraestructura de plataforma, no con esta copia de `node_modules`. Solo importaría si se
+corriera `vercel dev` localmente, y ni así queda expuesto a internet.
+
+Revisar de nuevo cuando Vercel publique una versión de `@vercel/node` que actualice esas
+dependencias, o antes del Cierre si para entonces cambió el análisis.
+
 ## Datos operativos
 
 | Dato | Valor |
@@ -46,9 +62,11 @@ explicitada.
 | Repositorio remoto | https://github.com/HRamiroAlbornoz/e-commerce-platform |
 | Repo local | Inicializado, rama `main` |
 | Estrategia de ramas | Una rama por feature desde `main`, con las slices adentro. Tope de tres slices por rama |
-| Merge | Siempre por pull request desde la interfaz de GitHub, con CI en verde. Nunca merge local |
+| Merge | Siempre por pull request desde la interfaz de GitHub, con CI en verde. Nunca merge local. **Squash and merge**: un commit por PR en `main`, mensaje editado si el título del PR no alcanza |
 | Formato de commits | Conventional commits en inglés imperativo: `feat:`, `fix:`, `docs:`, `test:`, `chore:`, `refactor:` |
 | Deploy | Vercel, con integración continua desde GitHub. Preview por rama, producción en el merge a `main` |
+| Protección de deploys | Vercel Authentication activa **solo en previews** (`ssoProtection: preview`). Producción es pública, sin login — necesario para F15.1 de la spec |
+| URL de producción | https://clack-liart.vercel.app |
 | Terminal | Git Bash (MINGW64). Los comandos de git que escriben historial o tocan el remoto los ejecuta Hernán |
 
 ## Stack fijado
@@ -58,7 +76,8 @@ Las versiones están decididas y no se cambian sin un motivo explícito.
 | Pieza | Versión / nota |
 |---|---|
 | React | 19 |
-| TypeScript | `strict: true`, más `noUncheckedIndexedAccess` y `exactOptionalPropertyTypes` |
+| TypeScript | **Pineado a `<6.1.0`** (hoy resuelve 6.0.3). TS 7 existe pero `typescript-eslint` todavía no lo soporta (`peerDependency: >=4.8.4 <6.1.0`); no volver a 7.x hasta que typescript-eslint lo permita. `strict: true`, más `noUncheckedIndexedAccess` y `exactOptionalPropertyTypes`. `baseUrl` está deprecado desde la 6.0 (se remueve en la 7): los `paths` de `tsconfig.app.json` ya son relativos (`./src/*`) sin `baseUrl`, así que el fix sigue valiendo en cualquiera de las dos versiones |
+| ESLint | **Pineado a `<10.0.0`** (junto con `@eslint/js`), hoy resuelve 9.39.x. ESLint 10 existe pero `eslint-plugin-jsx-a11y` todavía solo declara soporte hasta `^9`; no subir hasta que jsx-a11y lo permita |
 | Vite | Build tool |
 | Tailwind CSS | v4, configuración CSS-first con `@import "tailwindcss"` y `@theme`. **No** hay `tailwind.config.js` |
 | React Router | v7. Se importa de `react-router`; `RouterProvider` viene de `react-router/dom`. **No** se usa `react-router-dom` |
