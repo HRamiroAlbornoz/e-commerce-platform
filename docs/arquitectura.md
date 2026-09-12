@@ -179,6 +179,7 @@ consulta por separado y no tiene sentido fuera de su contenedor.
 | `price` | number | En la moneda única del proyecto. Se redondea explícitamente al calcular |
 | `stock` | number | Entero, nunca negativo |
 | `category` | `Category` | Del conjunto cerrado |
+| `color` | `Color` | Del conjunto cerrado (`black`, `white`, `gray`, `pink`, `rgb`). Se muestra en la tarjeta del catálogo |
 | `imageUrl` | string | Apunta al objeto en S3 |
 | `isActive` | boolean | `false` es un producto retirado del catálogo |
 | `ratingAverage` | number | Derivado de las Reviews. **Solo lo escribe el servidor** |
@@ -391,12 +392,17 @@ problema no pueda darse.
 
 ## Decisiones de modelado y por qué
 
-Cinco puntos donde el modelo se aparta de lo que parecería obvio.
+Seis puntos donde el modelo se aparta de lo que parecería obvio.
 
 **`Category` no es una colección.** Con un conjunto cerrado de categorías de periféricos, un union
 type de TypeScript valida en compilación lo que una colección validaría en runtime y con una
 lectura extra. El costo es real y aceptado: agregar una categoría requiere cambiar código y
 deployar. El enunciado nunca pide administrar categorías.
+
+**`Color` es un segundo conjunto cerrado, igual que `Category`.** El criterio F2.9 de la spec pedía
+mostrar el color de la pieza en la tarjeta, y el modelo original no lo había capturado — se agregó
+al revisar el contrato antes de la primera slice. Mismo criterio que `Category`: cinco valores
+conocidos de antemano (`black`, `white`, `gray`, `pink`, `rgb`), no una colección administrable.
 
 **`OrderItem` va embebido en la Order, no en una subcolección.** Nunca se consulta un OrderItem sin
 su Order, así que separarlos solo agregaría lecturas. Una orden de decenas de líneas está muy lejos
