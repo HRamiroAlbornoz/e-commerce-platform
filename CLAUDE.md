@@ -68,6 +68,19 @@ dependencias, o antes del Cierre si para entonces cambió el análisis.
 | Protección de deploys | Vercel Authentication activa **solo en previews** (`ssoProtection: preview`). Producción es pública, sin login — necesario para F15.1 de la spec |
 | URL de producción | https://clack-liart.vercel.app |
 | Terminal | Git Bash (MINGW64). Los comandos de git que escriben historial o tocan el remoto los ejecuta Hernán |
+| Protección de `main` | CI (`test`) y el deploy de Vercel (`Vercel`) como required status checks, sin aprobación obligatoria (Hernán trabaja solo), sin push directo, `delete_branch_on_merge` activo |
+
+## Comandos de npm
+
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | Servidor de desarrollo de Vite |
+| `npm run build` | `tsc -b` (proyecto `src/`) + `vite build` |
+| `npm run preview` | Sirve el build de producción localmente |
+| `npm run lint` / `lint:fix` | ESLint sobre todo el repo |
+| `npm run format` / `format:check` | Prettier |
+| `npm run typecheck` | `tsc -b` (`src/`) + `tsc -p api/tsconfig.json` (Functions, NodeNext) |
+| `npm test` / `test:watch` | Vitest |
 
 ## Stack fijado
 
@@ -127,7 +140,13 @@ El detalle y las alternativas descartadas están en `docs/adr/`.
 
 ## Estado
 
-Etapa 1 (Planificación) del flujo de `~/.claude/flujo-desarrollo.md`. Todavía no hay código de
-aplicación ni `package.json`: la regla transversal del flujo es que no se escribe código hasta que
-exista `docs/spec.md` con criterios de aceptación. Los comandos de npm se agregan a este archivo
-cuando el andamiaje los cree.
+Etapa 2 (Andamiaje) del flujo de `~/.claude/flujo-desarrollo.md`, en curso.
+
+- ✅ Paso 1 · Deploy de humo (PR #1)
+- ✅ Paso 2 · Configuración: ESLint, Prettier, Tailwind v4 (PR #2)
+- ✅ Paso 3 · CI en GitHub Actions, y registrado como required status check en `main` (PR #3)
+- ⬜ Paso 4 · Base de datos: Firebase Emulator Suite, `firestore.rules` cerradas, `scripts/seed.ts`
+- ✅ Paso 5 · Variables y secrets (hecho vía `scripts/setup-infra.sh`)
+- ⬜ Paso 6 · Layout base: un layout-ruta por superficie con su guard
+- ✅ Paso 7 · Lista de slices (`docs/spec.md`, sección 6)
+- ⬜ Paso 8 · Verificación conjunta de humo + CI + base + los tres layouts
