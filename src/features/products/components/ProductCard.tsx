@@ -1,11 +1,5 @@
-import type { Product, ProductDisplayColor } from '@shared/schemas/product';
-
-const FIELD_COLOR_CLASSES: Record<ProductDisplayColor, string> = {
-  lime: 'bg-field-lime',
-  magenta: 'bg-field-magenta',
-  cyan: 'bg-field-cyan',
-  amber: 'bg-field-amber',
-};
+import type { Product } from '@shared/schemas/product';
+import { FIELD_COLOR_CLASSES } from '@/features/products/constants/displayColors';
 
 const priceFormatter = new Intl.NumberFormat('es-AR');
 

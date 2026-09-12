@@ -102,11 +102,11 @@
       },
       "body": {
         "displayName": "Body (Archivo)",
-        "purpose": "Descriptions and supporting copy, at 70% text opacity against ink/bone."
+        "purpose": "Descriptions and supporting copy, at 70% text opacity against ink/bone; also the catalog search input's typed value/placeholder."
       },
       "label": {
         "displayName": "Label (Archivo, tracked uppercase)",
-        "purpose": "Piece-number badges and the retry link; always uppercase, always 0.1em tracked."
+        "purpose": "Piece-number badges, the retry link, and the category-rail chips; always uppercase, always 0.1em tracked."
       }
     },
     "breakpoints": [
@@ -148,17 +148,25 @@
       "css": ".ds-empty-state { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 96px 24px; text-align: center; } .ds-empty-state__title { font-family: 'Bodoni Moda', ui-serif, serif; font-size: 1.5rem; color: #0d0d0c; } .ds-empty-state__desc { font-family: Archivo, ui-sans-serif, sans-serif; font-size: 0.875rem; max-width: 28rem; color: rgba(13,13,12,0.7); }"
     },
     {
+      "name": "Catalog Filters",
+      "kind": "custom",
+      "refersTo": "catalog-filters",
+      "description": "The catalog search input plus the horizontally-scrolling category rail, rendered by CatalogPage directly under the shared header (not part of the header component itself).",
+      "html": "<div class=\"ds-catalog-filters\"><div role=\"search\"><label for=\"catalog-search\" class=\"sr-only\">Buscar productos por nombre</label><input id=\"catalog-search\" type=\"search\" placeholder=\"Buscar por nombre...\" class=\"ds-catalog-filters__search\" /></div><div role=\"group\" aria-label=\"Filtrar por categoria\" class=\"ds-catalog-filters__rail\"><button type=\"button\" aria-pressed=\"true\" class=\"ds-catalog-filters__chip\">Todos</button><button type=\"button\" aria-pressed=\"false\" class=\"ds-catalog-filters__chip\"><span class=\"ds-catalog-filters__dot ds-catalog-filters__dot--lime\"></span>Teclados</button></div></div>",
+      "css": ".ds-catalog-filters { display: flex; flex-direction: column; gap: 20px; padding-bottom: 24px; margin-bottom: 40px; border-bottom: 1px solid rgba(13,13,12,0.15); } .ds-catalog-filters__search { width: 100%; border: none; border-bottom: 1px solid rgba(13,13,12,0.5); background: transparent; padding: 8px 0; font-family: Archivo, ui-sans-serif, sans-serif; font-size: 0.875rem; color: #0d0d0c; } .ds-catalog-filters__search:focus-visible { outline: none; border-bottom-color: #ff3fa6; } .ds-catalog-filters__rail { display: flex; gap: 20px; overflow-x: auto; scrollbar-width: thin; scrollbar-color: rgba(13,13,12,0.3) transparent; } .ds-catalog-filters__chip { flex-shrink: 0; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid transparent; padding-bottom: 4px; font-family: Archivo, ui-sans-serif, sans-serif; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(13,13,12,0.6); background: none; } .ds-catalog-filters__chip[aria-pressed=\"true\"] { color: #0d0d0c; border-bottom-color: #ff3fa6; } .ds-catalog-filters__dot { width: 6px; height: 6px; } .ds-catalog-filters__dot--lime { background-color: #cfef00; }"
+    },
+    {
       "name": "Header Wordmark",
       "kind": "nav",
       "refersTo": "public-header",
-      "description": "The single hairline-bordered header holding only the CLACK wordmark; no search or category rail shipped yet.",
+      "description": "The single hairline-bordered header holding only the CLACK wordmark. Shared across public routes (catalog, product detail, future landing); the catalog's search/category-filter strip is rendered by CatalogPage below this header, not inside it.",
       "html": "<header class=\"ds-header\"><h1 class=\"ds-header__wordmark\">CLACK</h1></header>",
       "css": ".ds-header { border-bottom: 1px solid rgba(13,13,12,0.15); padding: 24px 16px; } .ds-header__wordmark { font-family: 'Bodoni Moda', ui-serif, serif; font-size: 1.25rem; letter-spacing: 0.1em; text-transform: uppercase; color: #0d0d0c; }"
     }
   ],
   "narrative": {
     "northStar": "The Numbered Specimen Case",
-    "overview": "CLACK's shipped catalog is a flat grid of specimens: every product sits inside its own full-bleed field of color, badged with a piece number, and described underneath in two weights of type — a didone name/price and a grotesque description. It is the teletext half of the direction contract's museum thesis: the closed four-color field, the numbering, and the didone/grotesque split all shipped exactly as specified. The other half — the full-width split hero with cartela, spec table, category rail, and search header — did not ship in this pass. What exists today is a uniform four-up grid, not the vitrine composition described in the surface brief's FIRST VIEWPORT. This document records the grid that was actually built; the hero/cartela composition remains a brief, not a shipped pattern, and should not be assumed present when building new screens. Depth is never simulated. There are no shadows, no gradients, and no border-radius anywhere in the sampled components — flatness is total, not partial. The dark theme (ink ground, bone text) is primary; the light theme is currently a literal swap of the same two neutrals rather than a separately-designed surface.",
+    "overview": "CLACK's shipped catalog is a flat grid of specimens: every product sits inside its own full-bleed field of color, badged with a piece number, and described underneath in two weights of type — a didone name/price and a grotesque description. It is the teletext half of the direction contract's museum thesis: the closed four-color field, the numbering, and the didone/grotesque split all shipped exactly as specified. The catalog's search field and category rail from the surface brief's FIRST VIEWPORT have also shipped, as a filter strip on the catalog route rather than fused into the shared header markup. What has not shipped is the other half of the brief: the full-width split hero with cartela and spec table. This document records what was actually built; the hero/cartela/spec-table composition remains a brief, not a shipped pattern, and should not be assumed present when building new screens. Depth is never simulated. There are no shadows, no gradients, and no border-radius anywhere in the sampled components — flatness is total, not partial. The dark theme (ink ground, bone text) is primary; the light theme is currently a literal swap of the same two neutrals rather than a separately-designed surface.",
     "keyCharacteristics": [
       "Closed four-color field system (lime, magenta, cyan, amber) — flat, full-strength, no tints or intermediate variants.",
       "Didone (Bodoni Moda) carries the single most important line on a view; grotesque (Archivo) carries everything else.",
@@ -169,21 +177,27 @@
     "rules": [
       { "name": "The Closed Four Rule", "body": "Only these four hexes exist as field colors anywhere in the system, enforced at the data layer by PRODUCT_DISPLAY_COLORS. No tints, no opacity variants, no fifth color.", "section": "colors" },
       { "name": "The Theme-Owned Accent Rule", "body": "The interactive accent is never a fixed hardcoded hue: it is magenta in light mode and cyan in dark mode. Amber and lime are identity fields only and never carry interaction state.", "section": "colors" },
+      { "name": "The Cycled-Not-Identity Rule", "body": "Small color swatches (product displayColor, the category-rail dot) cycle through the four closed field colors by index rather than mapping 1:1 to items. With six categories and four colors, two pairs necessarily repeat (Teclados/Sillas both lime, Mouse/Mousepads both magenta) — the swatch is a scan-rhythm cue, the uppercase label is the disambiguator. Don't add a fifth color to eliminate a repeat.", "section": "colors" },
       { "name": "The One Headline Rule", "body": "Bodoni Moda appears at most once per component as the highest-weight line — the product name, the price, or a state's message title — never for two competing strings on the same card or screen.", "section": "typography" },
-      { "name": "The Flat Ground Rule", "body": "Surfaces never lift with a shadow. If a component needs to stand out, it gets a field color, not an elevation.", "section": "elevation" }
+      { "name": "The Flat Ground Rule", "body": "Surfaces never lift with a shadow. If a component needs to stand out, it gets a field color, not an elevation.", "section": "elevation" },
+      { "name": "The Hairline-With-One-Exception Rule", "body": "Borders default to hairline, low-opacity (ink/15 / bone/15). The catalog search input's resting border (ink/50 / bone/40) is a deliberate, scoped exception to clear the WCAG 3:1 non-text UI-boundary contrast floor for an interactive control — not a new default border weight.", "section": "shapes" }
     ],
     "dos": [
       "Do assign exactly one of the four closed field colors, full-strength and full-bleed, per product tile.",
       "Do keep Bodoni Moda to one headline-weight string per component (name, price, or state message) — never stack two didone lines competing for attention.",
       "Do build any new skeleton to the exact shape of its loaded content, and gate its animation behind motion-safe:.",
       "Do source interactive accent color from the active theme (magenta light / cyan dark), not a hardcoded hex.",
-      "Do keep corners square and surfaces shadow-free; depth comes from the field color, never from elevation."
+      "Do keep corners square and surfaces shadow-free; depth comes from the field color, never from elevation.",
+      "Do cycle small color swatches (category-rail dots, product displayColor) through the closed four-field set by index, and let the adjacent text label disambiguate — repeated colors across items are expected, not a bug.",
+      "Do keep a heavier-than-hairline border scoped to the specific interactive control that needs it to clear a contrast floor, not applied system-wide."
     ],
     "donts": [
       "Don't add border-radius, drop shadows, gradients, or glassmorphism — none exist in the shipped system and none are implied by the direction contract.",
-      "Don't introduce a tint, opacity variant, or fifth color into the closed four-field set.",
-      "Don't assume the hero/cartela/spec-table/category-rail composition from the surface brief is already built when designing a new screen — only the plain specimen grid has shipped so far.",
-      "Don't treat the current light theme (a literal ink/bone swap) as the finished 'separately designed' light mode the direction contract calls for — it is recorded here as shipped behavior, not as an approved target for future light-theme work."
+      "Don't introduce a tint, opacity variant, or fifth color into the closed four-field set — including as a 'fix' for a cycled swatch repeat.",
+      "Don't assume the full split-hero/cartela/spec-table composition from the surface brief is already built when designing a new screen — only the specimen grid plus the catalog's search input and category rail have shipped so far.",
+      "Don't treat the current light theme (a literal ink/bone swap) as the finished 'separately designed' light mode the direction contract calls for — it is recorded here as shipped behavior, not as an approved target for future light-theme work.",
+      "Don't generalize the search input's heavier border (ink/50 / bone/40) into the system's default border weight — it's a one-off contrast-floor exception, not a replacement for the hairline convention.",
+      "Don't fold catalog-specific filtering controls into PublicLayout's shared header — it also wraps routes (product detail, future landing) that don't need them."
     ]
   }
 }
