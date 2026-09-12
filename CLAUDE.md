@@ -173,7 +173,7 @@ Etapa 2 (Andamiaje) del flujo de `~/.claude/flujo-desarrollo.md`, en curso.
 - ✅ Paso 3 · CI en GitHub Actions, y registrado como required status check en `main` (PR #3)
 - ✅ Paso 4 · Base de datos: Firebase Emulator Suite, `firestore.rules` cerradas, `scripts/seed.ts` (PR #5)
 - ✅ Paso 5 · Variables y secrets (hecho vía `scripts/setup-infra.sh`)
-- ⬜ Paso 6 · Autenticación (cimiento): init de Firebase, `AuthContext`, `ProtectedRoute`/`AdminRoute`
+- ✅ Paso 6 · Autenticación (cimiento): init de Firebase, `AuthContext`, `ProtectedRoute`/`AdminRoute` (PR #8)
 - ⬜ Paso 7 · Tres layouts base, uno por superficie, con su guard declarado una sola vez
 - ✅ Paso 8 · Lista de slices (`docs/spec.md`, sección 6)
 - ⬜ Paso 9 · Verificación conjunta de humo + CI + base + los tres layouts
