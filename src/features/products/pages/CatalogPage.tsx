@@ -1,13 +1,66 @@
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router';
 import { useActiveProducts } from '@/features/products/hooks/useActiveProducts';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { ProductGrid } from '@/features/products/components/ProductGrid';
+import { CatalogFilters } from '@/features/products/components/CatalogFilters';
 import { EmptyState } from '@/components/states/EmptyState';
 import { ErrorState } from '@/components/states/ErrorState';
+import {
+  parseCategoryParam,
+  parseSearchTermParam,
+} from '@/features/products/utils/catalogQueryParams';
+
+const SEARCH_DEBOUNCE_MS = 400;
+
+function withParam(
+  params: URLSearchParams,
+  key: string,
+  value: string | undefined,
+): URLSearchParams {
+  const nextParams = new URLSearchParams(params);
+  if (value) {
+    nextParams.set(key, value);
+  } else {
+    nextParams.delete(key);
+  }
+  return nextParams;
+}
 
 export function CatalogPage() {
-  const catalog = useActiveProducts();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const category = parseCategoryParam(searchParams.get('category'));
+  const committedSearchTerm = parseSearchTermParam(searchParams.get('q'));
+
+  const [searchInputValue, setSearchInputValue] = useState(committedSearchTerm);
+  const debouncedSearchTerm = useDebouncedValue(searchInputValue, SEARCH_DEBOUNCE_MS);
+
+  useEffect(() => {
+    if (debouncedSearchTerm === committedSearchTerm) {
+      return;
+    }
+
+    setSearchParams((currentParams) => withParam(currentParams, 'q', debouncedSearchTerm), {
+      replace: true,
+    });
+  }, [debouncedSearchTerm, committedSearchTerm, setSearchParams]);
+
+  const catalog = useActiveProducts({ category, searchTerm: debouncedSearchTerm });
+  const hasActiveFilter = category !== undefined || debouncedSearchTerm !== '';
+
+  function handleCategoryChange(nextCategory: string | undefined) {
+    setSearchParams((currentParams) => withParam(currentParams, 'category', nextCategory));
+  }
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 md:px-8 lg:px-12">
+      <CatalogFilters
+        category={category}
+        searchInputValue={searchInputValue}
+        onCategoryChange={handleCategoryChange}
+        onSearchInputChange={setSearchInputValue}
+      />
+
       {catalog.status === 'loading' ? <ProductGrid status="loading" /> : null}
 
       {catalog.status === 'error' ? (
@@ -16,8 +69,12 @@ export function CatalogPage() {
 
       {catalog.status === 'success' && catalog.products.length === 0 ? (
         <EmptyState
-          title="Todavia no hay productos"
-          description="La sala esta vacia por ahora. Volve mas tarde."
+          title={hasActiveFilter ? 'Sin resultados' : 'Todavia no hay productos'}
+          description={
+            hasActiveFilter
+              ? 'Ningun producto coincide con esta busqueda o categoria. Probá con otro termino o mostrá todos los productos.'
+              : 'La sala esta vacia por ahora. Volve mas tarde.'
+          }
         />
       ) : null}
 

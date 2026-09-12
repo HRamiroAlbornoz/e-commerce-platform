@@ -30,3 +30,32 @@
     }
   }
 }
+
+@layer components {
+  .catalog-category-rail {
+    scrollbar-width: thin;
+    scrollbar-color: --alpha(var(--color-ink) / 30%) transparent;
+  }
+
+  .catalog-category-rail::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .catalog-category-rail::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .catalog-category-rail::-webkit-scrollbar-thumb {
+    background-color: --alpha(var(--color-ink) / 30%);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .catalog-category-rail {
+      scrollbar-color: --alpha(var(--color-bone) / 30%) transparent;
+    }
+
+    .catalog-category-rail::-webkit-scrollbar-thumb {
+      background-color: --alpha(var(--color-bone) / 30%);
+    }
+  }
+}
