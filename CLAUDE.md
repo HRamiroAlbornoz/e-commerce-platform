@@ -166,7 +166,9 @@ El detalle y las alternativas descartadas están en `docs/adr/`.
 
 ## Estado
 
-**Etapa 2 (Andamiaje) completa.** Sigue la Etapa 3 (Ciclo), a partir del primer slice (catálogo).
+**Etapa 2 (Andamiaje) completa.** Etapa 3 (Ciclo) en curso.
+
+**Slice 1 · Catálogo (listado)**, rama `feature/catalog`: capa de datos (converter, `getActiveProducts`, `useActiveProducts`) más la superficie visual construida con Impeccable contra el brief de `.impeccable/surfaces/` — grilla, tarjeta, skeletons, estados vacío/error. Pasó finish review (`ship`) y quedó documentada en `DESIGN.md`. Fuera de alcance a propósito: buscador, riel de categorías y la pieza destacada del hero (van con el filtro real en la slice 2 y con la landing en la slice 14); las tarjetas todavía no son interactivas (sin detalle de producto ni carrito construidos aún).
 
 - ✅ Paso 1 · Deploy de humo (PR #1)
 - ✅ Paso 2 · Configuración: ESLint, Prettier, Tailwind v4 (PR #2)

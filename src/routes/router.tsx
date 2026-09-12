@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router';
-import App from '@/App';
+import { CatalogPage } from '@/features/products/pages/CatalogPage';
 import { PublicLayout } from '@/layouts/PublicLayout';
 import { PrivateLayout } from '@/layouts/PrivateLayout';
 import { AdminLayout } from '@/layouts/AdminLayout';
@@ -22,7 +22,7 @@ export const router = createBrowserRouter([
   {
     element: <PublicLayout />,
     children: [
-      { index: true, element: <App /> },
+      { index: true, element: <CatalogPage /> },
       { path: 'login', element: <LoginPlaceholder /> },
     ],
   },

@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-12T00:00:00Z",
+  "title": "Design System: CLACK",
+  "extensions": {
+    "colorMeta": {
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(15% 0.005 90)",
+        "tonalRamp": [
+          "oklch(15% 0.005 90)",
+          "oklch(25% 0.005 90)",
+          "oklch(35% 0.006 90)",
+          "oklch(45% 0.006 90)",
+          "oklch(55% 0.006 90)",
+          "oklch(65% 0.005 90)",
+          "oklch(80% 0.004 90)",
+          "oklch(95% 0.003 90)"
+        ]
+      },
+      "bone": {
+        "role": "neutral",
+        "displayName": "Bone",
+        "canonical": "oklch(94% 0.015 85)",
+        "tonalRamp": [
+          "oklch(15% 0.01 85)",
+          "oklch(25% 0.015 85)",
+          "oklch(35% 0.02 85)",
+          "oklch(45% 0.025 85)",
+          "oklch(55% 0.025 85)",
+          "oklch(65% 0.02 85)",
+          "oklch(80% 0.015 85)",
+          "oklch(95% 0.01 85)"
+        ]
+      },
+      "field-lime": {
+        "role": "primary",
+        "displayName": "Field Lime",
+        "canonical": "oklch(92% 0.23 110)",
+        "tonalRamp": [
+          "oklch(15% 0.05 110)",
+          "oklch(25% 0.09 110)",
+          "oklch(35% 0.13 110)",
+          "oklch(45% 0.17 110)",
+          "oklch(55% 0.20 110)",
+          "oklch(65% 0.22 110)",
+          "oklch(80% 0.20 110)",
+          "oklch(95% 0.10 110)"
+        ]
+      },
+      "field-magenta": {
+        "role": "primary",
+        "displayName": "Field Magenta",
+        "canonical": "oklch(65% 0.25 350)",
+        "tonalRamp": [
+          "oklch(15% 0.05 350)",
+          "oklch(25% 0.10 350)",
+          "oklch(35% 0.15 350)",
+          "oklch(45% 0.19 350)",
+          "oklch(55% 0.23 350)",
+          "oklch(65% 0.25 350)",
+          "oklch(80% 0.18 350)",
+          "oklch(95% 0.08 350)"
+        ]
+      },
+      "field-cyan": {
+        "role": "primary",
+        "displayName": "Field Cyan",
+        "canonical": "oklch(82% 0.15 200)",
+        "tonalRamp": [
+          "oklch(15% 0.03 200)",
+          "oklch(25% 0.06 200)",
+          "oklch(35% 0.09 200)",
+          "oklch(45% 0.11 200)",
+          "oklch(55% 0.13 200)",
+          "oklch(65% 0.15 200)",
+          "oklch(80% 0.10 200)",
+          "oklch(95% 0.05 200)"
+        ]
+      },
+      "field-amber": {
+        "role": "primary",
+        "displayName": "Field Amber",
+        "canonical": "oklch(80% 0.18 70)",
+        "tonalRamp": [
+          "oklch(15% 0.03 70)",
+          "oklch(25% 0.06 70)",
+          "oklch(35% 0.10 70)",
+          "oklch(45% 0.13 70)",
+          "oklch(55% 0.16 70)",
+          "oklch(65% 0.18 70)",
+          "oklch(80% 0.14 70)",
+          "oklch(95% 0.06 70)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display (Bodoni Moda)",
+        "purpose": "The single headline-weight line on a component: product name, price, or a state's message title. Never doubled up."
+      },
+      "body": {
+        "displayName": "Body (Archivo)",
+        "purpose": "Descriptions and supporting copy, at 70% text opacity against ink/bone."
+      },
+      "label": {
+        "displayName": "Label (Archivo, tracked uppercase)",
+        "purpose": "Piece-number badges and the retry link; always uppercase, always 0.1em tracked."
+      }
+    },
+    "breakpoints": [
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Product Card",
+      "kind": "card",
+      "refersTo": "product-card",
+      "description": "The specimen unit: a flat field-color square with photo, piece number, name, description, and price.",
+      "html": "<article class=\"ds-product-card\"><div class=\"ds-product-card__field ds-product-card__field--lime\"><span class=\"ds-product-card__badge\">No. 03</span><img class=\"ds-product-card__image\" src=\"https://example.com/product.png\" alt=\"Ridge\" /></div><div class=\"ds-product-card__body\"><h2 class=\"ds-product-card__name\">Ridge</h2><p class=\"ds-product-card__desc\">Mousepad de tela con borde cosido Ridge</p><p class=\"ds-product-card__price\">$9.999</p></div></article>",
+      "css": ".ds-product-card { display: flex; flex-direction: column; height: 100%; font-family: Archivo, ui-sans-serif, sans-serif; } .ds-product-card__field { position: relative; aspect-ratio: 1 / 1; overflow: hidden; } .ds-product-card__field--lime { background-color: #cfef00; } .ds-product-card__badge { position: absolute; top: 12px; left: 12px; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(13,13,12,0.7); } .ds-product-card__image { width: 100%; height: 100%; object-fit: contain; padding: 32px; } .ds-product-card__body { display: flex; flex: 1; flex-direction: column; gap: 4px; padding-top: 16px; } .ds-product-card__name { font-family: 'Bodoni Moda', ui-serif, serif; font-size: 1.125rem; line-height: 1.2; color: #0d0d0c; } .ds-product-card__desc { font-size: 0.875rem; color: rgba(13,13,12,0.7); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ds-product-card__price { font-family: 'Bodoni Moda', ui-serif, serif; margin-top: auto; padding-top: 8px; font-size: 1rem; color: #0d0d0c; }"
+    },
+    {
+      "name": "Product Card Skeleton",
+      "kind": "custom",
+      "refersTo": "product-card",
+      "description": "Loading placeholder shaped exactly like the loaded card, animation gated behind prefers-reduced-motion.",
+      "html": "<div class=\"ds-skeleton\" aria-hidden=\"true\"><div class=\"ds-skeleton__field\"></div><div class=\"ds-skeleton__body\"><div class=\"ds-skeleton__bar ds-skeleton__bar--title\"></div><div class=\"ds-skeleton__bar ds-skeleton__bar--desc\"></div><div class=\"ds-skeleton__bar ds-skeleton__bar--price\"></div></div></div>",
+      "css": ".ds-skeleton { display: flex; flex-direction: column; height: 100%; } .ds-skeleton__field { aspect-ratio: 1 / 1; background-color: rgba(13,13,12,0.1); } .ds-skeleton__body { display: flex; flex: 1; flex-direction: column; gap: 8px; padding-top: 16px; } .ds-skeleton__bar { background-color: rgba(13,13,12,0.1); height: 20px; } .ds-skeleton__bar--title { width: 75%; } .ds-skeleton__bar--desc { width: 100%; height: 16px; } .ds-skeleton__bar--price { width: 33%; margin-top: auto; padding-top: 8px; } @media (prefers-reduced-motion: no-preference) { .ds-skeleton__field, .ds-skeleton__bar { animation: ds-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; } } @keyframes ds-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }"
+    },
+    {
+      "name": "Retry Link",
+      "kind": "button",
+      "refersTo": "retry-link",
+      "description": "The error state's retry action: an underlined text link, accent color owned by the active theme.",
+      "html": "<button type=\"button\" class=\"ds-retry-link\">Reintentar</button>",
+      "css": ".ds-retry-link { font-family: Archivo, ui-sans-serif, sans-serif; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.025em; text-transform: uppercase; color: #0d0d0c; background: none; border: none; border-bottom: 2px solid #0d0d0c; outline-offset: 4px; cursor: pointer; padding: 0; } .ds-retry-link:hover { color: #ff3fa6; border-bottom-color: #ff3fa6; } .ds-retry-link:focus-visible { outline: 2px solid #ff3fa6; }"
+    },
+    {
+      "name": "Empty State",
+      "kind": "custom",
+      "refersTo": "state-message",
+      "description": "Centered message stack used when a filtered catalog returns nothing.",
+      "html": "<div class=\"ds-empty-state\"><p class=\"ds-empty-state__title\">No encontramos piezas con esos filtros</p><p class=\"ds-empty-state__desc\">Probá ajustar la categoría o el rango de precio.</p></div>",
+      "css": ".ds-empty-state { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 96px 24px; text-align: center; } .ds-empty-state__title { font-family: 'Bodoni Moda', ui-serif, serif; font-size: 1.5rem; color: #0d0d0c; } .ds-empty-state__desc { font-family: Archivo, ui-sans-serif, sans-serif; font-size: 0.875rem; max-width: 28rem; color: rgba(13,13,12,0.7); }"
+    },
+    {
+      "name": "Header Wordmark",
+      "kind": "nav",
+      "refersTo": "public-header",
+      "description": "The single hairline-bordered header holding only the CLACK wordmark; no search or category rail shipped yet.",
+      "html": "<header class=\"ds-header\"><h1 class=\"ds-header__wordmark\">CLACK</h1></header>",
+      "css": ".ds-header { border-bottom: 1px solid rgba(13,13,12,0.15); padding: 24px 16px; } .ds-header__wordmark { font-family: 'Bodoni Moda', ui-serif, serif; font-size: 1.25rem; letter-spacing: 0.1em; text-transform: uppercase; color: #0d0d0c; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Numbered Specimen Case",
+    "overview": "CLACK's shipped catalog is a flat grid of specimens: every product sits inside its own full-bleed field of color, badged with a piece number, and described underneath in two weights of type — a didone name/price and a grotesque description. It is the teletext half of the direction contract's museum thesis: the closed four-color field, the numbering, and the didone/grotesque split all shipped exactly as specified. The other half — the full-width split hero with cartela, spec table, category rail, and search header — did not ship in this pass. What exists today is a uniform four-up grid, not the vitrine composition described in the surface brief's FIRST VIEWPORT. This document records the grid that was actually built; the hero/cartela composition remains a brief, not a shipped pattern, and should not be assumed present when building new screens. Depth is never simulated. There are no shadows, no gradients, and no border-radius anywhere in the sampled components — flatness is total, not partial. The dark theme (ink ground, bone text) is primary; the light theme is currently a literal swap of the same two neutrals rather than a separately-designed surface.",
+    "keyCharacteristics": [
+      "Closed four-color field system (lime, magenta, cyan, amber) — flat, full-strength, no tints or intermediate variants.",
+      "Didone (Bodoni Moda) carries the single most important line on a view; grotesque (Archivo) carries everything else.",
+      "Zero elevation: no shadows, no gradients, no border-radius anywhere in the system.",
+      "Skeletons mirror the exact shape of loaded content; no spinners.",
+      "Interactive accent color is theme-owned: magenta in light mode, cyan in dark mode, never a fixed hover color."
+    ],
+    "rules": [
+      { "name": "The Closed Four Rule", "body": "Only these four hexes exist as field colors anywhere in the system, enforced at the data layer by PRODUCT_DISPLAY_COLORS. No tints, no opacity variants, no fifth color.", "section": "colors" },
+      { "name": "The Theme-Owned Accent Rule", "body": "The interactive accent is never a fixed hardcoded hue: it is magenta in light mode and cyan in dark mode. Amber and lime are identity fields only and never carry interaction state.", "section": "colors" },
+      { "name": "The One Headline Rule", "body": "Bodoni Moda appears at most once per component as the highest-weight line — the product name, the price, or a state's message title — never for two competing strings on the same card or screen.", "section": "typography" },
+      { "name": "The Flat Ground Rule", "body": "Surfaces never lift with a shadow. If a component needs to stand out, it gets a field color, not an elevation.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do assign exactly one of the four closed field colors, full-strength and full-bleed, per product tile.",
+      "Do keep Bodoni Moda to one headline-weight string per component (name, price, or state message) — never stack two didone lines competing for attention.",
+      "Do build any new skeleton to the exact shape of its loaded content, and gate its animation behind motion-safe:.",
+      "Do source interactive accent color from the active theme (magenta light / cyan dark), not a hardcoded hex.",
+      "Do keep corners square and surfaces shadow-free; depth comes from the field color, never from elevation."
+    ],
+    "donts": [
+      "Don't add border-radius, drop shadows, gradients, or glassmorphism — none exist in the shipped system and none are implied by the direction contract.",
+      "Don't introduce a tint, opacity variant, or fifth color into the closed four-field set.",
+      "Don't assume the hero/cartela/spec-table/category-rail composition from the surface brief is already built when designing a new screen — only the plain specimen grid has shipped so far.",
+      "Don't treat the current light theme (a literal ink/bone swap) as the finished 'separately designed' light mode the direction contract calls for — it is recorded here as shipped behavior, not as an approved target for future light-theme work."
+    ]
+  }
+}

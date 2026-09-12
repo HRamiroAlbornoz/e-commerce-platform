@@ -39,6 +39,9 @@ emulator-data/
 # local. Es estado de esta maquina, no del proyecto.
 .impeccable/questions/
 .impeccable/live/
+# Capturas de la revision de un build: evidencia de un momento puntual,
+# se regeneran en cada pasada de finish review, no aportan si quedan viejas.
+.impeccable/review/
 
 # Testing
 coverage/

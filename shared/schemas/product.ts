@@ -13,11 +13,11 @@ export const productCategorySchema = z.enum(PRODUCT_CATEGORIES);
 
 export type ProductCategory = z.infer<typeof productCategorySchema>;
 
-export const PRODUCT_COLORS = ['black', 'white', 'gray', 'pink', 'rgb'] as const;
+export const PRODUCT_DISPLAY_COLORS = ['lime', 'magenta', 'cyan', 'amber'] as const;
 
-export const productColorSchema = z.enum(PRODUCT_COLORS);
+export const productDisplayColorSchema = z.enum(PRODUCT_DISPLAY_COLORS);
 
-export type ProductColor = z.infer<typeof productColorSchema>;
+export type ProductDisplayColor = z.infer<typeof productDisplayColorSchema>;
 
 export const productInputSchema = z.object({
   name: z.string().min(1).max(120),
@@ -26,7 +26,7 @@ export const productInputSchema = z.object({
   price: z.number().positive(),
   stock: z.number().int().nonnegative(),
   category: productCategorySchema,
-  color: productColorSchema,
+  displayColor: productDisplayColorSchema,
   imageUrl: z.url(),
   isActive: z.boolean(),
 });

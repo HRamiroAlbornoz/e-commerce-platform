@@ -16,7 +16,7 @@ const productFixture: Product = {
   price: 89999,
   stock: 40,
   category: 'keyboard',
-  color: 'rgb',
+  displayColor: 'lime',
   imageUrl: 'https://placehold.co/600x400',
   isActive: true,
   ratingAverage: 4.5,

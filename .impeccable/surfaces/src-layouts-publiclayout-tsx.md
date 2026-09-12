@@ -1,8 +1,8 @@
 ---
 version: 1
-slug: "src-routes-public-publiclayout-tsx"
-primary_target: "src/routes/public/PublicLayout.tsx"
-related_targets: []
+slug: "src-layouts-publiclayout-tsx"
+primary_target: "src/layouts/PublicLayout.tsx"
+related_targets: ["src/features/products/pages/CatalogPage.tsx"]
 ---
 
 # Superficie pública — CLACK
@@ -80,7 +80,7 @@ Mobile-first: base a 320px, `md:` a 768px, `lg:` a 1024px; nunca `sm:`, `xl:` ni
 `prefers-color-scheme` en los dos sentidos; el oscuro es el principal acá y el claro se diseña, no
 se invierte. Se respeta `prefers-reduced-motion`. Skeletons con la forma del contenido real en la
 grilla, nunca spinners, para que el layout no salte. Tailwind v4 CSS-first, sin
-`tailwind.config.js`. React Router 7 desde `react-router`. **El código no lleva comentarios.**
+`tailwind.config.js`. React Router 8 desde `react-router`. **El código no lleva comentarios.**
 
 ## Decisiones sin resolver
 
