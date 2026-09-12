@@ -166,7 +166,7 @@ El detalle y las alternativas descartadas están en `docs/adr/`.
 
 ## Estado
 
-Etapa 2 (Andamiaje) del flujo de `~/.claude/flujo-desarrollo.md`, en curso.
+**Etapa 2 (Andamiaje) completa.** Sigue la Etapa 3 (Ciclo), a partir del primer slice (catálogo).
 
 - ✅ Paso 1 · Deploy de humo (PR #1)
 - ✅ Paso 2 · Configuración: ESLint, Prettier, Tailwind v4 (PR #2)
@@ -174,6 +174,6 @@ Etapa 2 (Andamiaje) del flujo de `~/.claude/flujo-desarrollo.md`, en curso.
 - ✅ Paso 4 · Base de datos: Firebase Emulator Suite, `firestore.rules` cerradas, `scripts/seed.ts` (PR #5)
 - ✅ Paso 5 · Variables y secrets (hecho vía `scripts/setup-infra.sh`)
 - ✅ Paso 6 · Autenticación (cimiento): init de Firebase, `AuthContext`, `ProtectedRoute`/`AdminRoute` (PR #8)
-- ⬜ Paso 7 · Tres layouts base, uno por superficie, con su guard declarado una sola vez
+- ✅ Paso 7 · Tres layouts base (`PublicLayout`, `PrivateLayout`, `AdminLayout`) con sus guards y el router real (PR #10)
 - ✅ Paso 8 · Lista de slices (`docs/spec.md`, sección 6)
-- ⬜ Paso 9 · Verificación conjunta de humo + CI + base + los tres layouts
+- ✅ Paso 9 · Verificación conjunta: producción responde (`/`, `/api/health`, deep link a `/account`), CI en verde, emulador con seed, los tres layouts probados con Chrome DevTools
