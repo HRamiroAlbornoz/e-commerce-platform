@@ -14,16 +14,22 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc -b && tsc -p api/tsconfig.json",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "typecheck": "tsc -b && tsc -p api/tsconfig.json && tsc -p shared/tsconfig.json && tsc -p scripts/tsconfig.json && tsc -p tests/tsconfig.json",
+    "test": "vitest run --exclude tests/rules/firestore.rules.test.ts",
+    "test:watch": "vitest",
+    "test:rules": "firebase emulators:exec \"vitest run tests/rules/firestore.rules.test.ts\"",
+    "seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
+    "firebase": "^12.19.0",
+    "firebase-admin": "^14.4.0",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
+    "@firebase/rules-unit-testing": "^5.0.2",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^22.20.2",
     "@types/react": "^19.3.0",
@@ -34,12 +40,21 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.1.1",
+    "firebase-tools": "^15.30.0",
     "globals": "^17.12.0",
     "prettier": "^3.9.6",
     "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.13",
     "typescript": "<6.1.0",
     "typescript-eslint": "^8.70.0",
     "vite": "^8.3.0",
     "vitest": "^5.0.0"
+  },
+  "allowScripts": {
+    "@firebase/util@1.15.3": true,
+    "esbuild@0.27.0": true,
+    "esbuild@0.28.2": true,
+    "protobufjs@7.6.6": true,
+    "re2@1.26.1": true
   }
 }
