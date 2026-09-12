@@ -29,7 +29,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['api/**/*.ts', 'scripts/**/*.ts', '*.config.ts'],
+    files: ['api/**/*.ts', 'scripts/**/*.ts', 'tests/**/*.ts', 'shared/**/*.ts', '*.config.ts'],
     extends: [js.configs.recommended, tseslint.configs.recommendedTypeChecked],
     languageOptions: {
       ecmaVersion: 2022,

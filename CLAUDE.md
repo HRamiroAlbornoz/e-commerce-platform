@@ -55,6 +55,28 @@ corriera `vercel dev` localmente, y ni así queda expuesto a internet.
 Revisar de nuevo cuando Vercel publique una versión de `@vercel/node` que actualice esas
 dependencias, o antes del Cierre si para entonces cambió el análisis.
 
+### Segunda cadena: `firebase-tools`
+
+Al sumar `firebase-tools` (paso 4 del andamiaje) aparecieron 7 vulnerabilidades más (todas
+moderadas: `@google-cloud/pubsub`, `@opentelemetry/core`, `csv-parse`, `gaxios`, `stream-json`,
+`uuid`, y `firebase-tools` mismo por arrastre). El único fix es `firebase-tools@10.1.1`, un
+retroceso de 5 versiones mayores desde la 15.30.0 instalada — mismo patrón que `@vercel/node`.
+
+**Tampoco se aplica, por un motivo distinto al de arriba pero igual de válido.**
+`@vercel/node` no ejecuta en absoluto (import type); `firebase-tools` sí ejecuta, pero **solo en
+tu maquina y en el runner de CI**, nunca en el código que se despliega — no es una dependencia de
+`src/` ni de `api/`, no viaja en el bundle ni en la función. Las vulnerabilidades puntuales
+(ReDoS en el parseo de un header "Baggage" de OpenTelemetry, un bug en `csv-parse` al importar
+usuarios por CSV, un bounds-check de `uuid`) requieren que la herramienta reciba **input externo
+adversarial**, y `firebase-tools` en este proyecto solo habla con el emulador local o con la propia
+cuenta de Google — nunca con un tercero no confiable.
+
+De las 3 vulnerabilidades **altas** que sigue reportando `npm audit`, las tres pertenecen a la
+cadena de `@vercel/node` de arriba; ninguna es nueva. Total actual: 13 (10 moderadas, 3 altas).
+
+Revisar de nuevo cuando `firebase-tools` publique una versión reciente con esas dependencias
+actualizadas, o antes del Cierre.
+
 ## Datos operativos
 
 | Dato | Valor |
@@ -127,6 +149,10 @@ El detalle y las alternativas descartadas están en `docs/adr/`.
 | `DESIGN.md` | Sistema visual global. Lo gestiona Impeccable |
 | `.impeccable/surfaces/` | Un brief por superficie (pública, privada de usuario, administración) |
 | `shared/schemas/` | Contrato Zod único, importado por `src/` y por `api/` |
+| `firebase.json` / `.firebaserc` | Configuración del Emulator Suite (Firestore puerto 8080, Auth puerto 9099) y del proyecto real `clack-add2a` |
+| `firestore.rules` | Arranca cerrada (`allow read, write: if false`). Cada slice abre solo lo que necesita |
+| `scripts/seed.ts` | Carga el catálogo de desarrollo en el emulador. Requiere el emulador corriendo (`firebase emulators:start`) |
+| `tests/rules/` | Tests de security rules con `@firebase/rules-unit-testing`, corren aparte con `npm run test:rules` |
 | `scripts/` | `seed.ts` para el catálogo de desarrollo, `grant-admin.ts` para asignar el rol admin |
 
 ## Herramientas de sesión
@@ -145,8 +171,9 @@ Etapa 2 (Andamiaje) del flujo de `~/.claude/flujo-desarrollo.md`, en curso.
 - ✅ Paso 1 · Deploy de humo (PR #1)
 - ✅ Paso 2 · Configuración: ESLint, Prettier, Tailwind v4 (PR #2)
 - ✅ Paso 3 · CI en GitHub Actions, y registrado como required status check en `main` (PR #3)
-- ⬜ Paso 4 · Base de datos: Firebase Emulator Suite, `firestore.rules` cerradas, `scripts/seed.ts`
+- 🔄 Paso 4 · Base de datos: Firebase Emulator Suite, `firestore.rules` cerradas, `scripts/seed.ts` (en curso)
 - ✅ Paso 5 · Variables y secrets (hecho vía `scripts/setup-infra.sh`)
-- ⬜ Paso 6 · Layout base: un layout-ruta por superficie con su guard
-- ✅ Paso 7 · Lista de slices (`docs/spec.md`, sección 6)
-- ⬜ Paso 8 · Verificación conjunta de humo + CI + base + los tres layouts
+- ⬜ Paso 6 · Autenticación (cimiento): init de Firebase, `AuthContext`, `ProtectedRoute`/`AdminRoute`
+- ⬜ Paso 7 · Tres layouts base, uno por superficie, con su guard declarado una sola vez
+- ✅ Paso 8 · Lista de slices (`docs/spec.md`, sección 6)
+- ⬜ Paso 9 · Verificación conjunta de humo + CI + base + los tres layouts
