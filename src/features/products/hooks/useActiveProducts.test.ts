@@ -4,7 +4,9 @@ import { useActiveProducts } from '@/features/products/hooks/useActiveProducts';
 import { getActiveProducts } from '@/features/products/services/getActiveProducts';
 import type { Product } from '@shared/schemas/product';
 
-vi.mock('@/features/products/services/getActiveProducts');
+vi.mock('@/features/products/services/getActiveProducts', () => ({
+  getActiveProducts: vi.fn(),
+}));
 
 const productFixture: Product = {
   id: 'product-1',
