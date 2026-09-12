@@ -39,6 +39,8 @@ export const productSchema = productInputSchema.extend({
   ratingCount: z.number().int().nonnegative(),
   orderCount: z.number().int().nonnegative(),
   unitsSold: z.number().int().nonnegative(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
 });
 
 export type Product = z.infer<typeof productSchema>;
