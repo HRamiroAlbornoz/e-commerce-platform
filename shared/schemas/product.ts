@@ -37,5 +37,8 @@ export const productSchema = productInputSchema.extend({
 export type Product = z.infer<typeof productSchema>;
 
 export function toNameLower(name: string): string {
-  return name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '');
 }

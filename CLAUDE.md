@@ -115,7 +115,7 @@ Las versiones están decididas y no se cambian sin un motivo explícito.
 | ESLint | **Pineado a `<10.0.0`** (junto con `@eslint/js`), hoy resuelve 9.39.x. ESLint 10 existe pero `eslint-plugin-jsx-a11y` todavía solo declara soporte hasta `^9`; no subir hasta que jsx-a11y lo permita |
 | Vite | Build tool |
 | Tailwind CSS | v4, configuración CSS-first con `@import "tailwindcss"` y `@theme`. **No** hay `tailwind.config.js` |
-| React Router | v7. Se importa de `react-router`; `RouterProvider` viene de `react-router/dom`. **No** se usa `react-router-dom` |
+| React Router | **v8** (subido desde la v7 decidida en la Planificación: v8 solo elimina el paquete `react-router-dom`, que ya no usábamos — el patrón de imports es idéntico). Se importa de `react-router`; `RouterProvider` viene de `react-router/dom`. **No** se usa `react-router-dom` |
 | Estado global | Context API + useReducer. Dos contextos separados: autenticación y carrito |
 | Backend de datos | Firebase Auth + Firestore |
 | Serverless | Vercel Functions en `api/`, handlers tipados con `@vercel/node` |
