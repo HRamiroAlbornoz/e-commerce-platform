@@ -16,7 +16,7 @@ const validRawProduct = {
   price: 89999,
   stock: 40,
   category: 'keyboard',
-  color: 'rgb',
+  displayColor: 'lime',
   imageUrl: 'https://placehold.co/600x400',
   isActive: true,
   ratingAverage: 4.5,
@@ -36,7 +36,7 @@ describe('productConverter.fromFirestore', () => {
     expect(product.id).toBe('product-1');
     expect(product.createdAt).toEqual(new Date('2026-01-01T00:00:00Z'));
     expect(product.updatedAt).toEqual(new Date('2026-01-02T00:00:00Z'));
-    expect(product.color).toBe('rgb');
+    expect(product.displayColor).toBe('lime');
   });
 
   it('rechaza un documento con una categoria fuera del conjunto cerrado', () => {

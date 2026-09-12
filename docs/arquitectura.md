@@ -179,7 +179,7 @@ consulta por separado y no tiene sentido fuera de su contenedor.
 | `price` | number | En la moneda única del proyecto. Se redondea explícitamente al calcular |
 | `stock` | number | Entero, nunca negativo |
 | `category` | `Category` | Del conjunto cerrado |
-| `color` | `Color` | Del conjunto cerrado (`black`, `white`, `gray`, `pink`, `rgb`). Se muestra en la tarjeta del catálogo |
+| `displayColor` | `DisplayColor` | Del conjunto cerrado (`lime`, `magenta`, `cyan`, `amber`). Es el campo de color de la cartela del catálogo, **no** el color físico de la pieza: existe para que un catálogo de periféricos mayormente negros se pueda recorrer de un vistazo |
 | `imageUrl` | string | Apunta al objeto en S3 |
 | `isActive` | boolean | `false` es un producto retirado del catálogo |
 | `ratingAverage` | number | Derivado de las Reviews. **Solo lo escribe el servidor** |
@@ -399,10 +399,15 @@ type de TypeScript valida en compilación lo que una colección validaría en ru
 lectura extra. El costo es real y aceptado: agregar una categoría requiere cambiar código y
 deployar. El enunciado nunca pide administrar categorías.
 
-**`Color` es un segundo conjunto cerrado, igual que `Category`.** El criterio F2.9 de la spec pedía
-mostrar el color de la pieza en la tarjeta, y el modelo original no lo había capturado — se agregó
-al revisar el contrato antes de la primera slice. Mismo criterio que `Category`: cinco valores
-conocidos de antemano (`black`, `white`, `gray`, `pink`, `rgb`), no una colección administrable.
+**`DisplayColor` es un segundo conjunto cerrado, igual que `Category`, y no es el color físico de
+la pieza.** El criterio F2.9 de la spec pedía mostrar "el color de la pieza" en la tarjeta, y el
+modelo original no lo había capturado — se agregó al revisar el contrato antes de la primera
+slice, primero como el color físico del periférico. Al construir la superficie contra el brief de
+diseño ya escrito (`.impeccable/surfaces/`), apareció la versión correcta: el campo de color es un
+recurso curatorial de la cartela — cuatro colores fijos y con nombre (`lime`, `magenta`, `cyan`,
+`amber`) — pensado explícitamente para que un catálogo de periféricos mayormente negros se pueda
+recorrer de un vistazo. Se corrigió antes de construir ninguna pantalla. Mismo criterio que
+`Category`: un conjunto cerrado y conocido de antemano, no una colección administrable.
 
 **`OrderItem` va embebido en la Order, no en una subcolección.** Nunca se consulta un OrderItem sin
 su Order, así que separarlos solo agregaría lecturas. Una orden de decenas de líneas está muy lejos

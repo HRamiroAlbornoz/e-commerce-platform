@@ -95,8 +95,9 @@ Cada criterio se responde con sí o no mirando la aplicación.
 7. Si la consulta a Firestore falla, se muestra un error comprensible con opción de reintentar, no
    una pantalla vacía ni un mensaje técnico.
 8. Recargar la página con filtros aplicados en la URL reproduce el mismo listado.
-9. Cada tarjeta muestra el campo de color de su pieza, el nombre, una línea de descripción y el
-   precio, y todas las tarjetas de una fila tienen la misma altura.
+9. Cada tarjeta muestra el campo de color curatorial de su pieza (`displayColor`, no el color
+   físico del periférico), el nombre, una línea de descripción y el precio, y todas las tarjetas de
+   una fila tienen la misma altura.
 
 ### F3 · Detalle de producto
 

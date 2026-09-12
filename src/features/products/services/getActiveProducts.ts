@@ -15,5 +15,10 @@ export async function getActiveProducts(): Promise<Product[]> {
   );
 
   const snapshot = await getDocs(activeProductsQuery);
+
+  if (snapshot.metadata.fromCache) {
+    throw new Error('No se pudo confirmar el catalogo con el servidor.');
+  }
+
   return snapshot.docs.map((productDoc) => productDoc.data());
 }

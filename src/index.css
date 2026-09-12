@@ -1,1 +1,32 @@
 @import 'tailwindcss';
+
+@theme {
+  --font-display: 'Bodoni Moda', ui-serif, serif;
+  --font-body: 'Archivo', ui-sans-serif, sans-serif;
+
+  --color-ink: #0d0d0c;
+  --color-bone: #f1ecdd;
+
+  --color-field-lime: #cfef00;
+  --color-field-magenta: #ff3fa6;
+  --color-field-cyan: #00d9e0;
+  --color-field-amber: #ffb100;
+}
+
+@layer base {
+  html {
+    color-scheme: light dark;
+  }
+
+  body {
+    background-color: var(--color-bone);
+    color: var(--color-ink);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-color: var(--color-ink);
+      color: var(--color-bone);
+    }
+  }
+}
