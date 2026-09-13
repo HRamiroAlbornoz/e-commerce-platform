@@ -1,4 +1,5 @@
 import { AuthNav } from '@/features/auth/components/AuthNav';
+import { CartIndicator } from '@/features/cart/components/CartIndicator';
 
 export function SiteHeader() {
   return (
@@ -6,7 +7,10 @@ export function SiteHeader() {
       <h1 className="font-display text-xl tracking-widest text-ink uppercase dark:text-bone">
         CLACK
       </h1>
-      <AuthNav />
+      <div className="flex items-center gap-4">
+        <CartIndicator />
+        <AuthNav />
+      </div>
     </header>
   );
 }

@@ -3,11 +3,17 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createRoutesStub } from 'react-router';
 import { CatalogPage } from '@/features/products/pages/CatalogPage';
 import { getActiveProducts, type ProductsPage } from '@/features/products/services/getActiveProducts';
+import { useCart } from '@/hooks/useCart';
+import { buildCartContextValue } from '@/test/mocks/cartContextValue';
 import type { Product } from '@shared/schemas/product';
 
 vi.mock('@/features/products/services/getActiveProducts', () => ({
   getActiveProducts: vi.fn(),
 }));
+
+vi.mock('@/hooks/useCart', () => ({ useCart: vi.fn() }));
+
+vi.mocked(useCart).mockReturnValue(buildCartContextValue());
 
 function buildProduct(overrides: Partial<Product>): Product {
   return {
