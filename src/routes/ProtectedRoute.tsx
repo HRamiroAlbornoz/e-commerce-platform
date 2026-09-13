@@ -1,5 +1,6 @@
-import { Navigate, Outlet } from 'react-router';
+import { Outlet } from 'react-router';
 import { useAuth } from '@/hooks/useAuth';
+import { RedirectToLogin } from '@/routes/RedirectToLogin';
 
 export function ProtectedRoute() {
   const auth = useAuth();
@@ -9,7 +10,7 @@ export function ProtectedRoute() {
   }
 
   if (auth.status === 'anonymous') {
-    return <Navigate to="/login" replace />;
+    return <RedirectToLogin />;
   }
 
   return <Outlet />;

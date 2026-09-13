@@ -1,5 +1,7 @@
-import { Navigate, Outlet } from 'react-router';
+import { Outlet } from 'react-router';
 import { useAuth } from '@/hooks/useAuth';
+import { RedirectToLogin } from '@/routes/RedirectToLogin';
+import { AccessDeniedState } from '@/components/states/AccessDeniedState';
 
 export function AdminRoute() {
   const auth = useAuth();
@@ -9,11 +11,11 @@ export function AdminRoute() {
   }
 
   if (auth.status === 'anonymous') {
-    return <Navigate to="/login" replace />;
+    return <RedirectToLogin />;
   }
 
   if (auth.role !== 'admin') {
-    return <Navigate to="/" replace />;
+    return <AccessDeniedState />;
   }
 
   return <Outlet />;
