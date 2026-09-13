@@ -17,3 +17,10 @@ export function parseSearchTermParam(raw: string | null): string {
   const result = searchTermParamSchema.safeParse(raw);
   return result.success ? result.data : '';
 }
+
+const pageParamSchema = z.coerce.number().int().min(1);
+
+export function parsePageParam(raw: string | null): number {
+  const result = pageParamSchema.safeParse(raw);
+  return result.success ? result.data : 1;
+}

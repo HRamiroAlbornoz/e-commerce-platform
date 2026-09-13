@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createRoutesStub } from 'react-router';
 import { CatalogPage } from '@/features/products/pages/CatalogPage';
-import { getActiveProducts } from '@/features/products/services/getActiveProducts';
+import { getActiveProducts, type ProductsPage } from '@/features/products/services/getActiveProducts';
 import type { Product } from '@shared/schemas/product';
 
 vi.mock('@/features/products/services/getActiveProducts', () => ({
@@ -33,6 +33,10 @@ function buildProduct(overrides: Partial<Product>): Product {
   };
 }
 
+function buildPage(products: Product[], overrides: Partial<ProductsPage> = {}): ProductsPage {
+  return { products, lastDoc: null, hasNextPage: false, ...overrides };
+}
+
 const keyboardFixture = buildProduct({ id: 'kb-1', name: 'Teclado mecanico X' });
 const mouseFixture = buildProduct({
   id: 'mouse-1',
@@ -52,7 +56,7 @@ describe('CatalogPage', () => {
   });
 
   it('lee la categoria inicial de la URL y consulta con ese filtro', async () => {
-    vi.mocked(getActiveProducts).mockResolvedValue([keyboardFixture]);
+    vi.mocked(getActiveProducts).mockResolvedValue(buildPage([keyboardFixture]));
 
     renderCatalogPage('/?category=keyboard');
 
@@ -61,7 +65,7 @@ describe('CatalogPage', () => {
   });
 
   it('descarta una categoria invalida en la URL en vez de romper', async () => {
-    vi.mocked(getActiveProducts).mockResolvedValue([keyboardFixture, mouseFixture]);
+    vi.mocked(getActiveProducts).mockResolvedValue(buildPage([keyboardFixture, mouseFixture]));
 
     renderCatalogPage('/?category=laptop');
 
@@ -71,7 +75,7 @@ describe('CatalogPage', () => {
   });
 
   it('al elegir una categoria en el riel, refetchea con ese filtro', async () => {
-    vi.mocked(getActiveProducts).mockResolvedValue([keyboardFixture, mouseFixture]);
+    vi.mocked(getActiveProducts).mockResolvedValue(buildPage([keyboardFixture, mouseFixture]));
 
     renderCatalogPage('/');
     await waitFor(() => screen.getByText('Teclado mecanico X'));
@@ -84,7 +88,7 @@ describe('CatalogPage', () => {
   });
 
   it('espera a que el usuario termine de escribir antes de consultar por nombre', async () => {
-    vi.mocked(getActiveProducts).mockResolvedValue([keyboardFixture]);
+    vi.mocked(getActiveProducts).mockResolvedValue(buildPage([keyboardFixture]));
 
     renderCatalogPage('/');
     await waitFor(() => screen.getByText('Teclado mecanico X'));
@@ -95,17 +99,14 @@ describe('CatalogPage', () => {
     fireEvent.change(searchInput, { target: { value: 'tec' } });
 
     await waitFor(() => {
-      expect(getActiveProducts).toHaveBeenLastCalledWith({
-        category: undefined,
-        searchTerm: 'tec',
-      });
+      expect(getActiveProducts).toHaveBeenLastCalledWith({ category: undefined, searchTerm: 'tec' });
     });
 
     expect(getActiveProducts).toHaveBeenCalledTimes(2);
   });
 
   it('distingue sin resultados de busqueda de catalogo sin productos', async () => {
-    vi.mocked(getActiveProducts).mockResolvedValue([]);
+    vi.mocked(getActiveProducts).mockResolvedValue(buildPage([]));
 
     renderCatalogPage('/?q=zzz');
 
@@ -113,10 +114,55 @@ describe('CatalogPage', () => {
   });
 
   it('muestra el mensaje de catalogo vacio cuando no hay filtro activo', async () => {
-    vi.mocked(getActiveProducts).mockResolvedValue([]);
+    vi.mocked(getActiveProducts).mockResolvedValue(buildPage([]));
 
     renderCatalogPage('/');
 
     await waitFor(() => screen.getByText('Todavia no hay productos'));
+  });
+
+  it('no muestra controles de paginacion cuando todo entra en una sola pagina', async () => {
+    vi.mocked(getActiveProducts).mockResolvedValue(buildPage([keyboardFixture], { hasNextPage: false }));
+
+    renderCatalogPage('/');
+
+    await waitFor(() => screen.getByText('Teclado mecanico X'));
+    expect(screen.queryByRole('navigation', { name: /paginacion/i })).not.toBeInTheDocument();
+  });
+
+  it('siguiente avanza de pagina, y volver a la primera no repite la consulta', async () => {
+    const lastDoc = { id: 'cursor-1' } as never;
+    vi.mocked(getActiveProducts)
+      .mockResolvedValueOnce(buildPage([keyboardFixture], { hasNextPage: true, lastDoc }))
+      .mockResolvedValueOnce(buildPage([mouseFixture], { hasNextPage: false }));
+
+    renderCatalogPage('/');
+    await waitFor(() => screen.getByText('Teclado mecanico X'));
+
+    expect(screen.getByRole('button', { name: 'Anterior' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
+
+    await waitFor(() => screen.getByText('Mouse ergonomico Y'));
+    expect(screen.getByRole('button', { name: 'Siguiente' })).toBeDisabled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Anterior' }));
+    await waitFor(() => screen.getByText('Teclado mecanico X'));
+
+    expect(getActiveProducts).toHaveBeenCalledTimes(2);
+  });
+
+  it('cambiar de categoria vuelve a la primera pagina', async () => {
+    vi.mocked(getActiveProducts).mockResolvedValue(
+      buildPage([keyboardFixture], { hasNextPage: true, lastDoc: {} as never }),
+    );
+
+    renderCatalogPage('/?page=2');
+    await waitFor(() => screen.getByText('Teclado mecanico X'));
+
+    fireEvent.click(screen.getByRole('button', { name: /^mouse$/i }));
+
+    await waitFor(() => {
+      expect(getActiveProducts).toHaveBeenLastCalledWith({ category: 'mouse', searchTerm: '' });
+    });
   });
 });
