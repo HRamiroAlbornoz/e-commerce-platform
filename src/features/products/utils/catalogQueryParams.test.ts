@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { parseCategoryParam, parseSearchTermParam } from '@/features/products/utils/catalogQueryParams';
+import {
+  parseCategoryParam,
+  parsePageParam,
+  parseSearchTermParam,
+} from '@/features/products/utils/catalogQueryParams';
 
 describe('parseCategoryParam', () => {
   it('devuelve undefined cuando no hay parametro', () => {
@@ -26,5 +30,21 @@ describe('parseSearchTermParam', () => {
 
   it('descarta un termino que excede el largo maximo', () => {
     expect(parseSearchTermParam('a'.repeat(200))).toBe('');
+  });
+});
+
+describe('parsePageParam', () => {
+  it('devuelve 1 cuando no hay parametro', () => {
+    expect(parsePageParam(null)).toBe(1);
+  });
+
+  it('acepta un numero de pagina valido', () => {
+    expect(parsePageParam('3')).toBe(3);
+  });
+
+  it('descarta cero, negativos y no numericos, volviendo a la pagina 1', () => {
+    expect(parsePageParam('0')).toBe(1);
+    expect(parsePageParam('-2')).toBe(1);
+    expect(parsePageParam('no-es-un-numero')).toBe(1);
   });
 });

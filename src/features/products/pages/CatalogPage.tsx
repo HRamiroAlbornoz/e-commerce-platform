@@ -4,10 +4,12 @@ import { useActiveProducts } from '@/features/products/hooks/useActiveProducts';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { ProductGrid } from '@/features/products/components/ProductGrid';
 import { CatalogFilters } from '@/features/products/components/CatalogFilters';
+import { PaginationControls } from '@/features/products/components/PaginationControls';
 import { EmptyState } from '@/components/states/EmptyState';
 import { ErrorState } from '@/components/states/ErrorState';
 import {
   parseCategoryParam,
+  parsePageParam,
   parseSearchTermParam,
 } from '@/features/products/utils/catalogQueryParams';
 
@@ -27,29 +29,48 @@ function withParam(
   return nextParams;
 }
 
+function withFilterChange(
+  params: URLSearchParams,
+  key: string,
+  value: string | undefined,
+): URLSearchParams {
+  const nextParams = withParam(params, key, value);
+  nextParams.delete('page');
+  return nextParams;
+}
+
 export function CatalogPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const category = parseCategoryParam(searchParams.get('category'));
   const committedSearchTerm = parseSearchTermParam(searchParams.get('q'));
+  const page = parsePageParam(searchParams.get('page'));
 
   const [searchInputValue, setSearchInputValue] = useState(committedSearchTerm);
   const debouncedSearchTerm = useDebouncedValue(searchInputValue, SEARCH_DEBOUNCE_MS);
+  const searchTermPending = debouncedSearchTerm !== committedSearchTerm;
 
   useEffect(() => {
-    if (debouncedSearchTerm === committedSearchTerm) {
+    if (!searchTermPending) {
       return;
     }
 
-    setSearchParams((currentParams) => withParam(currentParams, 'q', debouncedSearchTerm), {
+    setSearchParams((currentParams) => withFilterChange(currentParams, 'q', debouncedSearchTerm), {
       replace: true,
     });
-  }, [debouncedSearchTerm, committedSearchTerm, setSearchParams]);
+  }, [debouncedSearchTerm, searchTermPending, setSearchParams]);
 
-  const catalog = useActiveProducts({ category, searchTerm: debouncedSearchTerm });
+  const effectivePage = searchTermPending ? 1 : page;
+  const catalog = useActiveProducts({ category, searchTerm: debouncedSearchTerm }, effectivePage);
   const hasActiveFilter = category !== undefined || debouncedSearchTerm !== '';
 
   function handleCategoryChange(nextCategory: string | undefined) {
-    setSearchParams((currentParams) => withParam(currentParams, 'category', nextCategory));
+    setSearchParams((currentParams) => withFilterChange(currentParams, 'category', nextCategory));
+  }
+
+  function handlePageChange(nextPage: number) {
+    setSearchParams((currentParams) =>
+      withParam(currentParams, 'page', nextPage > 1 ? String(nextPage) : undefined),
+    );
   }
 
   return (
@@ -79,7 +100,16 @@ export function CatalogPage() {
       ) : null}
 
       {catalog.status === 'success' && catalog.products.length > 0 ? (
-        <ProductGrid status="success" products={catalog.products} />
+        <>
+          <ProductGrid status="success" products={catalog.products} />
+          {effectivePage > 1 || catalog.hasNextPage ? (
+            <PaginationControls
+              page={effectivePage}
+              hasNextPage={catalog.hasNextPage}
+              onPageChange={handlePageChange}
+            />
+          ) : null}
+        </>
       ) : null}
     </main>
   );
