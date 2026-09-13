@@ -19,6 +19,8 @@ const productFixture: Product = {
   displayColor: 'lime',
   imageUrl: 'https://placehold.co/600x400',
   isActive: true,
+  specs: [{ label: 'Switches', value: 'Lineales rojos' }],
+  curatorialNote: 'Lo probamos dos semanas escribiendo largo y jugando shooters.',
   ratingAverage: 4.5,
   ratingCount: 12,
   orderCount: 3,

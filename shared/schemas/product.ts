@@ -19,6 +19,13 @@ export const productDisplayColorSchema = z.enum(PRODUCT_DISPLAY_COLORS);
 
 export type ProductDisplayColor = z.infer<typeof productDisplayColorSchema>;
 
+export const productSpecSchema = z.object({
+  label: z.string().min(1).max(60),
+  value: z.string().min(1).max(120),
+});
+
+export type ProductSpec = z.infer<typeof productSpecSchema>;
+
 export const productInputSchema = z.object({
   name: z.string().min(1).max(120),
   nameLower: z.string().min(1).max(120),
@@ -29,6 +36,8 @@ export const productInputSchema = z.object({
   displayColor: productDisplayColorSchema,
   imageUrl: z.url(),
   isActive: z.boolean(),
+  specs: z.array(productSpecSchema).min(1).max(12),
+  curatorialNote: z.string().min(1).max(600),
 });
 
 export type ProductInput = z.infer<typeof productInputSchema>;
