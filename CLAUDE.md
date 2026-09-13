@@ -146,6 +146,7 @@ El detalle y las alternativas descartadas están en `docs/adr/`.
 | `docs/spec.md` | Alcance, criterios de aceptación, superficies |
 | `docs/arquitectura.md` | Entidades del dominio y vocabulario |
 | `docs/adr/` | Una decisión cara de revertir por archivo. No se editan: si la decisión cambia, se escribe un ADR nuevo |
+| `docs/pendientes.md` | Deuda técnica detectada durante el ciclo que no bloquea el merge de la slice, pero necesita acción antes del Cierre |
 | `DESIGN.md` | Sistema visual global. Lo gestiona Impeccable |
 | `.impeccable/surfaces/` | Un brief por superficie (pública, privada de usuario, administración) |
 | `shared/schemas/` | Contrato Zod único, importado por `src/` y por `api/` |
@@ -214,6 +215,8 @@ Decisiones y hallazgos de `/simplify`, citados acá porque el proyecto no lleva 
 - **Costo real evitado**: escribir en el buscador estando en la página 2+ antes desperdiciaba lecturas — pedía la página vieja con el filtro nuevo (cache invalidado, camina de la página 1 a la 2 innecesariamente) antes de que la URL se corrigiera a la página 1 un render después. Ahora `CatalogPage` pide la página 1 directamente en cuanto el término de búsqueda tiene un debounce pendiente, sin esperar el round-trip de la URL.
 - **Hallazgo descartado a propósito**: una revisión sugirió sacar por completo la caminata secuencial del deep-link y reemplazarla por guardar el cursor codificado en la URL. No se hizo: un `QueryDocumentSnapshot` es un objeto vivo del SDK que no se puede serializar a la URL sin inventar una codificación propia, y el costo real de la caminata (unas pocas lecturas chicas, solo en el caso de un link directo a una página profunda) no lo justifica a esta escala.
 - **Sin ronda de finish review dedicada**: `PaginationControls` reutiliza el `Button` ya auditado en la slice 5 sin agregar nada al sistema visual; el detector mecánico de Impeccable no encontró nada y la verificación visual en vivo (dos temas, mobile) confirmó que encaja con las convenciones ya establecidas. Se documentó en `DESIGN.md` igual, para que quede registrado como componente nuevo.
+
+**Hallazgo de deuda técnica al revisar el preview de la PR #18** (no bloqueante, no es una regresión de esta slice — el mismo comportamiento ya existía en producción antes del merge): el catálogo público falla tanto en el preview como en producción porque `firestore.rules` nunca se desplegó al proyecto real (`clack-add2a`), que sigue cerrado por default, y `scripts/seed.ts` solo corrió contra el emulador. Registrado en `docs/pendientes.md` con la acción concreta a tomar antes del Cierre.
 
 - ✅ Paso 1 · Deploy de humo (PR #1)
 - ✅ Paso 2 · Configuración: ESLint, Prettier, Tailwind v4 (PR #2)
