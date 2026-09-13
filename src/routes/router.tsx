@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router';
 import { CatalogPage } from '@/features/products/pages/CatalogPage';
+import { ProductDetailPage } from '@/features/products/pages/ProductDetailPage';
 import { PublicLayout } from '@/layouts/PublicLayout';
 import { PrivateLayout } from '@/layouts/PrivateLayout';
 import { AdminLayout } from '@/layouts/AdminLayout';
@@ -8,6 +9,10 @@ import { AdminRoute } from '@/routes/AdminRoute';
 
 function LoginPlaceholder() {
   return <p className="p-4 text-gray-500">Login: pendiente (slice de autenticacion).</p>;
+}
+
+function ProductReviewsPlaceholder() {
+  return <p className="p-4 text-gray-500">Reseñas: pendiente (slice de reviews).</p>;
 }
 
 function PrivateAreaPlaceholder() {
@@ -23,6 +28,8 @@ export const router = createBrowserRouter([
     element: <PublicLayout />,
     children: [
       { index: true, element: <CatalogPage /> },
+      { path: 'products/:id', element: <ProductDetailPage /> },
+      { path: 'products/:id/reviews', element: <ProductReviewsPlaceholder /> },
       { path: 'login', element: <LoginPlaceholder /> },
     ],
   },

@@ -19,6 +19,8 @@ export const productConverter: FirestoreDataConverter<Product> = {
       displayColor: product.displayColor,
       imageUrl: product.imageUrl,
       isActive: product.isActive,
+      specs: product.specs,
+      curatorialNote: product.curatorialNote,
       ratingAverage: product.ratingAverage,
       ratingCount: product.ratingCount,
       orderCount: product.orderCount,

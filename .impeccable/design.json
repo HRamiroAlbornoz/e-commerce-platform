@@ -98,15 +98,15 @@
     "typographyMeta": {
       "display": {
         "displayName": "Display (Bodoni Moda)",
-        "purpose": "The single headline-weight line on a component: product name, price, or a state's message title. Never doubled up."
+        "purpose": "The single headline-weight line on a component: product name, price, or a state's message title. Never doubled up. On the product detail page, sizes up to a 3xl h1 (name) and text-2xl (price)."
       },
       "body": {
         "displayName": "Body (Archivo)",
-        "purpose": "Descriptions and supporting copy, at 70% text opacity against ink/bone; also the catalog search input's typed value/placeholder."
+        "purpose": "Descriptions and supporting copy, at 70% text opacity against ink/bone; also the catalog search input's typed value/placeholder, the detail page's curatorial note (italic), and the dotted spec table."
       },
       "label": {
         "displayName": "Label (Archivo, tracked uppercase)",
-        "purpose": "Piece-number badges, the retry link, and the category-rail chips; always uppercase, always 0.1em tracked."
+        "purpose": "Piece-number badges, the retry link, the category-rail chips, and the detail page's add-to-cart button label; always uppercase, always 0.1em tracked."
       }
     },
     "breakpoints": [
@@ -119,9 +119,9 @@
       "name": "Product Card",
       "kind": "card",
       "refersTo": "product-card",
-      "description": "The specimen unit: a flat field-color square with photo, piece number, name, description, and price.",
-      "html": "<article class=\"ds-product-card\"><div class=\"ds-product-card__field ds-product-card__field--lime\"><span class=\"ds-product-card__badge\">No. 03</span><img class=\"ds-product-card__image\" src=\"https://example.com/product.png\" alt=\"Ridge\" /></div><div class=\"ds-product-card__body\"><h2 class=\"ds-product-card__name\">Ridge</h2><p class=\"ds-product-card__desc\">Mousepad de tela con borde cosido Ridge</p><p class=\"ds-product-card__price\">$9.999</p></div></article>",
-      "css": ".ds-product-card { display: flex; flex-direction: column; height: 100%; font-family: Archivo, ui-sans-serif, sans-serif; } .ds-product-card__field { position: relative; aspect-ratio: 1 / 1; overflow: hidden; } .ds-product-card__field--lime { background-color: #cfef00; } .ds-product-card__badge { position: absolute; top: 12px; left: 12px; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(13,13,12,0.7); } .ds-product-card__image { width: 100%; height: 100%; object-fit: contain; padding: 32px; } .ds-product-card__body { display: flex; flex: 1; flex-direction: column; gap: 4px; padding-top: 16px; } .ds-product-card__name { font-family: 'Bodoni Moda', ui-serif, serif; font-size: 1.125rem; line-height: 1.2; color: #0d0d0c; } .ds-product-card__desc { font-size: 0.875rem; color: rgba(13,13,12,0.7); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ds-product-card__price { font-family: 'Bodoni Moda', ui-serif, serif; margin-top: auto; padding-top: 8px; font-size: 1rem; color: #0d0d0c; }"
+      "description": "The specimen unit: a flat field-color square with photo, piece number, name, description, and price. The whole card is a Link to the product detail page; its accessible name comes from aria-labelledby over three separate ids (name/description/price).",
+      "html": "<a href=\"/products/1\" aria-labelledby=\"name-1 desc-1 price-1\" class=\"ds-product-card\"><div class=\"ds-product-card__field ds-product-card__field--lime\"><span class=\"ds-product-card__badge\">No. 03</span><img class=\"ds-product-card__image\" src=\"https://example.com/product.png\" alt=\"\" /></div><div class=\"ds-product-card__body\"><h2 id=\"name-1\" class=\"ds-product-card__name\">Ridge</h2><p id=\"desc-1\" class=\"ds-product-card__desc\">Mousepad de tela con borde cosido Ridge</p><p id=\"price-1\" class=\"ds-product-card__price\">$9.999</p></div></a>",
+      "css": ".ds-product-card { display: flex; flex-direction: column; height: 100%; font-family: Archivo, ui-sans-serif, sans-serif; text-decoration: none; } .ds-product-card__field { position: relative; aspect-ratio: 1 / 1; overflow: hidden; } .ds-product-card__field--lime { background-color: #cfef00; } .ds-product-card__badge { position: absolute; top: 12px; left: 12px; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(13,13,12,0.7); } .ds-product-card__image { width: 100%; height: 100%; object-fit: contain; padding: 32px; } .ds-product-card__body { display: flex; flex: 1; flex-direction: column; gap: 4px; padding-top: 16px; } .ds-product-card__name { font-family: 'Bodoni Moda', ui-serif, serif; font-size: 1.125rem; line-height: 1.2; color: #0d0d0c; } .ds-product-card__desc { font-size: 0.875rem; color: rgba(13,13,12,0.7); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ds-product-card__price { font-family: 'Bodoni Moda', ui-serif, serif; margin-top: auto; padding-top: 8px; font-size: 1rem; color: #0d0d0c; }"
     },
     {
       "name": "Product Card Skeleton",
@@ -144,7 +144,7 @@
       "kind": "custom",
       "refersTo": "state-message",
       "description": "Centered message stack used when a filtered catalog returns nothing.",
-      "html": "<div class=\"ds-empty-state\"><p class=\"ds-empty-state__title\">No encontramos piezas con esos filtros</p><p class=\"ds-empty-state__desc\">Probá ajustar la categoría o el rango de precio.</p></div>",
+      "html": "<div class=\"ds-empty-state\"><p class=\"ds-empty-state__title\">No encontramos piezas con esos filtros</p><p class=\"ds-empty-state__desc\">Proba ajustar la categoria o el rango de precio.</p></div>",
       "css": ".ds-empty-state { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 96px 24px; text-align: center; } .ds-empty-state__title { font-family: 'Bodoni Moda', ui-serif, serif; font-size: 1.5rem; color: #0d0d0c; } .ds-empty-state__desc { font-family: Archivo, ui-sans-serif, sans-serif; font-size: 0.875rem; max-width: 28rem; color: rgba(13,13,12,0.7); }"
     },
     {
@@ -159,45 +159,68 @@
       "name": "Header Wordmark",
       "kind": "nav",
       "refersTo": "public-header",
-      "description": "The single hairline-bordered header holding only the CLACK wordmark. Shared across public routes (catalog, product detail, future landing); the catalog's search/category-filter strip is rendered by CatalogPage below this header, not inside it.",
+      "description": "The single hairline-bordered header holding only the CLACK wordmark. Shared across public routes (catalog, product detail, future landing); the catalog's search/category-filter strip is rendered by CatalogPage below this header, not inside it. Note: the product detail page's cartela also renders an h1 (product name), a disclosed two-h1 trade-off.",
       "html": "<header class=\"ds-header\"><h1 class=\"ds-header__wordmark\">CLACK</h1></header>",
       "css": ".ds-header { border-bottom: 1px solid rgba(13,13,12,0.15); padding: 24px 16px; } .ds-header__wordmark { font-family: 'Bodoni Moda', ui-serif, serif; font-size: 1.25rem; letter-spacing: 0.1em; text-transform: uppercase; color: #0d0d0c; }"
+    },
+    {
+      "name": "Product Detail Page (Cartela)",
+      "kind": "custom",
+      "refersTo": "product-detail",
+      "description": "The single-item view: a full-bleed displayColor image panel plus a fixed-tone bone/ink cartela panel with name, description, rating link, curatorial note, dotted spec table, price, quantity stepper, and add-to-cart button. The cartela never theme-swaps (Fixed Paper Rule).",
+      "html": "<main class=\"ds-detail\"><div class=\"ds-detail__grid\"><div class=\"ds-detail__image-panel ds-detail__image-panel--lime\"><img src=\"https://example.com/product.png\" alt=\"\" class=\"ds-detail__image\" /></div><div class=\"ds-detail__cartela\"><h1 class=\"ds-detail__name\">Ridge</h1><p class=\"ds-detail__desc\">Mousepad de tela con borde cosido Ridge</p><a href=\"/products/1/reviews\" class=\"ds-detail__rating\">4.5 &middot; 12 resenas</a><p class=\"ds-detail__note\">Pensado para partidas largas, no para quien busca una superficie rigida.</p><dl class=\"ds-detail__specs\"><div class=\"ds-detail__spec-row\"><dt>Material</dt><dd>Tela + goma</dd></div></dl><div class=\"ds-detail__buy-row\"><p class=\"ds-detail__price\">$9.999</p><div class=\"ds-detail__stepper\"><button type=\"button\" aria-label=\"Restar uno\" class=\"ds-stepper-btn\">-</button><span aria-live=\"polite\">1</span><button type=\"button\" aria-label=\"Sumar uno\" class=\"ds-stepper-btn\">+</button></div><button type=\"button\" class=\"ds-detail__cta\">Agregar al carrito</button></div></div></div></main>",
+      "css": ".ds-detail__grid { display: grid; grid-template-columns: 1fr; } @media (min-width: 768px) { .ds-detail__grid { grid-template-columns: 1fr 1fr; } } .ds-detail__image-panel { display: flex; align-items: center; justify-content: center; min-height: 24rem; padding: 48px; } @media (min-width: 768px) { .ds-detail__image-panel { min-height: 36rem; } } .ds-detail__image-panel--lime { background-color: #cfef00; } .ds-detail__image { max-height: 100%; width: 100%; object-fit: contain; } .ds-detail__cartela { display: flex; flex-direction: column; gap: 16px; background-color: #f1ecdd; color: #0d0d0c; padding: 40px 24px; border-bottom: 1px solid rgba(13,13,12,0.15); } @media (min-width: 768px) { .ds-detail__cartela { padding: 40px 48px; border-right: 1px solid rgba(13,13,12,0.15); } } .ds-detail__name { font-family: 'Bodoni Moda', ui-serif, serif; font-size: 1.875rem; text-wrap: balance; line-height: 1.2; } .ds-detail__desc, .ds-detail__note { font-family: Archivo, ui-sans-serif, sans-serif; font-size: 0.875rem; color: rgba(13,13,12,0.7); } .ds-detail__note { font-style: italic; } .ds-detail__rating { font-family: Archivo, ui-sans-serif, sans-serif; font-size: 0.875rem; text-decoration: underline; } .ds-detail__specs { margin-top: 8px; font-family: Archivo, ui-sans-serif, sans-serif; font-size: 0.875rem; } .ds-detail__spec-row { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-top: 1px dotted rgba(13,13,12,0.3); } .ds-detail__buy-row { margin-top: auto; display: flex; flex-direction: column; gap: 16px; padding-top: 24px; } @media (min-width: 768px) { .ds-detail__buy-row { flex-direction: row; align-items: flex-end; justify-content: space-between; } } .ds-detail__price { font-family: 'Bodoni Moda', ui-serif, serif; font-size: 1.5rem; } .ds-detail__cta { font-family: Archivo, ui-sans-serif, sans-serif; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid #0d0d0c; padding: 8px 24px; background: none; color: #0d0d0c; } .ds-detail__cta:hover { border-color: #ff3fa6; color: #ff3fa6; }"
+    },
+    {
+      "name": "Quantity Selector",
+      "kind": "input",
+      "refersTo": "quantity-step-button",
+      "description": "Generic reusable stepper (src/components/ui/QuantitySelector.tsx). Step buttons use border-current, not a hardcoded dark:border-bone pair, so they stay visible even inside a fixed-tone surface like the cartela.",
+      "html": "<div role=\"group\" aria-label=\"Cantidad\" class=\"ds-stepper\"><button type=\"button\" aria-label=\"Restar uno\" class=\"ds-stepper-btn\">-</button><span aria-live=\"polite\" class=\"ds-stepper-count\">1</span><button type=\"button\" aria-label=\"Sumar uno\" class=\"ds-stepper-btn\">+</button></div>",
+      "css": ".ds-stepper { display: flex; align-items: center; gap: 12px; } .ds-stepper-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid currentColor; background: none; color: inherit; font-family: Archivo, ui-sans-serif, sans-serif; font-size: 1.125rem; } .ds-stepper-btn:hover:not(:disabled) { border-color: #ff3fa6; color: #ff3fa6; } .ds-stepper-btn:disabled { cursor: not-allowed; opacity: 0.4; } .ds-stepper-count { min-width: 24px; text-align: center; font-family: Archivo, ui-sans-serif, sans-serif; font-size: 0.875rem; }"
     }
   ],
   "narrative": {
     "northStar": "The Numbered Specimen Case",
-    "overview": "CLACK's shipped catalog is a flat grid of specimens: every product sits inside its own full-bleed field of color, badged with a piece number, and described underneath in two weights of type — a didone name/price and a grotesque description. It is the teletext half of the direction contract's museum thesis: the closed four-color field, the numbering, and the didone/grotesque split all shipped exactly as specified. The catalog's search field and category rail from the surface brief's FIRST VIEWPORT have also shipped, as a filter strip on the catalog route rather than fused into the shared header markup. What has not shipped is the other half of the brief: the full-width split hero with cartela and spec table. This document records what was actually built; the hero/cartela/spec-table composition remains a brief, not a shipped pattern, and should not be assumed present when building new screens. Depth is never simulated. There are no shadows, no gradients, and no border-radius anywhere in the sampled components — flatness is total, not partial. The dark theme (ink ground, bone text) is primary; the light theme is currently a literal swap of the same two neutrals rather than a separately-designed surface.",
+    "overview": "CLACK's shipped catalog is a flat grid of specimens: every product sits inside its own full-bleed field of color, badged with a piece number, and described underneath in two weights of type — a didone name/price and a grotesque description. It is the teletext half of the direction contract's museum thesis: the closed four-color field, the numbering, and the didone/grotesque split all shipped exactly as specified. The catalog's search field and category rail from the surface brief's FIRST VIEWPORT have also shipped, as a filter strip on the catalog route rather than fused into the shared header markup. The cartela and its dotted spec table have also now shipped — but as a standalone product detail page reached from a card, not as the split-hero composition the brief originally described. There is still no hero or landing composition anywhere in the build (that remains slice 14's work). This document records what was actually built. Depth is never simulated. There are no shadows, no gradients, and no border-radius anywhere in the sampled components — flatness is total, not partial. The dark theme (ink ground, bone text) is primary; the light theme is currently a literal swap of the same two neutrals rather than a separately-designed surface. The cartela is the one deliberate exception to theme-swapping altogether: it stays bone/ink regardless of the active theme.",
     "keyCharacteristics": [
       "Closed four-color field system (lime, magenta, cyan, amber) — flat, full-strength, no tints or intermediate variants.",
       "Didone (Bodoni Moda) carries the single most important line on a view; grotesque (Archivo) carries everything else.",
       "Zero elevation: no shadows, no gradients, no border-radius anywhere in the system.",
       "Skeletons mirror the exact shape of loaded content; no spinners.",
-      "Interactive accent color is theme-owned: magenta in light mode, cyan in dark mode, never a fixed hover color."
+      "Interactive accent color is theme-owned: magenta in light mode, cyan in dark mode, never a fixed hover color — except the one fixed-tone surface (the cartela), which never theme-swaps at all."
     ],
     "rules": [
       { "name": "The Closed Four Rule", "body": "Only these four hexes exist as field colors anywhere in the system, enforced at the data layer by PRODUCT_DISPLAY_COLORS. No tints, no opacity variants, no fifth color.", "section": "colors" },
       { "name": "The Theme-Owned Accent Rule", "body": "The interactive accent is never a fixed hardcoded hue: it is magenta in light mode and cyan in dark mode. Amber and lime are identity fields only and never carry interaction state.", "section": "colors" },
       { "name": "The Cycled-Not-Identity Rule", "body": "Small color swatches (product displayColor, the category-rail dot) cycle through the four closed field colors by index rather than mapping 1:1 to items. With six categories and four colors, two pairs necessarily repeat (Teclados/Sillas both lime, Mouse/Mousepads both magenta) — the swatch is a scan-rhythm cue, the uppercase label is the disambiguator. Don't add a fifth color to eliminate a repeat.", "section": "colors" },
-      { "name": "The One Headline Rule", "body": "Bodoni Moda appears at most once per component as the highest-weight line — the product name, the price, or a state's message title — never for two competing strings on the same card or screen.", "section": "typography" },
+      { "name": "The Fixed Paper Rule", "body": "The product detail page's cartela panel (bg-bone text-ink) is bone-on-ink unconditionally and does not theme-swap with the page's dark mode — a fixed paper object in the scene regardless of the room's lighting. Any component placed inside it must not assume the page's theme-swap reaches it. Scoped to the cartela; does not license a second fixed-tone surface elsewhere without the same editorial reason.", "section": "colors" },
+      { "name": "The One Headline Rule", "body": "Bodoni Moda appears at most once per component as the highest-weight line — the product name, the price, or a state's message title — never for two competing strings on the same card or screen. Disclosed exception: the product detail page carries two h1s (header wordmark + cartela name), an accepted single-item-page trade-off, not a pattern to reproduce elsewhere.", "section": "typography" },
       { "name": "The Flat Ground Rule", "body": "Surfaces never lift with a shadow. If a component needs to stand out, it gets a field color, not an elevation.", "section": "elevation" },
-      { "name": "The Hairline-With-One-Exception Rule", "body": "Borders default to hairline, low-opacity (ink/15 / bone/15). The catalog search input's resting border (ink/50 / bone/40) is a deliberate, scoped exception to clear the WCAG 3:1 non-text UI-boundary contrast floor for an interactive control — not a new default border weight.", "section": "shapes" }
+      { "name": "The Hairline-With-One-Exception Rule", "body": "Borders default to hairline, low-opacity (ink/15 / bone/15). The catalog search input's resting border (ink/50 / bone/40) is a deliberate, scoped exception to clear the WCAG 3:1 non-text UI-boundary contrast floor for an interactive control — not a new default border weight. The cartela's own hairline border is scoped to the two edges abutting page-bone only.", "section": "shapes" }
     ],
     "dos": [
-      "Do assign exactly one of the four closed field colors, full-strength and full-bleed, per product tile.",
+      "Do assign exactly one of the four closed field colors, full-strength and full-bleed, per product tile — and, on the product detail page, to the image panel itself.",
       "Do keep Bodoni Moda to one headline-weight string per component (name, price, or state message) — never stack two didone lines competing for attention.",
       "Do build any new skeleton to the exact shape of its loaded content, and gate its animation behind motion-safe:.",
-      "Do source interactive accent color from the active theme (magenta light / cyan dark), not a hardcoded hex.",
+      "Do source interactive accent color from the active theme (magenta light / cyan dark), not a hardcoded hex — except inside the cartela's fixed-tone surface, where hardcoded colors are correct.",
       "Do keep corners square and surfaces shadow-free; depth comes from the field color, never from elevation.",
       "Do cycle small color swatches (category-rail dots, product displayColor) through the closed four-field set by index, and let the adjacent text label disambiguate — repeated colors across items are expected, not a bug.",
-      "Do keep a heavier-than-hairline border scoped to the specific interactive control that needs it to clear a contrast floor, not applied system-wide."
+      "Do keep a heavier-than-hairline border scoped to the specific interactive control that needs it to clear a contrast floor, not applied system-wide.",
+      "Do use border-current/currentColor (not a dark: variant) in any reusable component that might be dropped inside a fixed-tone surface like the cartela.",
+      "Do use aria-labelledby referencing separate name/description/price ids for card-as-link components, following the Product Card's pattern."
     ],
     "donts": [
       "Don't add border-radius, drop shadows, gradients, or glassmorphism — none exist in the shipped system and none are implied by the direction contract.",
       "Don't introduce a tint, opacity variant, or fifth color into the closed four-field set — including as a 'fix' for a cycled swatch repeat.",
-      "Don't assume the full split-hero/cartela/spec-table composition from the surface brief is already built when designing a new screen — only the specimen grid plus the catalog's search input and category rail have shipped so far.",
+      "Don't assume a full-width split-hero/landing composition exists just because the cartela shipped — the cartela is a standalone product detail page; the hero/landing composition remains unbuilt (slice 14).",
       "Don't treat the current light theme (a literal ink/bone swap) as the finished 'separately designed' light mode the direction contract calls for — it is recorded here as shipped behavior, not as an approved target for future light-theme work.",
       "Don't generalize the search input's heavier border (ink/50 / bone/40) into the system's default border weight — it's a one-off contrast-floor exception, not a replacement for the hairline convention.",
-      "Don't fold catalog-specific filtering controls into PublicLayout's shared header — it also wraps routes (product detail, future landing) that don't need them."
+      "Don't fold catalog-specific filtering controls into PublicLayout's shared header — it also wraps routes (product detail, future landing) that don't need them.",
+      "Don't generalize the Fixed Paper Rule into a second fixed-tone surface elsewhere without the same editorial reason — it is a named exception, not an invitation to stop theme-swapping other panels.",
+      "Don't wire a hardcoded dark: color pair onto a component that could end up inside a fixed-tone surface; use currentColor/border-current or an explicit non-conditional value instead.",
+      "Don't treat the product detail page's two h1 elements as a pattern to reproduce deliberately elsewhere — it's a disclosed single-item-page trade-off, not a system-wide heading convention."
     ]
   }
 }
+</content>

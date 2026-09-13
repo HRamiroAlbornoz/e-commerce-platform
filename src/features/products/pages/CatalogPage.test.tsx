@@ -21,6 +21,8 @@ function buildProduct(overrides: Partial<Product>): Product {
     displayColor: 'lime',
     imageUrl: 'https://placehold.co/600x400',
     isActive: true,
+    specs: [{ label: 'Switches', value: 'Lineales rojos' }],
+    curatorialNote: 'Nota curatorial de prueba.',
     ratingAverage: 4,
     ratingCount: 1,
     orderCount: 0,

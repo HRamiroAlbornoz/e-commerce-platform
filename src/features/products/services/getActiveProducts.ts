@@ -8,6 +8,7 @@ import {
   type QueryConstraint,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase/client';
+import { assertFromServer } from '@/lib/firebase/assertFromServer';
 import { productConverter } from '@/lib/firebase/converters/product';
 import { toNameLower, type Product, type ProductCategory } from '@shared/schemas/product';
 
@@ -44,9 +45,7 @@ export async function getActiveProducts(filters: ProductFilters = {}): Promise<P
   const activeProductsQuery = query(productsRef, ...constraints);
   const snapshot = await getDocs(activeProductsQuery);
 
-  if (snapshot.metadata.fromCache) {
-    throw new Error('No se pudo confirmar el catalogo con el servidor.');
-  }
+  assertFromServer(snapshot, 'No se pudo confirmar el catalogo con el servidor.');
 
   return snapshot.docs.map((productDoc) => productDoc.data());
 }

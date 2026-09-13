@@ -1,13 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
+import { useKeyedAsync } from '@/hooks/useKeyedAsync';
 import {
   getActiveProducts,
   type ProductFilters,
 } from '@/features/products/services/getActiveProducts';
 import type { Product } from '@shared/schemas/product';
-
-type FetchResult =
-  | { key: string; status: 'success'; products: Product[] }
-  | { key: string; status: 'error'; message: string };
 
 type ProductsState =
   | { status: 'loading' }
@@ -18,45 +15,21 @@ export function useActiveProducts(filters: ProductFilters = {}): ProductsState &
   retry: () => void;
 } {
   const { category, searchTerm } = filters;
-  const [attempt, setAttempt] = useState(0);
-  const [result, setResult] = useState<FetchResult | null>(null);
-  const requestKey = `${category ?? ''}::${searchTerm ?? ''}::${attempt}`;
+  const filterKey = `${category ?? ''}::${searchTerm ?? ''}`;
+  const fetchProducts = useCallback(
+    () => getActiveProducts({ category, searchTerm }),
+    [category, searchTerm],
+  );
 
-  useEffect(() => {
-    let isMounted = true;
+  const result = useKeyedAsync(
+    filterKey,
+    fetchProducts,
+    'No pudimos cargar el catalogo. Intenta de nuevo.',
+  );
 
-    getActiveProducts({ category, searchTerm })
-      .then((products) => {
-        if (isMounted) {
-          setResult({ key: requestKey, status: 'success', products });
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setResult({
-            key: requestKey,
-            status: 'error',
-            message: 'No pudimos cargar el catalogo. Intenta de nuevo.',
-          });
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [category, searchTerm, requestKey]);
-
-  const retry = useCallback(() => {
-    setAttempt((current) => current + 1);
-  }, []);
-
-  if (result === null || result.key !== requestKey) {
-    return { status: 'loading', retry };
+  if (result.status === 'success') {
+    return { status: 'success', products: result.data, retry: result.retry };
   }
 
-  if (result.status === 'error') {
-    return { status: 'error', message: result.message, retry };
-  }
-
-  return { status: 'success', products: result.products, retry };
+  return result;
 }
