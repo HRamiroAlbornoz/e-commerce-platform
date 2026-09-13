@@ -1,16 +1,17 @@
-import { Outlet } from 'react-router';
-import { useAuth } from '@/hooks/useAuth';
+import { Link, Outlet } from 'react-router';
+import { LogoutButton } from '@/features/auth/components/LogoutButton';
 
 export function PrivateLayout() {
-  const auth = useAuth();
-
   return (
-    <div>
-      <header className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
-        <p className="font-semibold">CLACK</p>
-        <button type="button" onClick={() => void auth.logout()}>
-          Cerrar sesion
-        </button>
+    <div className="min-h-screen bg-bone dark:bg-ink">
+      <header className="flex items-center justify-between border-b border-ink/15 px-4 py-6 md:px-8 lg:px-12 dark:border-bone/15">
+        <Link
+          to="/"
+          className="font-display text-xl tracking-widest text-ink uppercase dark:text-bone"
+        >
+          CLACK
+        </Link>
+        <LogoutButton />
       </header>
       <Outlet />
     </div>
