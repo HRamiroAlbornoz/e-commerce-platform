@@ -6,6 +6,7 @@ import { useCart } from '@/hooks/useCart';
 import { buildCartContextValue } from '@/test/mocks/cartContextValue';
 
 vi.mock('@/hooks/useCart', () => ({ useCart: vi.fn() }));
+vi.mock('@/hooks/useAuth', () => ({ useAuth: vi.fn() }));
 
 function renderCartIndicator() {
   const Stub = createRoutesStub([{ path: '/', Component: CartIndicator }]);
