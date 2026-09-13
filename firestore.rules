@@ -15,5 +15,9 @@ service cloud.firestore {
       allow create: if request.auth.uid == uid && request.resource.data.role == 'customer';
       allow update: if request.auth.uid == uid && request.resource.data.role == resource.data.role;
     }
+
+    match /carts/{uid} {
+      allow read, write: if request.auth.uid == uid;
+    }
   }
 }

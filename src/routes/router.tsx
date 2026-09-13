@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router';
 import { CatalogPage } from '@/features/products/pages/CatalogPage';
 import { ProductDetailPage } from '@/features/products/pages/ProductDetailPage';
+import { CartPage } from '@/features/cart/pages/CartPage';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { RegisterPage } from '@/features/auth/pages/RegisterPage';
 import { PublicLayout } from '@/layouts/PublicLayout';
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
       { index: true, element: <CatalogPage /> },
       { path: 'products/:id', element: <ProductDetailPage /> },
       { path: 'products/:id/reviews', element: <ProductReviewsPlaceholder /> },
+      { path: 'cart', element: <CartPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
     ],

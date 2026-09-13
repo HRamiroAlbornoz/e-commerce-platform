@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router';
 import { useProduct } from '@/features/products/hooks/useProduct';
-import { QuantitySelector } from '@/components/ui/QuantitySelector';
+import { AddToCartControl } from '@/features/products/components/AddToCartControl';
 import { ProductDetailSkeleton } from '@/features/products/components/ProductDetailSkeleton';
 import { EmptyState } from '@/components/states/EmptyState';
 import { ErrorState } from '@/components/states/ErrorState';
@@ -9,8 +9,6 @@ import { formatPrice } from '@/features/products/utils/formatPrice';
 import type { Product } from '@shared/schemas/product';
 
 function ProductDetailContent({ product }: { product: Product }) {
-  const isOutOfStock = product.stock === 0;
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2">
       <div
@@ -53,21 +51,7 @@ function ProductDetailContent({ product }: { product: Product }) {
         <div className="mt-auto flex flex-col gap-4 pt-6 md:flex-row md:items-end md:justify-between">
           <p className="font-display text-2xl">{formatPrice(product.price)}</p>
 
-          <div className="flex flex-col gap-3 md:items-end">
-            {isOutOfStock ? (
-              <p className="font-body text-sm text-ink/70">Sin stock</p>
-            ) : (
-              <QuantitySelector maxQuantity={product.stock} />
-            )}
-
-            <button
-              type="button"
-              disabled={isOutOfStock}
-              className="font-body border border-ink px-6 py-2 text-xs font-medium tracking-widest uppercase enabled:hover:border-field-magenta enabled:hover:text-field-magenta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-field-magenta disabled:cursor-not-allowed disabled:opacity-40 dark:enabled:hover:border-field-cyan dark:enabled:hover:text-field-cyan dark:focus-visible:outline-field-cyan"
-            >
-              Agregar al carrito
-            </button>
-          </div>
+          <AddToCartControl product={product} />
         </div>
       </div>
     </div>

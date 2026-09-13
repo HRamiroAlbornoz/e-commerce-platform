@@ -3,10 +3,15 @@ import { render, screen } from '@testing-library/react';
 import { createRoutesStub } from 'react-router';
 import type { User } from 'firebase/auth';
 import { useAuth } from '@/hooks/useAuth';
+import { useCart } from '@/hooks/useCart';
 import type { AuthContextValue, AuthState } from '@/contexts/AuthContext';
 import { AdminRoute } from '@/routes/AdminRoute';
+import { buildCartContextValue } from '@/test/mocks/cartContextValue';
 
 vi.mock('@/hooks/useAuth', () => ({ useAuth: vi.fn() }));
+vi.mock('@/hooks/useCart', () => ({ useCart: vi.fn() }));
+
+vi.mocked(useCart).mockReturnValue(buildCartContextValue());
 
 // AdminRoute solo lee status/role: un User real de Firebase no aporta nada al test.
 const fakeUser = {} as User;

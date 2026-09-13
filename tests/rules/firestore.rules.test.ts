@@ -111,3 +111,35 @@ describe('firestore.rules (users)', () => {
     await assertFails(updateDoc(doc(user.firestore(), 'users/user-1'), { role: 'admin' }));
   });
 });
+
+describe('firestore.rules (carts)', () => {
+  function buildCartData(overrides: Record<string, unknown> = {}) {
+    return {
+      items: [{ productId: 'product-1', quantity: 1 }],
+      updatedAt: new Date(),
+      ...overrides,
+    };
+  }
+
+  it('deniega leer o escribir un carrito sin autenticacion', async () => {
+    const anonymous = testEnv.unauthenticatedContext();
+    await assertFails(getDoc(doc(anonymous.firestore(), 'carts/user-1')));
+    await assertFails(setDoc(doc(anonymous.firestore(), 'carts/user-1'), buildCartData()));
+  });
+
+  it('permite leer y escribir el propio carrito', async () => {
+    const user = testEnv.authenticatedContext('user-1');
+    await assertSucceeds(setDoc(doc(user.firestore(), 'carts/user-1'), buildCartData()));
+    await assertSucceeds(getDoc(doc(user.firestore(), 'carts/user-1')));
+  });
+
+  it('deniega leer o escribir el carrito de otro usuario', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), 'carts/user-1'), buildCartData());
+    });
+
+    const otherUser = testEnv.authenticatedContext('user-2');
+    await assertFails(getDoc(doc(otherUser.firestore(), 'carts/user-1')));
+    await assertFails(setDoc(doc(otherUser.firestore(), 'carts/user-1'), buildCartData()));
+  });
+});
