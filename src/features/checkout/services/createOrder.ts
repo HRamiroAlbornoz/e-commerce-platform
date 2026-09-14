@@ -1,9 +1,6 @@
-import { getIdToken, type User } from 'firebase/auth';
-import {
-  createOrderResponseSchema,
-  orderErrorResponseSchema,
-  type CreateOrderRequest,
-} from '@shared/schemas/order';
+import type { User } from 'firebase/auth';
+import { postOrderRequest } from '@/lib/orderApiRequest';
+import { createOrderResponseSchema, type CreateOrderRequest } from '@shared/schemas/order';
 
 const GENERIC_ORDER_ERROR = 'No pudimos procesar tu compra. Intentá de nuevo.';
 
@@ -13,29 +10,13 @@ export async function createOrder(
   user: User,
   request: CreateOrderRequest,
 ): Promise<CreateOrderResult> {
-  try {
-    const token = await getIdToken(user);
-    const response = await fetch('/api/orders/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(request),
-    });
+  const result = await postOrderRequest(
+    user,
+    '/api/orders/create',
+    request,
+    createOrderResponseSchema,
+    GENERIC_ORDER_ERROR,
+  );
 
-    const body: unknown = await response.json();
-
-    if (response.ok) {
-      const parsed = createOrderResponseSchema.safeParse(body);
-      return parsed.success
-        ? { ok: true, orderId: parsed.data.orderId }
-        : { ok: false, message: GENERIC_ORDER_ERROR };
-    }
-
-    const parsedError = orderErrorResponseSchema.safeParse(body);
-    return {
-      ok: false,
-      message: parsedError.success ? parsedError.data.message : GENERIC_ORDER_ERROR,
-    };
-  } catch {
-    return { ok: false, message: GENERIC_ORDER_ERROR };
-  }
+  return result.ok ? { ok: true, orderId: result.data.orderId } : result;
 }

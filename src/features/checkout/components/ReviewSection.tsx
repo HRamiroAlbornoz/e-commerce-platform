@@ -5,13 +5,12 @@ import { InlineError } from '@/components/ui/InlineError';
 import { formatPrice } from '@/features/products/utils/formatPrice';
 import { createOrder } from '@/features/checkout/services/createOrder';
 import { roundToCents, SHIPPING_COST } from '@shared/schemas/order';
+import type { SubmitState } from '@/lib/asyncSubmitState';
 import type { CartLine } from '@/features/cart/hooks/useResolvedCart';
 import type { PaymentDraft, ShippingDetails } from '@shared/schemas/checkout';
 
 const REJECTED_PAYMENT_MESSAGE =
   'El pago simulado fue rechazado. Volvé al paso de pago para intentar de nuevo.';
-
-type SubmitState = { status: 'idle' } | { status: 'submitting' } | { status: 'error'; message: string };
 
 type ReviewSectionProps = {
   shipping: ShippingDetails;

@@ -14,6 +14,8 @@ describe('orderErrorHttpStatus', () => {
     expect(orderErrorHttpStatus('OUT_OF_STOCK')).toBe(409);
     expect(orderErrorHttpStatus('PRICE_CHANGED')).toBe(409);
     expect(orderErrorHttpStatus('CART_CHANGED')).toBe(409);
+    expect(orderErrorHttpStatus('ORDER_NOT_FOUND')).toBe(404);
+    expect(orderErrorHttpStatus('INVALID_STATUS_TRANSITION')).toBe(409);
     expect(orderErrorHttpStatus('INTERNAL_ERROR')).toBe(500);
   });
 });

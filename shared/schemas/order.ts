@@ -66,6 +66,19 @@ export const createOrderResponseSchema = z.object({
 
 export type CreateOrderResponse = z.infer<typeof createOrderResponseSchema>;
 
+export const cancelOrderRequestSchema = z.object({
+  orderId: z.string().min(1),
+});
+
+export type CancelOrderRequest = z.infer<typeof cancelOrderRequestSchema>;
+
+export const cancelOrderResponseSchema = z.object({
+  orderId: z.string().min(1),
+  status: orderStatusSchema,
+});
+
+export type CancelOrderResponse = z.infer<typeof cancelOrderResponseSchema>;
+
 export const ORDER_ERROR_CODES = [
   'UNAUTHENTICATED',
   'INVALID_REQUEST',
@@ -74,6 +87,8 @@ export const ORDER_ERROR_CODES = [
   'OUT_OF_STOCK',
   'PRICE_CHANGED',
   'CART_CHANGED',
+  'ORDER_NOT_FOUND',
+  'INVALID_STATUS_TRANSITION',
   'INTERNAL_ERROR',
 ] as const;
 

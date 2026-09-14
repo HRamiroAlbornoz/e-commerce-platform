@@ -6,7 +6,7 @@ import {
   initializeTestEnvironment,
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 
 let testEnv: RulesTestEnvironment;
 
@@ -207,5 +207,34 @@ describe('firestore.rules (orders)', () => {
 
     const owner = testEnv.authenticatedContext('user-1');
     await assertFails(updateDoc(doc(owner.firestore(), 'orders/order-1'), { status: 'cancelled' }));
+  });
+
+  it('deniega leer una orden que nunca existio, igual que la de otro usuario (F7.2)', async () => {
+    const anyUser = testEnv.authenticatedContext('user-1');
+    await assertFails(getDoc(doc(anyUser.firestore(), 'orders/never-existed')));
+  });
+
+  it('permite listar solo las propias ordenes filtrando por userId', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), 'orders/order-1'), buildOrderData({ userId: 'user-1' }));
+      await setDoc(doc(context.firestore(), 'orders/order-2'), buildOrderData({ userId: 'user-2' }));
+    });
+
+    const owner = testEnv.authenticatedContext('user-1');
+    const ownOrdersQuery = query(collection(owner.firestore(), 'orders'), where('userId', '==', 'user-1'));
+    await assertSucceeds(getDocs(ownOrdersQuery));
+  });
+
+  it('deniega listar ordenes de otro usuario', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), 'orders/order-1'), buildOrderData({ userId: 'user-1' }));
+    });
+
+    const otherUser = testEnv.authenticatedContext('user-2');
+    const otherUsersOrdersQuery = query(
+      collection(otherUser.firestore(), 'orders'),
+      where('userId', '==', 'user-1'),
+    );
+    await assertFails(getDocs(otherUsersOrdersQuery));
   });
 });

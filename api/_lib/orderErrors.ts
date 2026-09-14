@@ -1,3 +1,4 @@
+import type { VercelResponse } from '@vercel/node';
 import type { OrderErrorCode, OrderErrorResponse } from '../../shared/schemas/order.js';
 
 const ORDER_ERROR_HTTP_STATUS: Record<OrderErrorCode, number> = {
@@ -8,6 +9,8 @@ const ORDER_ERROR_HTTP_STATUS: Record<OrderErrorCode, number> = {
   OUT_OF_STOCK: 409,
   PRICE_CHANGED: 409,
   CART_CHANGED: 409,
+  ORDER_NOT_FOUND: 404,
+  INVALID_STATUS_TRANSITION: 409,
   INTERNAL_ERROR: 500,
 };
 
@@ -44,4 +47,9 @@ export function logOrderError(requestId: string, error: OrderError): void {
       message: error.message,
     }),
   );
+}
+
+export function respondWithError(res: VercelResponse, requestId: string, error: OrderError): void {
+  logOrderError(requestId, error);
+  res.status(orderErrorHttpStatus(error.code)).json(toOrderErrorResponse(error));
 }
