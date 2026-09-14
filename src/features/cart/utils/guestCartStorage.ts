@@ -1,9 +1,10 @@
 import { guestCartSchema, type CartItem } from '@shared/schemas/cart';
+import { safeStorageGet, safeStorageRemove, safeStorageSet } from '@/lib/webStorage';
 
 const GUEST_CART_STORAGE_KEY = 'clack:guest-cart';
 
 export function readGuestCart(): CartItem[] {
-  const raw = localStorage.getItem(GUEST_CART_STORAGE_KEY);
+  const raw = safeStorageGet(localStorage, GUEST_CART_STORAGE_KEY);
 
   if (!raw) {
     return [];
@@ -18,17 +19,9 @@ export function readGuestCart(): CartItem[] {
 }
 
 export function writeGuestCart(items: CartItem[]): void {
-  try {
-    localStorage.setItem(GUEST_CART_STORAGE_KEY, JSON.stringify({ items }));
-  } catch {
-    return;
-  }
+  safeStorageSet(localStorage, GUEST_CART_STORAGE_KEY, JSON.stringify({ items }));
 }
 
 export function clearGuestCart(): void {
-  try {
-    localStorage.removeItem(GUEST_CART_STORAGE_KEY);
-  } catch {
-    return;
-  }
+  safeStorageRemove(localStorage, GUEST_CART_STORAGE_KEY);
 }

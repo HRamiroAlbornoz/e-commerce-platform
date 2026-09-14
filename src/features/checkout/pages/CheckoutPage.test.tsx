@@ -6,6 +6,7 @@ import { CheckoutPage } from '@/features/checkout/pages/CheckoutPage';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
 import { useResolvedCart } from '@/features/cart/hooks/useResolvedCart';
+import { createOrder } from '@/features/checkout/services/createOrder';
 import { buildCartContextValue } from '@/test/mocks/cartContextValue';
 import type { AuthContextValue } from '@/contexts/AuthContext';
 import type { Product } from '@shared/schemas/product';
@@ -13,6 +14,7 @@ import type { Product } from '@shared/schemas/product';
 vi.mock('@/hooks/useAuth', () => ({ useAuth: vi.fn() }));
 vi.mock('@/hooks/useCart', () => ({ useCart: vi.fn() }));
 vi.mock('@/features/cart/hooks/useResolvedCart', () => ({ useResolvedCart: vi.fn() }));
+vi.mock('@/features/checkout/services/createOrder', () => ({ createOrder: vi.fn() }));
 
 const fakeUser = {} as User;
 
@@ -64,6 +66,7 @@ async function fillPayment() {
 describe('CheckoutPage', () => {
   beforeEach(() => {
     localStorage.clear();
+    sessionStorage.clear();
     vi.mocked(useAuth).mockReturnValue({
       status: 'authenticated',
       user: fakeUser,
@@ -127,5 +130,55 @@ describe('CheckoutPage', () => {
 
     await waitFor(() => expect(screen.getByText('Revisión final')).toBeInTheDocument());
     expect(screen.getByText('Resultado simulado: Aprobado')).toBeInTheDocument();
+  });
+
+  it('confirmar compra muestra la confirmacion, vacia el carrito y reinicia el borrador (F6.5, F6.10)', async () => {
+    const clearCart = vi.fn(() => {
+      vi.mocked(useResolvedCart).mockReturnValue({ status: 'success', lines: [], total: 0, retry: vi.fn() });
+    });
+    vi.mocked(useCart).mockReturnValue(buildCartContextValue({ clearCart }));
+    vi.mocked(useResolvedCart).mockReturnValue({
+      status: 'success',
+      lines: [{ product: buildProduct(), quantity: 1, lineTotal: 29999 }],
+      total: 29999,
+      retry: vi.fn(),
+    });
+    vi.mocked(createOrder).mockResolvedValue({ ok: true, orderId: '11112222-3333-4444-5555-666677778888' });
+
+    renderCheckoutPage();
+    await fillShipping();
+    await fillPayment();
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar compra' }));
+
+    await waitFor(() => expect(screen.getByText(/Gracias por tu compra/)).toBeInTheDocument());
+    expect(screen.getByText(/77778888/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Ver mis órdenes' })).toHaveAttribute('href', '/orders');
+    expect(clearCart).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText('Revisión final')).not.toBeInTheDocument();
+  });
+
+  it('si ya habia un pedido confirmado en esta pestaña, lo muestra de nuevo al recargar', () => {
+    sessionStorage.setItem('clack:last-order-id:undefined', 'aaaa1111-bbbb-2222-cccc-333344445555');
+    vi.mocked(useResolvedCart).mockReturnValue({ status: 'success', lines: [], total: 0, retry: vi.fn() });
+
+    renderCheckoutPage();
+
+    expect(screen.getByText(/Gracias por tu compra/)).toBeInTheDocument();
+    expect(screen.getByText(/44445555/)).toBeInTheDocument();
+  });
+
+  it('si el carrito vuelve a tener productos, deja de mostrar la confirmacion vieja y vuelve al stepper', () => {
+    sessionStorage.setItem('clack:last-order-id:undefined', 'aaaa1111-bbbb-2222-cccc-333344445555');
+    vi.mocked(useResolvedCart).mockReturnValue({
+      status: 'success',
+      lines: [{ product: buildProduct(), quantity: 1, lineTotal: 29999 }],
+      total: 29999,
+      retry: vi.fn(),
+    });
+
+    renderCheckoutPage();
+
+    expect(screen.queryByText(/Gracias por tu compra/)).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Nombre completo')).toBeInTheDocument();
   });
 });

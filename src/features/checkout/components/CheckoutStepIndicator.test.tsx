@@ -15,7 +15,13 @@ const shipping: ShippingDetails = {
 const payment: PaymentDraft = { cardholderName: 'Hernán Albornoz', method: 'card', outcome: 'success' };
 
 function draftWith(overrides: Partial<CheckoutDraftState>): CheckoutDraftState {
-  return { shipping: null, payment: null, activeStep: 'shipping', ...overrides };
+  return {
+    shipping: null,
+    payment: null,
+    activeStep: 'shipping',
+    orderRequestId: 'order-request-1',
+    ...overrides,
+  };
 }
 
 describe('CheckoutStepIndicator', () => {

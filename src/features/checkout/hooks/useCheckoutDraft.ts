@@ -12,6 +12,7 @@ export type UseCheckoutDraftResult = CheckoutDraftState & {
   submitPayment: (payment: PaymentDraft) => void;
   editShipping: () => void;
   editPayment: () => void;
+  resetDraft: () => void;
 };
 
 export function useCheckoutDraft(uid: string): UseCheckoutDraftResult {
@@ -45,5 +46,9 @@ export function useCheckoutDraft(uid: string): UseCheckoutDraftResult {
     dispatch({ type: 'EDIT_PAYMENT' });
   }
 
-  return { ...state, submitShipping, submitPayment, editShipping, editPayment };
+  function resetDraft(): void {
+    dispatch({ type: 'RESET', orderRequestId: crypto.randomUUID() });
+  }
+
+  return { ...state, submitShipping, submitPayment, editShipping, editPayment, resetDraft };
 }

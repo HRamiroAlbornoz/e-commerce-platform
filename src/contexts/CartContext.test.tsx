@@ -30,6 +30,7 @@ function TestConsumer() {
     <div>
       <p data-testid="items">{JSON.stringify(cart.items)}</p>
       <button onClick={() => cart.addItem('product-1', 1, 5)}>agregar</button>
+      <button onClick={() => cart.clearCart()}>vaciar</button>
     </div>
   );
 }
@@ -60,6 +61,30 @@ describe('CartProvider', () => {
       expect(writeGuestCart).toHaveBeenCalledWith([{ productId: 'product-1', quantity: 1 }]);
     });
     expect(setCart).not.toHaveBeenCalled();
+  });
+
+  it('clearCart vacia el carrito local y lo persiste vacio (F6.5, tras confirmar una orden)', async () => {
+    mockAuth({ status: 'authenticated', user: fakeUser, role: 'customer' });
+    vi.mocked(loadAuthenticatedCart).mockResolvedValue({ items: [], exclusions: [] });
+
+    renderWithProvider();
+    await waitFor(() => expect(loadAuthenticatedCart).toHaveBeenCalledTimes(1));
+
+    fireEvent.click(screen.getByRole('button', { name: 'agregar' }));
+    await waitFor(() => {
+      expect(screen.getByTestId('items')).toHaveTextContent(
+        JSON.stringify([{ productId: 'product-1', quantity: 1 }]),
+      );
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'vaciar' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('items')).toHaveTextContent('[]');
+    });
+    await waitFor(() => {
+      expect(setCart).toHaveBeenLastCalledWith('user-1', []);
+    });
   });
 
   it('al iniciar sesion con un carrito de invitado, dispara la fusion una sola vez', async () => {

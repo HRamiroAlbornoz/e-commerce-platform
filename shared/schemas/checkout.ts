@@ -41,6 +41,7 @@ export const checkoutDraftSchema = z
     shipping: shippingDetailsSchema.nullable(),
     payment: paymentDraftSchema.nullable(),
     activeStep: checkoutStepSchema,
+    orderRequestId: z.uuid(),
   })
   .refine((draft) => draft.activeStep === 'shipping' || draft.shipping !== null, {
     message: 'El paso de pago o revisión no pueden alcanzarse sin haber completado el envío.',

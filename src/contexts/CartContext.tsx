@@ -10,6 +10,7 @@ export type CartContextValue = CartState & {
   addItem: (productId: string, quantity: number, stock: number) => void;
   setQuantity: (productId: string, quantity: number, stock: number) => void;
   removeItem: (productId: string) => void;
+  clearCart: () => void;
   mergeExclusions: MergeExclusion[];
   dismissMergeExclusions: () => void;
 };
@@ -108,6 +109,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'REMOVE_ITEM', productId });
   }
 
+  function clearCart(): void {
+    dispatch({ type: 'CLEAR' });
+  }
+
   function dismissMergeExclusions(): void {
     setMergeExclusions([]);
   }
@@ -119,6 +124,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         addItem,
         setQuantity,
         removeItem,
+        clearCart,
         mergeExclusions,
         dismissMergeExclusions,
       }}

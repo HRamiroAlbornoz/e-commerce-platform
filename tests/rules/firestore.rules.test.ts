@@ -26,12 +26,12 @@ afterAll(async () => {
 describe('firestore.rules (base cerrada)', () => {
   it('deniega la lectura sin autenticacion de una coleccion sin regla propia', async () => {
     const anonymous = testEnv.unauthenticatedContext();
-    await assertFails(getDoc(doc(anonymous.firestore(), 'orders/any-id')));
+    await assertFails(getDoc(doc(anonymous.firestore(), 'reviews/any-id')));
   });
 
   it('deniega la escritura de una coleccion sin regla propia, incluso autenticado', async () => {
     const customer = testEnv.authenticatedContext('user-1');
-    await assertFails(setDoc(doc(customer.firestore(), 'orders/any-id'), { status: 'pending' }));
+    await assertFails(setDoc(doc(customer.firestore(), 'reviews/any-id'), { rating: 5 }));
   });
 
   it('permite la lectura publica de products sin autenticacion', async () => {
@@ -141,5 +141,71 @@ describe('firestore.rules (carts)', () => {
     const otherUser = testEnv.authenticatedContext('user-2');
     await assertFails(getDoc(doc(otherUser.firestore(), 'carts/user-1')));
     await assertFails(setDoc(doc(otherUser.firestore(), 'carts/user-1'), buildCartData()));
+  });
+});
+
+describe('firestore.rules (orders)', () => {
+  function buildOrderData(overrides: Record<string, unknown> = {}) {
+    return {
+      userId: 'user-1',
+      items: [{ productId: 'product-1', name: 'Teclado', unitPrice: 1000, imageUrl: 'https://x.test/a.png', quantity: 1 }],
+      subtotal: 1000,
+      shippingCost: 4999,
+      total: 5999,
+      status: 'pending',
+      shipping: {
+        fullName: 'User One',
+        address: 'Calle 123',
+        city: 'CABA',
+        postalCode: '1000',
+        phone: '1122334455',
+      },
+      payment: { cardholderName: 'User One', method: 'card', outcome: 'success' },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...overrides,
+    };
+  }
+
+  it('deniega leer o escribir sin autenticacion', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), 'orders/order-1'), buildOrderData());
+    });
+
+    const anonymous = testEnv.unauthenticatedContext();
+    await assertFails(getDoc(doc(anonymous.firestore(), 'orders/order-1')));
+    await assertFails(setDoc(doc(anonymous.firestore(), 'orders/order-1'), buildOrderData()));
+  });
+
+  it('permite al dueño leer su propia orden', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), 'orders/order-1'), buildOrderData());
+    });
+
+    const owner = testEnv.authenticatedContext('user-1');
+    await assertSucceeds(getDoc(doc(owner.firestore(), 'orders/order-1')));
+  });
+
+  it('deniega leer la orden de otro usuario (F7.2)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), 'orders/order-1'), buildOrderData());
+    });
+
+    const otherUser = testEnv.authenticatedContext('user-2');
+    await assertFails(getDoc(doc(otherUser.firestore(), 'orders/order-1')));
+  });
+
+  it('deniega crear una orden desde el cliente, incluso como el propio dueño', async () => {
+    const owner = testEnv.authenticatedContext('user-1');
+    await assertFails(setDoc(doc(owner.firestore(), 'orders/order-1'), buildOrderData()));
+  });
+
+  it('deniega modificar una orden existente desde el cliente', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), 'orders/order-1'), buildOrderData());
+    });
+
+    const owner = testEnv.authenticatedContext('user-1');
+    await assertFails(updateDoc(doc(owner.firestore(), 'orders/order-1'), { status: 'cancelled' }));
   });
 });

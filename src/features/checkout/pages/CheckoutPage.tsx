@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
 import { useResolvedCart } from '@/features/cart/hooks/useResolvedCart';
@@ -10,65 +11,94 @@ import { ShippingSummary } from '@/features/checkout/components/ShippingSummary'
 import { PaymentForm } from '@/features/checkout/components/PaymentForm';
 import { PaymentSummary } from '@/features/checkout/components/PaymentSummary';
 import { ReviewSection } from '@/features/checkout/components/ReviewSection';
+import { OrderConfirmation } from '@/features/checkout/components/OrderConfirmation';
+import { readLastOrderId, writeLastOrderId } from '@/features/checkout/utils/lastOrderStorage';
 
 export function CheckoutPage() {
   const auth = useAuth();
-  const { setQuantity, removeItem } = useCart();
+  const { setQuantity, removeItem, clearCart } = useCart();
   const cart = useResolvedCart();
   const uid = auth.status === 'authenticated' ? auth.user.uid : '';
   const draft = useCheckoutDraft(uid);
+  const [confirmedOrderId, setConfirmedOrderId] = useState<string | null>(() =>
+    readLastOrderId(uid),
+  );
 
   const shippingVisibility = getStepVisibility(draft, 'shipping');
   const paymentVisibility = getStepVisibility(draft, 'payment');
   const reviewVisibility = getStepVisibility(draft, 'review');
 
+  function handleOrderCreated(orderId: string): void {
+    writeLastOrderId(uid, orderId);
+    setConfirmedOrderId(orderId);
+    clearCart();
+    draft.resetDraft();
+  }
+
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-8 px-4 py-10 pb-24 md:px-8 md:py-16 md:pb-16">
       <h2 className="font-display text-3xl text-ink dark:text-bone">Checkout</h2>
 
-      <CartLinesSummary
-        cart={cart}
-        onQuantityChange={setQuantity}
-        onRemove={removeItem}
-        emptyStateDescription="Agregá productos al carrito antes de iniciar la compra."
-        totalVariant="sticky-bottom"
-      />
-
-      {cart.status === 'success' && cart.lines.length > 0 ? (
-        <div className="flex flex-col gap-8 md:flex-row md:gap-12 md:border-t md:border-ink/15 md:pt-8 dark:md:border-bone/15">
-          <CheckoutStepIndicator
-            draft={draft}
-            onEditShipping={draft.editShipping}
-            onEditPayment={draft.editPayment}
+      {confirmedOrderId && !(cart.status === 'success' && cart.lines.length > 0) ? (
+        <OrderConfirmation orderId={confirmedOrderId} />
+      ) : (
+        <>
+          <CartLinesSummary
+            cart={cart}
+            onQuantityChange={setQuantity}
+            onRemove={removeItem}
+            emptyStateDescription="Agregá productos al carrito antes de iniciar la compra."
+            totalVariant="sticky-bottom"
           />
 
-          <div className="flex flex-1 flex-col divide-y divide-dotted divide-ink/30 dark:divide-bone/30">
-            <div className="pb-10 not-first:pt-10">
-              {shippingVisibility === 'form' ? (
-                <ShippingForm defaultValues={draft.shipping} onSubmit={draft.submitShipping} />
-              ) : draft.shipping ? (
-                <ShippingSummary shipping={draft.shipping} onEdit={draft.editShipping} />
-              ) : null}
-            </div>
+          {cart.status === 'success' && cart.lines.length > 0 ? (
+            <div className="flex flex-col gap-8 md:flex-row md:gap-12 md:border-t md:border-ink/15 md:pt-8 dark:md:border-bone/15">
+              <CheckoutStepIndicator
+                draft={draft}
+                onEditShipping={draft.editShipping}
+                onEditPayment={draft.editPayment}
+              />
 
-            {paymentVisibility !== 'hidden' ? (
-              <div className="pb-10 not-first:pt-10">
-                {paymentVisibility === 'form' ? (
-                  <PaymentForm defaultValues={draft.payment} onSubmit={draft.submitPayment} />
-                ) : draft.payment ? (
-                  <PaymentSummary payment={draft.payment} onEdit={draft.editPayment} />
+              <div className="flex flex-1 flex-col divide-y divide-dotted divide-ink/30 dark:divide-bone/30">
+                <div className="pb-10 not-first:pt-10">
+                  {shippingVisibility === 'form' ? (
+                    <ShippingForm defaultValues={draft.shipping} onSubmit={draft.submitShipping} />
+                  ) : draft.shipping ? (
+                    <ShippingSummary shipping={draft.shipping} onEdit={draft.editShipping} />
+                  ) : null}
+                </div>
+
+                {paymentVisibility !== 'hidden' ? (
+                  <div className="pb-10 not-first:pt-10">
+                    {paymentVisibility === 'form' ? (
+                      <PaymentForm defaultValues={draft.payment} onSubmit={draft.submitPayment} />
+                    ) : draft.payment ? (
+                      <PaymentSummary payment={draft.payment} onEdit={draft.editPayment} />
+                    ) : null}
+                  </div>
+                ) : null}
+
+                {reviewVisibility !== 'hidden' &&
+                draft.shipping &&
+                draft.payment &&
+                auth.status === 'authenticated' ? (
+                  <div className="not-first:pt-10">
+                    <ReviewSection
+                      shipping={draft.shipping}
+                      payment={draft.payment}
+                      cartLines={cart.lines}
+                      subtotal={cart.total}
+                      orderRequestId={draft.orderRequestId}
+                      user={auth.user}
+                      onOrderCreated={handleOrderCreated}
+                    />
+                  </div>
                 ) : null}
               </div>
-            ) : null}
-
-            {reviewVisibility !== 'hidden' ? (
-              <div className="not-first:pt-10">
-                <ReviewSection total={cart.total} />
-              </div>
-            ) : null}
-          </div>
-        </div>
-      ) : null}
+            </div>
+          ) : null}
+        </>
+      )}
     </main>
   );
 }

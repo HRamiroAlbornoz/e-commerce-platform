@@ -4,19 +4,28 @@ export type CheckoutDraftState = {
   shipping: ShippingDetails | null;
   payment: PaymentDraft | null;
   activeStep: CheckoutStep;
+  orderRequestId: string;
 };
 
 export type CheckoutDraftAction =
   | { type: 'SUBMIT_SHIPPING'; shipping: ShippingDetails }
   | { type: 'SUBMIT_PAYMENT'; payment: PaymentDraft }
   | { type: 'EDIT_SHIPPING' }
-  | { type: 'EDIT_PAYMENT' };
+  | { type: 'EDIT_PAYMENT' }
+  | { type: 'RESET'; orderRequestId: string };
 
 export const INITIAL_CHECKOUT_DRAFT_STATE: CheckoutDraftState = {
   shipping: null,
   payment: null,
   activeStep: 'shipping',
+  orderRequestId: '',
 };
+
+export function createFreshCheckoutDraftState(
+  orderRequestId: string = crypto.randomUUID(),
+): CheckoutDraftState {
+  return { shipping: null, payment: null, activeStep: 'shipping', orderRequestId };
+}
 
 export type CheckoutStepVisibility = 'form' | 'summary' | 'hidden';
 
@@ -62,6 +71,9 @@ export function checkoutDraftReducer(
 
     case 'EDIT_PAYMENT':
       return { ...state, activeStep: 'payment' };
+
+    case 'RESET':
+      return createFreshCheckoutDraftState(action.orderRequestId);
 
     default:
       return state;

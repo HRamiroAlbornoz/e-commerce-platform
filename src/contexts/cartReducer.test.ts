@@ -107,4 +107,14 @@ describe('cartReducer', () => {
 
     expect(result.items).toEqual(nextItems);
   });
+
+  it('CLEAR vacia el carrito (usado al confirmar una orden)', () => {
+    const state = stateWith([
+      { productId: 'product-1', quantity: 2 },
+      { productId: 'product-2', quantity: 1 },
+    ]);
+    const result = cartReducer(state, { type: 'CLEAR' });
+
+    expect(result.items).toEqual([]);
+  });
 });

@@ -7,6 +7,7 @@ export function buildCartContextValue(overrides: Partial<CartContextValue> = {})
     addItem: vi.fn(),
     setQuantity: vi.fn(),
     removeItem: vi.fn(),
+    clearCart: vi.fn(),
     mergeExclusions: [],
     dismissMergeExclusions: vi.fn(),
     ...overrides,
