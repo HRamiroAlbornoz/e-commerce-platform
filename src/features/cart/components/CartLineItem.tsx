@@ -32,7 +32,7 @@ export function CartLineItem({ line, onQuantityChange, onRemove }: CartLineItemP
           </p>
         </div>
 
-        <div className="flex items-center justify-between gap-6 md:justify-end">
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 md:flex-nowrap md:justify-end">
           <QuantitySelector
             maxQuantity={product.stock}
             initialQuantity={Math.min(quantity, product.stock)}

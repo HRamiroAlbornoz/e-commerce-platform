@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router';
 import { CatalogPage } from '@/features/products/pages/CatalogPage';
 import { ProductDetailPage } from '@/features/products/pages/ProductDetailPage';
 import { CartPage } from '@/features/cart/pages/CartPage';
+import { CheckoutPage } from '@/features/checkout/pages/CheckoutPage';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { RegisterPage } from '@/features/auth/pages/RegisterPage';
 import { PublicLayout } from '@/layouts/PublicLayout';
@@ -39,7 +40,10 @@ export const router = createBrowserRouter([
     children: [
       {
         element: <PrivateLayout />,
-        children: [{ path: 'account', element: <PrivateAreaPlaceholder /> }],
+        children: [
+          { path: 'account', element: <PrivateAreaPlaceholder /> },
+          { path: 'checkout', element: <CheckoutPage /> },
+        ],
       },
     ],
   },
