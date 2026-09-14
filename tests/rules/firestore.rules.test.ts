@@ -6,7 +6,19 @@ import {
   initializeTestEnvironment,
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  Timestamp,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 
 let testEnv: RulesTestEnvironment;
 
@@ -236,5 +248,191 @@ describe('firestore.rules (orders)', () => {
       where('userId', '==', 'user-1'),
     );
     await assertFails(getDocs(otherUsersOrdersQuery));
+  });
+});
+
+describe('firestore.rules (reviews)', () => {
+  function reviewPath(productId: string, reviewId: string): string {
+    return `products/${productId}/reviews/${reviewId}`;
+  }
+
+  function buildReviewData(overrides: Record<string, unknown> = {}) {
+    return {
+      userId: 'user-1',
+      displayName: 'User One',
+      rating: 5,
+      comment: 'Excelente producto.',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      ...overrides,
+    };
+  }
+
+  // Cada test usa su propio productId: el entorno del emulador se comparte
+  // entre tests del mismo archivo (sin clearFirestore entre ellos), y un
+  // "create" contra un documento que otro test ya sembro se evalua como
+  // "update" en su lugar, con reglas distintas.
+
+  it('permite leer las reseñas sin autenticacion', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), reviewPath('product-read', 'user-1')), buildReviewData());
+    });
+
+    const anonymous = testEnv.unauthenticatedContext();
+    await assertSucceeds(getDoc(doc(anonymous.firestore(), reviewPath('product-read', 'user-1'))));
+  });
+
+  it('permite crear la propia reseña, con el id del autor como id del documento', async () => {
+    const user = testEnv.authenticatedContext('user-1');
+    await assertSucceeds(
+      setDoc(doc(user.firestore(), reviewPath('product-create-own', 'user-1')), buildReviewData()),
+    );
+  });
+
+  it('deniega crear una reseña bajo el id de otro usuario', async () => {
+    const user = testEnv.authenticatedContext('user-1');
+    await assertFails(
+      setDoc(doc(user.firestore(), reviewPath('product-create-wrong-id', 'user-2')), buildReviewData()),
+    );
+  });
+
+  it('deniega crear una reseña cuyo campo userId no coincide con el autor', async () => {
+    const user = testEnv.authenticatedContext('user-1');
+    await assertFails(
+      setDoc(
+        doc(user.firestore(), reviewPath('product-create-userid-mismatch', 'user-1')),
+        buildReviewData({ userId: 'user-2' }),
+      ),
+    );
+  });
+
+  it.each([0, 6, 2.5])('deniega un rating invalido (%s)', async (rating) => {
+    const user = testEnv.authenticatedContext('user-1');
+    await assertFails(
+      setDoc(
+        doc(user.firestore(), reviewPath('product-create-invalid-rating', 'user-1')),
+        buildReviewData({ rating }),
+      ),
+    );
+  });
+
+  it('deniega un comentario vacio', async () => {
+    const user = testEnv.authenticatedContext('user-1');
+    await assertFails(
+      setDoc(
+        doc(user.firestore(), reviewPath('product-create-empty-comment', 'user-1')),
+        buildReviewData({ comment: '' }),
+      ),
+    );
+  });
+
+  it('deniega un comentario que excede el limite de largo', async () => {
+    const user = testEnv.authenticatedContext('user-1');
+    await assertFails(
+      setDoc(
+        doc(user.firestore(), reviewPath('product-create-long-comment', 'user-1')),
+        buildReviewData({ comment: 'x'.repeat(501) }),
+      ),
+    );
+  });
+
+  it('deniega un displayName vacio o que excede el limite de largo', async () => {
+    const user = testEnv.authenticatedContext('user-1');
+    await assertFails(
+      setDoc(
+        doc(user.firestore(), reviewPath('product-create-empty-name', 'user-1')),
+        buildReviewData({ displayName: '' }),
+      ),
+    );
+    await assertFails(
+      setDoc(
+        doc(user.firestore(), reviewPath('product-create-long-name', 'user-2')),
+        buildReviewData({ userId: 'user-2', displayName: 'x'.repeat(121) }),
+      ),
+    );
+  });
+
+  it('deniega crear una reseña con un createdAt fabricado, distinto del timestamp del servidor', async () => {
+    const user = testEnv.authenticatedContext('user-1');
+    await assertFails(
+      setDoc(
+        doc(user.firestore(), reviewPath('product-create-fake-createdat', 'user-1')),
+        buildReviewData({ createdAt: Timestamp.fromDate(new Date('2000-01-01')) }),
+      ),
+    );
+  });
+
+  it('permite al autor actualizar su propia reseña conservando el createdAt original', async () => {
+    const path = reviewPath('product-update-own', 'user-1');
+    let createdAt: Timestamp | undefined;
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), path), buildReviewData());
+      const snap = await getDoc(doc(context.firestore(), path));
+      createdAt = snap.data()?.createdAt as Timestamp;
+    });
+
+    const user = testEnv.authenticatedContext('user-1');
+    await assertSucceeds(
+      setDoc(
+        doc(user.firestore(), path),
+        buildReviewData({ rating: 3, comment: 'Cambié de opinión.', createdAt }),
+      ),
+    );
+  });
+
+  it('deniega alterar el createdAt al actualizar la propia reseña', async () => {
+    const path = reviewPath('product-update-fake-createdat', 'user-1');
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), path), buildReviewData());
+    });
+
+    const user = testEnv.authenticatedContext('user-1');
+    await assertFails(
+      setDoc(
+        doc(user.firestore(), path),
+        buildReviewData({ createdAt: Timestamp.fromDate(new Date('2000-01-01')) }),
+      ),
+    );
+  });
+
+  it('deniega actualizar la reseña de otro usuario', async () => {
+    const path = reviewPath('product-update-other-user', 'user-1');
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), path), buildReviewData());
+    });
+
+    const otherUser = testEnv.authenticatedContext('user-2');
+    await assertFails(updateDoc(doc(otherUser.firestore(), path), { rating: 1 }));
+  });
+
+  it('permite al autor borrar su propia reseña', async () => {
+    const path = reviewPath('product-delete-own', 'user-1');
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), path), buildReviewData());
+    });
+
+    const user = testEnv.authenticatedContext('user-1');
+    await assertSucceeds(deleteDoc(doc(user.firestore(), path)));
+  });
+
+  it('deniega borrar la reseña de otro usuario', async () => {
+    const path = reviewPath('product-delete-other-user', 'user-1');
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), path), buildReviewData());
+    });
+
+    const otherUser = testEnv.authenticatedContext('user-2');
+    await assertFails(deleteDoc(doc(otherUser.firestore(), path)));
+  });
+
+  it('deniega escribir ratingAverage/ratingCount en products directamente desde el cliente (F8.5)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), 'products/product-f85'), { ratingAverage: 0, ratingCount: 0 });
+    });
+
+    const user = testEnv.authenticatedContext('user-1');
+    await assertFails(
+      updateDoc(doc(user.firestore(), 'products/product-f85'), { ratingAverage: 5, ratingCount: 1000 }),
+    );
   });
 });
