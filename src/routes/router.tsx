@@ -3,6 +3,8 @@ import { CatalogPage } from '@/features/products/pages/CatalogPage';
 import { ProductDetailPage } from '@/features/products/pages/ProductDetailPage';
 import { CartPage } from '@/features/cart/pages/CartPage';
 import { CheckoutPage } from '@/features/checkout/pages/CheckoutPage';
+import { OrdersPage } from '@/features/orders/pages/OrdersPage';
+import { OrderDetailPage } from '@/features/orders/pages/OrderDetailPage';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { RegisterPage } from '@/features/auth/pages/RegisterPage';
 import { PublicLayout } from '@/layouts/PublicLayout';
@@ -17,10 +19,6 @@ function ProductReviewsPlaceholder() {
 
 function PrivateAreaPlaceholder() {
   return <p className="p-4 text-gray-500">Area privada: pendiente.</p>;
-}
-
-function OrdersPlaceholder() {
-  return <p className="p-4 text-gray-500">Mis ordenes: pendiente.</p>;
 }
 
 function AdminAreaPlaceholder() {
@@ -47,7 +45,8 @@ export const router = createBrowserRouter([
         children: [
           { path: 'account', element: <PrivateAreaPlaceholder /> },
           { path: 'checkout', element: <CheckoutPage /> },
-          { path: 'orders', element: <OrdersPlaceholder /> },
+          { path: 'orders', element: <OrdersPage /> },
+          { path: 'orders/:orderId', element: <OrderDetailPage /> },
         ],
       },
     ],

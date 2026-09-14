@@ -3,12 +3,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { adminDb } from '../_lib/firebaseAdmin.js';
 import { verifyRequestToken } from '../_lib/verifyRequestToken.js';
-import {
-  OrderError,
-  logOrderError,
-  orderErrorHttpStatus,
-  toOrderErrorResponse,
-} from '../_lib/orderErrors.js';
+import { OrderError, respondWithError } from '../_lib/orderErrors.js';
 import {
   createOrderRequestSchema,
   roundToCents,
@@ -18,11 +13,6 @@ import {
 } from '../../shared/schemas/order.js';
 import { cartSchema } from '../../shared/schemas/cart.js';
 import { productSchema } from '../../shared/schemas/product.js';
-
-function respondWithError(res: VercelResponse, requestId: string, error: OrderError): void {
-  logOrderError(requestId, error);
-  res.status(orderErrorHttpStatus(error.code)).json(toOrderErrorResponse(error));
-}
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   const requestId = randomUUID();
