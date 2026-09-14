@@ -4,6 +4,7 @@ import { useKeyedAsync } from '@/hooks/useKeyedAsync';
 import { getProductsByIds } from '@/features/products/services/getProductsByIds';
 import type { CartItem } from '@shared/schemas/cart';
 import type { Product } from '@shared/schemas/product';
+import { roundToCents } from '@shared/schemas/order';
 
 export type CartLine = { product: Product; quantity: number; lineTotal: number };
 
@@ -14,10 +15,6 @@ type ResolvedCartState =
 
 function toItemsKey(items: CartItem[]): string {
   return items.map((item) => `${item.productId}:${item.quantity}`).join(',');
-}
-
-function roundToCents(value: number): number {
-  return Math.round(value * 100) / 100;
 }
 
 async function resolveCartLines(items: CartItem[]): Promise<CartLine[]> {

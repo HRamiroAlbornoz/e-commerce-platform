@@ -321,6 +321,7 @@ seed, que es cimiento del andamiaje y no una slice.
 | [0004](adr/0004-carrito-de-invitado-con-merge-al-iniciar-sesion.md) | Carrito de invitado con fusión al iniciar sesión |
 | [0005](adr/0005-borrado-de-productos-en-dos-niveles.md) | Borrado de productos en dos niveles |
 | [0006](adr/0006-promedio-de-rating-calculado-en-el-servidor.md) | El promedio de rating lo calcula el servidor |
+| [0007](adr/0007-creacion-de-la-orden-via-vercel-function-con-admin-sdk.md) | La orden se crea desde una Vercel Function con el Admin SDK |
 
 ## 8 · Modelo de dominio
 

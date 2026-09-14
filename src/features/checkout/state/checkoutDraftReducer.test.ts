@@ -31,6 +31,7 @@ describe('checkoutDraftReducer', () => {
       shipping: null,
       payment: null,
       activeStep: 'shipping',
+      orderRequestId: '',
     });
   });
 
@@ -40,35 +41,47 @@ describe('checkoutDraftReducer', () => {
       shipping,
     });
 
-    expect(result).toEqual({ shipping, payment: null, activeStep: 'payment' });
+    expect(result).toEqual({ shipping, payment: null, activeStep: 'payment', orderRequestId: '' });
   });
 
   it('SUBMIT_SHIPPING salta directo a revision si el pago ya estaba completo (F6.2)', () => {
     const state = stateWith({ payment, activeStep: 'shipping' });
     const result = checkoutDraftReducer(state, { type: 'SUBMIT_SHIPPING', shipping });
 
-    expect(result).toEqual({ shipping, payment, activeStep: 'review' });
+    expect(result).toEqual({ shipping, payment, activeStep: 'review', orderRequestId: '' });
   });
 
   it('SUBMIT_PAYMENT guarda el pago y avanza a revision', () => {
     const state = stateWith({ shipping, activeStep: 'payment' });
     const result = checkoutDraftReducer(state, { type: 'SUBMIT_PAYMENT', payment });
 
-    expect(result).toEqual({ shipping, payment, activeStep: 'review' });
+    expect(result).toEqual({ shipping, payment, activeStep: 'review', orderRequestId: '' });
   });
 
   it('EDIT_SHIPPING vuelve al paso de envio sin borrar los datos ya cargados', () => {
     const state = stateWith({ shipping, payment, activeStep: 'review' });
     const result = checkoutDraftReducer(state, { type: 'EDIT_SHIPPING' });
 
-    expect(result).toEqual({ shipping, payment, activeStep: 'shipping' });
+    expect(result).toEqual({ shipping, payment, activeStep: 'shipping', orderRequestId: '' });
   });
 
   it('EDIT_PAYMENT vuelve al paso de pago sin borrar los datos ya cargados', () => {
     const state = stateWith({ shipping, payment, activeStep: 'review' });
     const result = checkoutDraftReducer(state, { type: 'EDIT_PAYMENT' });
 
-    expect(result).toEqual({ shipping, payment, activeStep: 'payment' });
+    expect(result).toEqual({ shipping, payment, activeStep: 'payment', orderRequestId: '' });
+  });
+
+  it('RESET vuelve al estado inicial con el orderRequestId nuevo que se le pasa', () => {
+    const state = stateWith({ shipping, payment, activeStep: 'review', orderRequestId: 'old-id' });
+    const result = checkoutDraftReducer(state, { type: 'RESET', orderRequestId: 'new-id' });
+
+    expect(result).toEqual({
+      shipping: null,
+      payment: null,
+      activeStep: 'shipping',
+      orderRequestId: 'new-id',
+    });
   });
 });
 

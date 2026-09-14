@@ -41,7 +41,12 @@ describe('useCheckoutDraft', () => {
     act(() => result.current.submitShipping(shipping));
     act(() => result.current.submitPayment(payment));
 
-    expect(readCheckoutDraft(UID)).toEqual({ shipping, payment, activeStep: 'review' });
+    expect(readCheckoutDraft(UID)).toEqual({
+      shipping,
+      payment,
+      activeStep: 'review',
+      orderRequestId: expect.any(String),
+    });
   });
 
   it('editShipping vuelve al paso de envio sin perder el pago ya cargado', () => {
@@ -53,5 +58,26 @@ describe('useCheckoutDraft', () => {
 
     expect(result.current.activeStep).toBe('shipping');
     expect(result.current.payment).toEqual(payment);
+  });
+
+  it('resetDraft vuelve al estado inicial con un orderRequestId nuevo, y lo persiste', () => {
+    const { result } = renderHook(() => useCheckoutDraft(UID));
+
+    act(() => result.current.submitShipping(shipping));
+    act(() => result.current.submitPayment(payment));
+    const previousOrderRequestId = result.current.orderRequestId;
+
+    act(() => result.current.resetDraft());
+
+    expect(result.current.shipping).toBeNull();
+    expect(result.current.payment).toBeNull();
+    expect(result.current.activeStep).toBe('shipping');
+    expect(result.current.orderRequestId).not.toBe(previousOrderRequestId);
+    expect(readCheckoutDraft(UID)).toEqual({
+      shipping: null,
+      payment: null,
+      activeStep: 'shipping',
+      orderRequestId: result.current.orderRequestId,
+    });
   });
 });

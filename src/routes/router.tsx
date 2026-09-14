@@ -19,6 +19,10 @@ function PrivateAreaPlaceholder() {
   return <p className="p-4 text-gray-500">Area privada: pendiente.</p>;
 }
 
+function OrdersPlaceholder() {
+  return <p className="p-4 text-gray-500">Mis ordenes: pendiente.</p>;
+}
+
 function AdminAreaPlaceholder() {
   return <p className="p-4 text-gray-500">Panel de administracion: pendiente.</p>;
 }
@@ -43,6 +47,7 @@ export const router = createBrowserRouter([
         children: [
           { path: 'account', element: <PrivateAreaPlaceholder /> },
           { path: 'checkout', element: <CheckoutPage /> },
+          { path: 'orders', element: <OrdersPlaceholder /> },
         ],
       },
     ],
