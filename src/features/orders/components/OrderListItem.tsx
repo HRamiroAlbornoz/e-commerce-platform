@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { OrderStatusBadge } from '@/features/orders/components/OrderStatusBadge';
 import { formatOrderNumber } from '@/features/orders/utils/formatOrderNumber';
-import { formatOrderDate } from '@/features/orders/utils/formatOrderDate';
+import { formatDate } from '@/lib/formatDate';
 import { formatPrice } from '@/features/products/utils/formatPrice';
 import type { Order } from '@shared/schemas/order';
 
@@ -21,7 +21,7 @@ export function OrderListItem({ order }: OrderListItemProps) {
             Orden #{formatOrderNumber(order.id)}
           </p>
           <p className="font-body text-xs text-ink/70 dark:text-bone/70">
-            {formatOrderDate(order.createdAt)}
+            {formatDate(order.createdAt)}
           </p>
         </div>
 

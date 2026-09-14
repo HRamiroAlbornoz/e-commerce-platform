@@ -9,6 +9,7 @@ import { OrderItemRow } from '@/features/orders/components/OrderItemRow';
 import { CancelOrderModal } from '@/features/orders/components/CancelOrderModal';
 import { formatOrderNumber } from '@/features/orders/utils/formatOrderNumber';
 import { formatPrice } from '@/features/products/utils/formatPrice';
+import { DestructiveTriggerButton } from '@/components/ui/DestructiveTriggerButton';
 import { EmptyState } from '@/components/states/EmptyState';
 import { ErrorState } from '@/components/states/ErrorState';
 import type { Order } from '@shared/schemas/order';
@@ -77,13 +78,9 @@ function OrderDetailContent({ order, user, onCancelled }: OrderDetailContentProp
 
       {order.status === 'pending' ? (
         <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={() => setIsCancelModalOpen(true)}
-            className="font-body border-b border-ink text-xs font-medium tracking-widest text-ink uppercase hover:border-field-magenta hover:text-field-magenta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-field-magenta dark:border-bone dark:text-bone dark:hover:border-field-cyan dark:hover:text-field-cyan dark:focus-visible:outline-field-cyan"
-          >
+          <DestructiveTriggerButton onClick={() => setIsCancelModalOpen(true)}>
             Cancelar orden
-          </button>
+          </DestructiveTriggerButton>
         </div>
       ) : null}
 

@@ -15,10 +15,10 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc -b && tsc -p api/tsconfig.json && tsc -p shared/tsconfig.json && tsc -p scripts/tsconfig.json && tsc -p tests/tsconfig.json",
-    "test": "vitest run --exclude tests/rules/firestore.rules.test.ts --exclude api/orders/create.test.ts --exclude api/orders/cancel.test.ts",
+    "test": "vitest run --exclude tests/rules/firestore.rules.test.ts --exclude api/orders/create.test.ts --exclude api/orders/cancel.test.ts --exclude api/reviews/recalculate.test.ts",
     "test:watch": "vitest",
     "test:rules": "firebase emulators:exec \"vitest run tests/rules/firestore.rules.test.ts\"",
-    "test:functions": "firebase emulators:exec \"vitest run api/orders/create.test.ts api/orders/cancel.test.ts\"",
+    "test:functions": "firebase emulators:exec \"vitest run api/orders/create.test.ts api/orders/cancel.test.ts api/reviews/recalculate.test.ts\"",
     "seed": "tsx scripts/seed.ts"
   },
   "dependencies": {

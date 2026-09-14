@@ -8,6 +8,33 @@ service cloud.firestore {
 
     match /products/{productId} {
       allow read: if true;
+
+      match /reviews/{reviewId} {
+        function hasValidReviewFields() {
+          return request.resource.data.rating is int
+            && request.resource.data.rating >= 1 && request.resource.data.rating <= 5
+            && request.resource.data.comment is string
+            && request.resource.data.comment.size() > 0 && request.resource.data.comment.size() <= 500
+            && request.resource.data.displayName is string
+            && request.resource.data.displayName.size() > 0 && request.resource.data.displayName.size() <= 120;
+        }
+
+        allow read: if true;
+
+        allow create: if request.auth.uid == reviewId
+          && request.resource.data.userId == reviewId
+          && hasValidReviewFields()
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.updatedAt == request.time;
+
+        allow update: if request.auth.uid == reviewId
+          && request.resource.data.userId == resource.data.userId
+          && hasValidReviewFields()
+          && request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.updatedAt == request.time;
+
+        allow delete: if request.auth.uid == reviewId;
+      }
     }
 
     match /users/{uid} {

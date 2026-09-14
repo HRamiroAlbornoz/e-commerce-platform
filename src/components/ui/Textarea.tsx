@@ -1,14 +1,14 @@
-import { forwardRef, type InputHTMLAttributes } from 'react';
+import { forwardRef, type TextareaHTMLAttributes } from 'react';
 import { useFieldDescribedBy } from '@/lib/useFieldDescribedBy';
 
-type TextFieldProps = InputHTMLAttributes<HTMLInputElement> & {
+type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   label: string;
   hint?: string | undefined;
   error?: string | undefined;
 };
 
-export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
-  { label, hint, error, id, ...inputProps },
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
+  { label, hint, error, id, ...textareaProps },
   ref,
 ) {
   const { fieldId, hintId, errorId, describedBy } = useFieldDescribedBy(id, hint, error);
@@ -21,13 +21,13 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
       >
         {label}
       </label>
-      <input
+      <textarea
         ref={ref}
         id={fieldId}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
         className="font-body border-b border-ink/50 bg-transparent py-2 text-sm text-ink outline-none focus-visible:border-field-magenta dark:border-bone/40 dark:text-bone dark:focus-visible:border-field-cyan"
-        {...inputProps}
+        {...textareaProps}
       />
       {hint && !error ? (
         <p id={hintId} className="font-body text-xs text-ink/70 dark:text-bone/70">

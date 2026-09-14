@@ -1,16 +1,16 @@
 import { getIdToken, type User } from 'firebase/auth';
 import type { z } from 'zod';
-import { orderErrorResponseSchema } from '@shared/schemas/order';
 
-export type OrderApiResult<T> = { ok: true; data: T } | { ok: false; message: string };
+export type ApiRequestResult<T> = { ok: true; data: T } | { ok: false; message: string };
 
-export async function postOrderRequest<T>(
+export async function postJsonRequest<T>(
   user: User,
   path: string,
   body: unknown,
   responseSchema: z.ZodType<T>,
+  errorSchema: z.ZodType<{ message: string }>,
   genericErrorMessage: string,
-): Promise<OrderApiResult<T>> {
+): Promise<ApiRequestResult<T>> {
   try {
     const token = await getIdToken(user);
     const response = await fetch(path, {
@@ -26,7 +26,7 @@ export async function postOrderRequest<T>(
       return parsed.success ? { ok: true, data: parsed.data } : { ok: false, message: genericErrorMessage };
     }
 
-    const parsedError = orderErrorResponseSchema.safeParse(responseBody);
+    const parsedError = errorSchema.safeParse(responseBody);
     return {
       ok: false,
       message: parsedError.success ? parsedError.data.message : genericErrorMessage,
