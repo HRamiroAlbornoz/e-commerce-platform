@@ -1,14 +1,12 @@
 import { PRODUCT_CATEGORIES, PRODUCT_DISPLAY_COLORS, type ProductCategory } from '@shared/schemas/product';
 import { CATEGORY_LABELS } from '@/features/products/constants/categoryLabels';
 import { FIELD_COLOR_CLASSES } from '@/features/products/constants/displayColors';
+import { FILTER_CHIP_CLASSES } from '@/features/products/constants/filterStyles';
 
 function dotClassForCategory(index: number): string {
   const color = PRODUCT_DISPLAY_COLORS[index % PRODUCT_DISPLAY_COLORS.length] ?? 'lime';
   return FIELD_COLOR_CLASSES[color];
 }
-
-const CHIP_CLASSES =
-  'flex shrink-0 items-center gap-2 border-b-2 border-transparent pb-1 font-body text-xs font-medium tracking-widest text-ink/60 uppercase aria-pressed:border-field-magenta aria-pressed:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-field-magenta dark:text-bone/60 dark:aria-pressed:border-field-cyan dark:aria-pressed:text-bone dark:focus-visible:outline-field-cyan';
 
 type CatalogFiltersProps = {
   category: ProductCategory | undefined;
@@ -48,7 +46,7 @@ export function CatalogFilters({
           type="button"
           aria-pressed={category === undefined}
           onClick={() => onCategoryChange(undefined)}
-          className={CHIP_CLASSES}
+          className={FILTER_CHIP_CLASSES}
         >
           Todos
         </button>
@@ -58,7 +56,7 @@ export function CatalogFilters({
             type="button"
             aria-pressed={category === productCategory}
             onClick={() => onCategoryChange(productCategory)}
-            className={CHIP_CLASSES}
+            className={FILTER_CHIP_CLASSES}
           >
             <span aria-hidden="true" className={`size-1.5 ${dotClassForCategory(index)}`} />
             {CATEGORY_LABELS[productCategory]}

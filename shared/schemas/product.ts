@@ -60,3 +60,78 @@ export function toNameLower(name: string): string {
     .normalize('NFD')
     .replace(/\p{Diacritic}/gu, '');
 }
+
+export const productIdSchema = z
+  .string()
+  .min(1)
+  .max(200)
+  .regex(/^[A-Za-z0-9_-]+$/);
+
+export const createProductRequestSchema = productInputSchema.omit({
+  nameLower: true,
+  isActive: true,
+});
+
+export type CreateProductRequest = z.infer<typeof createProductRequestSchema>;
+
+export const createProductResponseSchema = z.object({
+  productId: z.string().min(1),
+});
+
+export type CreateProductResponse = z.infer<typeof createProductResponseSchema>;
+
+export const updateProductRequestSchema = z
+  .object({
+    productId: productIdSchema,
+    changes: productInputSchema.omit({ nameLower: true }).partial(),
+  })
+  .refine((body) => Object.keys(body.changes).length > 0, {
+    message: 'No hay cambios para aplicar.',
+    path: ['changes'],
+  });
+
+export type UpdateProductRequest = z.infer<typeof updateProductRequestSchema>;
+
+export const updateProductResponseSchema = z.object({
+  productId: z.string().min(1),
+});
+
+export type UpdateProductResponse = z.infer<typeof updateProductResponseSchema>;
+
+export const deleteProductRequestSchema = z.object({
+  productId: productIdSchema,
+});
+
+export type DeleteProductRequest = z.infer<typeof deleteProductRequestSchema>;
+
+export const deleteProductResponseSchema = z.object({
+  productId: z.string().min(1),
+});
+
+export type DeleteProductResponse = z.infer<typeof deleteProductResponseSchema>;
+
+export const PRODUCT_ERROR_CODES = [
+  'UNAUTHENTICATED',
+  'FORBIDDEN',
+  'INVALID_REQUEST',
+  'PRODUCT_NOT_FOUND',
+  'PRODUCT_HAS_REFERENCES',
+  'INTERNAL_ERROR',
+] as const;
+
+export const productErrorCodeSchema = z.enum(PRODUCT_ERROR_CODES);
+
+export type ProductErrorCode = z.infer<typeof productErrorCodeSchema>;
+
+export const productErrorResponseSchema = z.object({
+  code: productErrorCodeSchema,
+  message: z.string().min(1),
+  details: z
+    .object({
+      orderCount: z.number().int().nonnegative(),
+      ratingCount: z.number().int().nonnegative(),
+    })
+    .optional(),
+});
+
+export type ProductErrorResponse = z.infer<typeof productErrorResponseSchema>;

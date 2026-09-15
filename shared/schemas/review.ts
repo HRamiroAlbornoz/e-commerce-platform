@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { productIdSchema } from './product.js';
 
 export const reviewInputSchema = z.object({
   rating: z.number().int().min(1).max(5),
@@ -17,7 +18,7 @@ export const reviewSchema = reviewInputSchema.extend({
 export type Review = z.infer<typeof reviewSchema>;
 
 export const recalculateRatingRequestSchema = z.object({
-  productId: z.string().min(1).max(200).regex(/^[A-Za-z0-9_-]+$/),
+  productId: productIdSchema,
 });
 
 export type RecalculateRatingRequest = z.infer<typeof recalculateRatingRequestSchema>;

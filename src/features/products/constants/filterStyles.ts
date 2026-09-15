@@ -1,0 +1,2 @@
+export const FILTER_CHIP_CLASSES =
+  'flex shrink-0 items-center gap-2 border-b-2 border-transparent pb-1 font-body text-xs font-medium tracking-widest text-ink/60 uppercase aria-pressed:border-field-magenta aria-pressed:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-field-magenta dark:text-bone/60 dark:aria-pressed:border-field-cyan dark:aria-pressed:text-bone dark:focus-visible:outline-field-cyan';

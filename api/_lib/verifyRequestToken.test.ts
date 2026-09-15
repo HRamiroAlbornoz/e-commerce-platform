@@ -19,13 +19,29 @@ describe('verifyRequestToken', () => {
     expect(verifyIdToken).not.toHaveBeenCalled();
   });
 
-  it('con un token valido, devuelve ok:true con el uid decodificado', async () => {
+  it('con un token valido sin claim de rol, devuelve ok:true con role:customer', async () => {
     verifyIdToken.mockResolvedValueOnce({ uid: 'user-1' });
 
     const result = await verifyRequestToken(buildRequest('Bearer real-token'));
 
     expect(verifyIdToken).toHaveBeenCalledWith('real-token', true);
-    expect(result).toEqual({ ok: true, uid: 'user-1' });
+    expect(result).toEqual({ ok: true, uid: 'user-1', role: 'customer' });
+  });
+
+  it('con un token con claim role:admin, devuelve ok:true con role:admin', async () => {
+    verifyIdToken.mockResolvedValueOnce({ uid: 'admin-1', role: 'admin' });
+
+    const result = await verifyRequestToken(buildRequest('Bearer admin-token'));
+
+    expect(result).toEqual({ ok: true, uid: 'admin-1', role: 'admin' });
+  });
+
+  it('con un claim de rol desconocido, devuelve role:customer como default seguro', async () => {
+    verifyIdToken.mockResolvedValueOnce({ uid: 'user-2', role: 'superuser' });
+
+    const result = await verifyRequestToken(buildRequest('Bearer weird-token'));
+
+    expect(result).toEqual({ ok: true, uid: 'user-2', role: 'customer' });
   });
 
   it('con un token invalido o expirado, devuelve ok:false', async () => {
