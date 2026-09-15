@@ -155,6 +155,7 @@ El detalle y las alternativas descartadas están en `docs/adr/`.
 | `scripts/seed.ts` | Carga el catálogo de desarrollo en el emulador. Requiere el emulador corriendo (`firebase emulators:start`) |
 | `tests/rules/` | Tests de security rules con `@firebase/rules-unit-testing`, corren aparte con `npm run test:rules` |
 | `scripts/` | `seed.ts` para el catálogo de desarrollo, `grant-admin.ts` para asignar el rol admin |
+| `.vercelignore` | Excluye `api/**/*.test.ts` del deployment (ver nota en la slice 10, abajo) |
 
 ## Herramientas de sesión
 
@@ -329,6 +330,8 @@ Verificado en vivo con `vercel dev` + el emulador seedeado, con dos cuentas nuev
 **Pasada de diseño con Impeccable (`polish`)**: un hallazgo real de contraste — los labels de columna usaban `/50` de opacidad para texto, un valor documentado en este sistema solo como excepción de *borde* (nunca de texto), medido en ≈3.5:1, por debajo del piso AA de 4.5:1; corregido a `/60` (≈4.8:1, el mismo valor ya verificado del chip de categoría inactivo), extraído a `TABLE_LABEL_CLASSES`. De paso se completó `DESIGN.md`, que saltaba directo de la slice 7a a esta sin documentar las slices 8 y 9 — diez entradas de componentes nuevas (`Modal`, `ConfirmActionModal`, `OrderStatusBadge`, `OrdersPage`, `OrderDetailPage`, `RatingDisplay`, `RatingInput`, `Textarea`, `ReviewForm`, `ProductReviewsPage`) derivadas del código real, no de memoria.
 
 **Verificado en vivo** con `vercel dev` + el emulador seedeado, con `grant-admin.ts` promoviendo una cuenta de prueba real: editar precio en la celda (confirmado en Firestore vía REST, `updatedAt` refrescado con timestamp de servidor), retirar (desaparece del catálogo público, confirmado en una pestaña separada, sigue en la tabla admin como "RETIRADO"), reactivar, eliminar definitivamente (modal nombra el producto, foco inicial en "Volver", la fila desaparece solo tras confirmar el backend), crear y editar un producto completo (formulario pre-cargado correctamente), filtro/búsqueda (distingue "sin productos" de "sin resultados"), guard de acceso (anónimo → `/login`, customer → `AccessDeniedState`; las tres Functions ya cubiertas por tests contra el emulador real con `role: customer` → 403 `FORBIDDEN`), mobile 320px y desktop, tema claro y oscuro, sin errores de consola.
+
+**Deploy de preview falló al abrir el PR, ajeno al código de la slice pero destapado por ella**: Vercel rechazó el build con `exceeded_serverless_functions_per_deployment` — el plan Hobby tope a 12 Serverless Functions por deployment, y Vercel trata cualquier archivo bajo `api/` que no empiece con `_` o `.` como una función propia, **incluidos los `*.test.ts`** (solo `api/_lib/` está exento, por el prefijo `_`). Antes de esta slice había 4 endpoints reales + 4 tests = 8, bajo el límite por casualidad; los 3 endpoints y 3 tests nuevos de esta slice lo llevaron a 14. Arreglado con `.vercelignore` nuevo (`api/**/*.test.ts`) — excluye los tests del bundle que sube a Vercel sin afectar `npm test`/`npm run test:functions`, que los corren localmente. Confirmado con Context7 contra el propio código fuente de Vercel (`fs-detectors`) qué prefijos exceptúa la detección de funciones, en vez de asumirlo.
 
 - ✅ Paso 1 · Deploy de humo (PR #1)
 - ✅ Paso 2 · Configuración: ESLint, Prettier, Tailwind v4 (PR #2)
