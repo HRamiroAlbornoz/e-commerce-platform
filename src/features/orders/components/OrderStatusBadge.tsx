@@ -1,4 +1,5 @@
 import type { OrderStatus } from '@shared/schemas/order';
+import { STATUS_BADGE_BASE_CLASSES } from '@/components/ui/statusBadgeClasses';
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
   pending: 'Pendiente',
@@ -7,13 +8,12 @@ const STATUS_LABELS: Record<OrderStatus, string> = {
   cancelled: 'Cancelada',
 };
 
-const BASE_CLASSES = 'font-body inline-block px-2 py-0.5 text-xs font-medium tracking-widest uppercase';
-const OUTLINED_CLASSES = `${BASE_CLASSES} border border-current`;
+const OUTLINED_CLASSES = `${STATUS_BADGE_BASE_CLASSES} border border-current`;
 
 const STATUS_CLASSES: Record<OrderStatus, string> = {
   pending: OUTLINED_CLASSES,
   processing: `${OUTLINED_CLASSES} underline underline-offset-4`,
-  completed: `${BASE_CLASSES} bg-ink text-bone dark:bg-bone dark:text-ink`,
+  completed: `${STATUS_BADGE_BASE_CLASSES} bg-ink text-bone dark:bg-bone dark:text-ink`,
   cancelled: `${OUTLINED_CLASSES} line-through`,
 };
 
