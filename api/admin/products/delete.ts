@@ -14,7 +14,13 @@ const productReferenceCountsSchema = productSchema.pick({ orderCount: true, rati
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   const requestId = randomUUID();
 
-  const auth = await requireAdmin(req, res, requestId);
+  const auth = await requireAdmin(
+    req,
+    res,
+    requestId,
+    (code, message) => new ProductError(code, message),
+    respondWithError,
+  );
   if (!auth) {
     return;
   }
@@ -39,7 +45,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       throw new ProductError('PRODUCT_NOT_FOUND', 'No encontramos ese producto.');
     }
 
-    const { orderCount, ratingCount } = productReferenceCountsSchema.parse(productSnap.data() ?? {});
+    const { orderCount, ratingCount } = productReferenceCountsSchema.parse(
+      productSnap.data() ?? {},
+    );
 
     if (orderCount !== 0 || ratingCount !== 0) {
       throw new ProductError(

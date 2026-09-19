@@ -14,7 +14,13 @@ import {
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   const requestId = randomUUID();
 
-  const auth = await requireAdmin(req, res, requestId);
+  const auth = await requireAdmin(
+    req,
+    res,
+    requestId,
+    (code, message) => new ProductError(code, message),
+    respondWithError,
+  );
   if (!auth) {
     return;
   }

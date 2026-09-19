@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch, type Control } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { User } from 'firebase/auth';
 import { Button } from '@/components/ui/Button';
@@ -8,6 +8,12 @@ import { TextField } from '@/components/ui/TextField';
 import { Textarea } from '@/components/ui/Textarea';
 import { InlineError } from '@/components/ui/InlineError';
 import { ProductSpecsFieldArray } from '@/features/admin/products/components/ProductSpecsFieldArray';
+import { ImageUploadField } from '@/features/admin/products/components/ImageUploadField';
+import { FIELD_LABEL_CLASSES } from '@/features/admin/products/constants/formFieldClasses';
+import {
+  useImageUpload,
+  type ImageUploadState,
+} from '@/features/admin/uploads/hooks/useImageUpload';
 import { CATEGORY_LABELS } from '@/features/products/constants/categoryLabels';
 import { DISPLAY_COLOR_LABELS } from '@/features/admin/products/constants/displayColorLabels';
 import { createProduct } from '@/features/admin/products/services/createProduct';
@@ -24,13 +30,39 @@ import type { SubmitState } from '@/lib/asyncSubmitState';
 const SELECT_CLASSES =
   'border-b border-ink/50 bg-transparent py-2 font-body text-sm text-ink outline-none focus-visible:border-field-magenta dark:border-bone/40 dark:text-bone dark:focus-visible:border-field-cyan';
 
-const FIELD_LABEL_CLASSES =
-  'font-body text-xs font-medium tracking-widest text-ink uppercase dark:text-bone';
-
 type AdminProductFormProps = {
   user: User;
   existingProduct: Product | null;
 };
+
+type ProductImageFieldProps = {
+  control: Control<CreateProductRequest>;
+  uploadState: ImageUploadState;
+  onFileSelected: (file: File) => void;
+  error: string | undefined;
+};
+
+function ProductImageField({
+  control,
+  uploadState,
+  onFileSelected,
+  error,
+}: ProductImageFieldProps) {
+  const imageUrl = useWatch({ control, name: 'imageUrl' });
+
+  return (
+    <ImageUploadField
+      currentImageUrl={imageUrl}
+      state={uploadState}
+      onFileSelected={onFileSelected}
+      error={error}
+    />
+  );
+}
+
+function isImageUploadInProgress(state: ImageUploadState): boolean {
+  return state.status === 'requesting-url' || state.status === 'uploading';
+}
 
 function toFormDefaults(product: Product | null): CreateProductRequest {
   if (!product) {
@@ -63,10 +95,12 @@ function toFormDefaults(product: Product | null): CreateProductRequest {
 export function AdminProductForm({ user, existingProduct }: AdminProductFormProps) {
   const navigate = useNavigate();
   const [submitState, setSubmitState] = useState<SubmitState>({ status: 'idle' });
+  const { state: imageUploadState, upload: uploadImage } = useImageUpload(user);
   const {
     register,
     control,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<CreateProductRequest>({
     resolver: zodResolver(createProductRequestSchema),
@@ -74,7 +108,17 @@ export function AdminProductForm({ user, existingProduct }: AdminProductFormProp
     defaultValues: toFormDefaults(existingProduct),
   });
 
-  const isBusy = isSubmitting || submitState.status === 'submitting';
+  const isBusy =
+    isSubmitting ||
+    submitState.status === 'submitting' ||
+    isImageUploadInProgress(imageUploadState);
+
+  async function handleImageFileSelected(file: File): Promise<void> {
+    const result = await uploadImage(file);
+    if (result.ok) {
+      setValue('imageUrl', result.publicUrl, { shouldValidate: true, shouldDirty: true });
+    }
+  }
 
   async function handleValid(values: CreateProductRequest): Promise<void> {
     setSubmitState({ status: 'submitting' });
@@ -161,11 +205,11 @@ export function AdminProductForm({ user, existingProduct }: AdminProductFormProp
           </div>
         </div>
 
-        <TextField
-          label="URL de la imagen"
-          type="url"
+        <ProductImageField
+          control={control}
+          uploadState={imageUploadState}
+          onFileSelected={(file) => void handleImageFileSelected(file)}
           error={errors.imageUrl?.message}
-          {...register('imageUrl')}
         />
 
         <ProductSpecsFieldArray control={control} register={register} errors={errors} />

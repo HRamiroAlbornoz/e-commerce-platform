@@ -14,7 +14,13 @@ import {
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   const requestId = randomUUID();
 
-  const auth = await requireAdmin(req, res, requestId);
+  const auth = await requireAdmin(
+    req,
+    res,
+    requestId,
+    (code, message) => new ProductError(code, message),
+    respondWithError,
+  );
   if (!auth) {
     return;
   }
@@ -32,7 +38,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const { productId, changes } = parsedBody.data;
 
   try {
-    const updateData: Record<string, unknown> = { ...changes, updatedAt: FieldValue.serverTimestamp() };
+    const updateData: Record<string, unknown> = {
+      ...changes,
+      updatedAt: FieldValue.serverTimestamp(),
+    };
     if (changes.price !== undefined) {
       updateData.price = roundToCents(changes.price);
     }
@@ -63,5 +72,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 }
 
 function isFirestoreNotFoundError(err: unknown): boolean {
-  return typeof err === 'object' && err !== null && 'code' in err && err.code === GrpcStatus.NOT_FOUND;
+  return (
+    typeof err === 'object' && err !== null && 'code' in err && err.code === GrpcStatus.NOT_FOUND
+  );
 }
