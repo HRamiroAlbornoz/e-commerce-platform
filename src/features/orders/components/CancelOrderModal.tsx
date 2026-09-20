@@ -1,19 +1,19 @@
-import type { User } from 'firebase/auth';
 import { ConfirmActionModal } from '@/components/ui/ConfirmActionModal';
-import { cancelOrder } from '@/features/orders/services/cancelOrder';
 import { formatOrderNumber } from '@/features/orders/utils/formatOrderNumber';
 import type { Order } from '@shared/schemas/order';
 
+type CancelOrderResult = { ok: true } | { ok: false; message: string };
+
 type CancelOrderModalProps = {
   order: Order;
-  user: User;
+  onCancel: () => Promise<CancelOrderResult>;
   onClose: () => void;
   onCancelled: () => void;
 };
 
-export function CancelOrderModal({ order, user, onClose, onCancelled }: CancelOrderModalProps) {
+export function CancelOrderModal({ order, onCancel, onClose, onCancelled }: CancelOrderModalProps) {
   async function handleConfirm(): Promise<void> {
-    const result = await cancelOrder(user, order.id);
+    const result = await onCancel();
     if (!result.ok) {
       throw new Error(result.message);
     }

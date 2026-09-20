@@ -4,11 +4,11 @@ import { useAuth } from '@/hooks/useAuth';
 import { useAdminProducts } from '@/features/admin/products/hooks/useAdminProducts';
 import { AdminProductFilters } from '@/features/admin/products/components/AdminProductFilters';
 import { AdminProductRow } from '@/features/admin/products/components/AdminProductRow';
-import { AdminProductsSkeleton } from '@/features/admin/products/components/AdminProductsSkeleton';
+import { TableSkeleton } from '@/components/ui/TableSkeleton';
 import { EmptyState } from '@/components/states/EmptyState';
 import { ErrorState } from '@/components/states/ErrorState';
 import { BUTTON_CLASSES } from '@/components/ui/Button';
-import { TABLE_LABEL_CLASSES } from '@/features/admin/products/constants/tableLabelClasses';
+import { TABLE_LABEL_CLASSES } from '@/features/admin/constants/tableLabelClasses';
 import { toNameLower, type Product, type ProductCategory } from '@shared/schemas/product';
 
 function filterProducts(
@@ -63,7 +63,7 @@ export function AdminProductsPage() {
         />
       ) : null}
 
-      {productsState.status === 'loading' ? <AdminProductsSkeleton /> : null}
+      {productsState.status === 'loading' ? <TableSkeleton /> : null}
 
       {productsState.status === 'error' ? (
         <ErrorState message={productsState.message} onRetry={productsState.retry} />

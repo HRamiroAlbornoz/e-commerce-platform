@@ -1,7 +1,7 @@
 import type { OrderStatus } from '@shared/schemas/order';
 import { STATUS_BADGE_BASE_CLASSES } from '@/components/ui/statusBadgeClasses';
 
-const STATUS_LABELS: Record<OrderStatus, string> = {
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   pending: 'Pendiente',
   processing: 'En proceso',
   completed: 'Completada',
@@ -22,5 +22,5 @@ type OrderStatusBadgeProps = {
 };
 
 export function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
-  return <span className={STATUS_CLASSES[status]}>{STATUS_LABELS[status]}</span>;
+  return <span className={STATUS_CLASSES[status]}>{ORDER_STATUS_LABELS[status]}</span>;
 }

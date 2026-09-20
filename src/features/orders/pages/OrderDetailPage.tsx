@@ -7,6 +7,7 @@ import { OrderStatusBadge } from '@/features/orders/components/OrderStatusBadge'
 import { OrderDetailSkeleton } from '@/features/orders/components/OrderDetailSkeleton';
 import { OrderItemRow } from '@/features/orders/components/OrderItemRow';
 import { CancelOrderModal } from '@/features/orders/components/CancelOrderModal';
+import { cancelOrder } from '@/features/orders/services/cancelOrder';
 import { formatOrderNumber } from '@/features/orders/utils/formatOrderNumber';
 import { formatPrice } from '@/features/products/utils/formatPrice';
 import { DestructiveTriggerButton } from '@/components/ui/DestructiveTriggerButton';
@@ -87,7 +88,7 @@ function OrderDetailContent({ order, user, onCancelled }: OrderDetailContentProp
       {isCancelModalOpen ? (
         <CancelOrderModal
           order={order}
-          user={user}
+          onCancel={() => cancelOrder(user, order.id)}
           onClose={() => setIsCancelModalOpen(false)}
           onCancelled={() => {
             setIsCancelModalOpen(false);
@@ -125,7 +126,9 @@ export function OrderDetailPage() {
         </>
       ) : null}
 
-      {detail.status === 'error' ? <ErrorState message={detail.message} onRetry={detail.retry} /> : null}
+      {detail.status === 'error' ? (
+        <ErrorState message={detail.message} onRetry={detail.retry} />
+      ) : null}
 
       {detail.status === 'success' && auth.status === 'authenticated' ? (
         <OrderDetailContent order={detail.order} user={auth.user} onCancelled={detail.retry} />

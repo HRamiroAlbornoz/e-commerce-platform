@@ -1,9 +1,10 @@
 import { randomUUID } from 'node:crypto';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { FieldValue, Timestamp } from 'firebase-admin/firestore';
+import { Timestamp } from 'firebase-admin/firestore';
 import { adminDb } from '../_lib/firebaseAdmin.js';
 import { verifyRequestToken } from '../_lib/verifyRequestToken.js';
 import { OrderError, respondWithError } from '../_lib/orderErrors.js';
+import { cancelOrderAndRestoreStock } from '../_lib/orderCancellation.js';
 import {
   cancelOrderRequestSchema,
   orderSchema,
@@ -62,35 +63,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       }
 
       if (order.status !== 'pending') {
-        throw new OrderError(
-          'INVALID_STATUS_TRANSITION',
-          'Esta orden ya no se puede cancelar.',
-        );
+        throw new OrderError('INVALID_STATUS_TRANSITION', 'Esta orden ya no se puede cancelar.');
       }
 
-      const quantityByProductId = new Map<string, number>();
-      for (const item of order.items) {
-        quantityByProductId.set(
-          item.productId,
-          (quantityByProductId.get(item.productId) ?? 0) + item.quantity,
-        );
-      }
-      const productIds = [...quantityByProductId.keys()];
-      const productSnaps = await tx.getAll(...productIds.map((id) => adminDb.doc(`products/${id}`)));
-
-      tx.update(orderRef, { status: 'cancelled', updatedAt: FieldValue.serverTimestamp() });
-
-      productIds.forEach((productId, index) => {
-        const snap = productSnaps[index];
-        if (!snap?.exists) {
-          return;
-        }
-
-        tx.update(snap.ref, {
-          stock: FieldValue.increment(quantityByProductId.get(productId) ?? 0),
-          updatedAt: FieldValue.serverTimestamp(),
-        });
-      });
+      await cancelOrderAndRestoreStock(tx, order, orderRef);
     });
 
     const response: CancelOrderResponse = { orderId, status: 'cancelled' };
