@@ -23,6 +23,17 @@ export const orderStatusSchema = z.enum(ORDER_STATUSES);
 
 export type OrderStatus = z.infer<typeof orderStatusSchema>;
 
+export const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = {
+  pending: ['processing', 'cancelled'],
+  processing: ['completed', 'cancelled'],
+  completed: [],
+  cancelled: [],
+};
+
+export function isValidOrderStatusTransition(from: OrderStatus, to: OrderStatus): boolean {
+  return ORDER_STATUS_TRANSITIONS[from].includes(to);
+}
+
 export const orderSchema = z.object({
   id: z.string().min(1),
   userId: z.string().min(1),
@@ -66,8 +77,10 @@ export const createOrderResponseSchema = z.object({
 
 export type CreateOrderResponse = z.infer<typeof createOrderResponseSchema>;
 
+export const orderIdSchema = z.uuid();
+
 export const cancelOrderRequestSchema = z.object({
-  orderId: z.string().min(1),
+  orderId: orderIdSchema,
 });
 
 export type CancelOrderRequest = z.infer<typeof cancelOrderRequestSchema>;
@@ -79,8 +92,20 @@ export const cancelOrderResponseSchema = z.object({
 
 export type CancelOrderResponse = z.infer<typeof cancelOrderResponseSchema>;
 
+export const updateOrderStatusRequestSchema = z.object({
+  orderId: orderIdSchema,
+  status: orderStatusSchema,
+});
+
+export type UpdateOrderStatusRequest = z.infer<typeof updateOrderStatusRequestSchema>;
+
+export const updateOrderStatusResponseSchema = cancelOrderResponseSchema;
+
+export type UpdateOrderStatusResponse = z.infer<typeof updateOrderStatusResponseSchema>;
+
 export const ORDER_ERROR_CODES = [
   'UNAUTHENTICATED',
+  'FORBIDDEN',
   'INVALID_REQUEST',
   'EMPTY_CART',
   'PRODUCT_UNAVAILABLE',

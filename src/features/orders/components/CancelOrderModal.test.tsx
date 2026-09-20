@@ -1,19 +1,19 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import type { User } from 'firebase/auth';
 import { CancelOrderModal } from '@/features/orders/components/CancelOrderModal';
-import { cancelOrder } from '@/features/orders/services/cancelOrder';
 import type { Order } from '@shared/schemas/order';
-
-vi.mock('@/features/orders/services/cancelOrder', () => ({ cancelOrder: vi.fn() }));
-
-const fakeUser = {} as User;
 
 const orderFixture: Order = {
   id: 'aaaa1111-bbbb-2222-cccc-333344445555',
   userId: 'user-1',
   items: [
-    { productId: 'product-1', name: 'Teclado Aurora', unitPrice: 89999, imageUrl: 'https://placehold.co/600x400', quantity: 1 },
+    {
+      productId: 'product-1',
+      name: 'Teclado Aurora',
+      unitPrice: 89999,
+      imageUrl: 'https://placehold.co/600x400',
+      quantity: 1,
+    },
   ],
   subtotal: 89999,
   shippingCost: 4999,
@@ -31,12 +31,22 @@ const orderFixture: Order = {
   updatedAt: new Date('2026-01-01T00:00:00Z'),
 };
 
-function renderModal(onCancelled = vi.fn(), onClose = vi.fn()) {
+function renderModal(
+  onCancel = vi.fn().mockResolvedValue({ ok: true }),
+  onCancelled = vi.fn(),
+  onClose = vi.fn(),
+) {
   return {
+    onCancel,
     onCancelled,
     onClose,
     ...render(
-      <CancelOrderModal order={orderFixture} user={fakeUser} onClose={onClose} onCancelled={onCancelled} />,
+      <CancelOrderModal
+        order={orderFixture}
+        onCancel={onCancel}
+        onClose={onClose}
+        onCancelled={onCancelled}
+      />,
     ),
   };
 }
@@ -54,31 +64,30 @@ describe('CancelOrderModal', () => {
     expect(screen.getByRole('button', { name: 'Volver' })).toHaveFocus();
   });
 
-  it('"Volver" cierra el modal sin llamar al servidor', () => {
-    const { onClose } = renderModal();
+  it('"Volver" cierra el modal sin llamar a la accion de cancelacion', () => {
+    const { onClose, onCancel } = renderModal();
 
     fireEvent.click(screen.getByRole('button', { name: 'Volver' }));
 
     expect(onClose).toHaveBeenCalledTimes(1);
-    expect(cancelOrder).not.toHaveBeenCalled();
+    expect(onCancel).not.toHaveBeenCalled();
   });
 
-  it('confirmar cancela la orden y avisa al padre', async () => {
-    vi.mocked(cancelOrder).mockResolvedValue({ ok: true });
-    const { onCancelled } = renderModal();
+  it('confirmar dispara la accion de cancelacion recibida y avisa al padre', async () => {
+    const { onCancel, onCancelled } = renderModal();
 
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar cancelación' }));
 
     await waitFor(() => expect(onCancelled).toHaveBeenCalledTimes(1));
-    expect(cancelOrder).toHaveBeenCalledWith(fakeUser, orderFixture.id);
+    expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
-  it('si el servidor rechaza la cancelacion, muestra el motivo sin cerrar el modal', async () => {
-    vi.mocked(cancelOrder).mockResolvedValue({
+  it('si la accion de cancelacion rechaza, muestra el motivo sin cerrar el modal', async () => {
+    const onCancel = vi.fn().mockResolvedValue({
       ok: false,
       message: 'Esta orden ya no se puede cancelar.',
     });
-    const { onCancelled } = renderModal();
+    const { onCancelled } = renderModal(onCancel);
 
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar cancelación' }));
 

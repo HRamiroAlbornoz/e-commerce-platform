@@ -8,7 +8,7 @@ import { FIELD_COLOR_CLASSES } from '@/features/products/constants/displayColors
 import { EditableNumberCell } from '@/features/admin/products/components/EditableNumberCell';
 import { ProductStatusBadge } from '@/features/admin/products/components/ProductStatusBadge';
 import { DeleteProductModal } from '@/features/admin/products/components/DeleteProductModal';
-import { TABLE_LABEL_CLASSES } from '@/features/admin/products/constants/tableLabelClasses';
+import { TABLE_LABEL_CLASSES } from '@/features/admin/constants/tableLabelClasses';
 import { updateProduct } from '@/features/admin/products/services/updateProduct';
 import { roundToCents } from '@shared/schemas/order';
 import type { Product } from '@shared/schemas/product';
@@ -99,17 +99,13 @@ export function AdminProductRow({ product, user, onMutated }: AdminProductRowPro
         {product.name}
       </td>
       <td className="flex items-center justify-between gap-2 md:table-cell md:py-3 md:pr-4">
-        <span className={`${TABLE_LABEL_CLASSES} md:hidden`}>
-          Categoría
-        </span>
+        <span className={`${TABLE_LABEL_CLASSES} md:hidden`}>Categoría</span>
         <span className="font-body text-sm text-ink/70 dark:text-bone/70">
           {CATEGORY_LABELS[product.category]}
         </span>
       </td>
       <td className="flex items-center justify-between gap-2 md:table-cell md:py-3 md:pr-4">
-        <span className={`${TABLE_LABEL_CLASSES} md:hidden`}>
-          Precio
-        </span>
+        <span className={`${TABLE_LABEL_CLASSES} md:hidden`}>Precio</span>
         <EditableNumberCell
           key={product.price}
           value={product.price}
@@ -121,9 +117,7 @@ export function AdminProductRow({ product, user, onMutated }: AdminProductRowPro
         />
       </td>
       <td className="flex items-center justify-between gap-2 md:table-cell md:py-3 md:pr-4">
-        <span className={`${TABLE_LABEL_CLASSES} md:hidden`}>
-          Stock
-        </span>
+        <span className={`${TABLE_LABEL_CLASSES} md:hidden`}>Stock</span>
         <EditableNumberCell
           key={product.stock}
           value={product.stock}
@@ -135,9 +129,7 @@ export function AdminProductRow({ product, user, onMutated }: AdminProductRowPro
         />
       </td>
       <td className="flex items-center justify-between gap-2 md:table-cell md:py-3 md:pr-4">
-        <span className={`${TABLE_LABEL_CLASSES} md:hidden`}>
-          Estado
-        </span>
+        <span className={`${TABLE_LABEL_CLASSES} md:hidden`}>Estado</span>
         <ProductStatusBadge isActive={product.isActive} />
       </td>
       <td className="md:py-3">

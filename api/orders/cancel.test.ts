@@ -51,7 +51,13 @@ async function seedProduct(id: string, overrides: Record<string, unknown> = {}):
   });
 }
 
-type SeedOrderItem = { productId: string; name: string; unitPrice: number; imageUrl: string; quantity: number };
+type SeedOrderItem = {
+  productId: string;
+  name: string;
+  unitPrice: number;
+  imageUrl: string;
+  quantity: number;
+};
 
 async function seedOrder(
   id: string,
@@ -87,7 +93,11 @@ function buildRequest(body: unknown): VercelRequest {
   } as unknown as VercelRequest;
 }
 
-function buildResponse(): { res: VercelResponse; status: ReturnType<typeof vi.fn>; json: ReturnType<typeof vi.fn> } {
+function buildResponse(): {
+  res: VercelResponse;
+  status: ReturnType<typeof vi.fn>;
+  json: ReturnType<typeof vi.fn>;
+} {
   const json = vi.fn();
   const status = vi.fn(() => ({ json }));
   const res = { status, setHeader: vi.fn() } as unknown as VercelResponse;
@@ -103,8 +113,20 @@ describe('POST /api/orders/cancel', () => {
     await seedProduct(productA, { stock: 3 });
     await seedProduct(productB, { stock: 1 });
     await seedOrder(orderId, uid, [
-      { productId: productA, name: 'Teclado Aurora', unitPrice: 10000, imageUrl: 'https://placehold.co/600x400', quantity: 2 },
-      { productId: productB, name: 'Mouse Vector', unitPrice: 5000, imageUrl: 'https://placehold.co/600x400', quantity: 1 },
+      {
+        productId: productA,
+        name: 'Teclado Aurora',
+        unitPrice: 10000,
+        imageUrl: 'https://placehold.co/600x400',
+        quantity: 2,
+      },
+      {
+        productId: productB,
+        name: 'Mouse Vector',
+        unitPrice: 5000,
+        imageUrl: 'https://placehold.co/600x400',
+        quantity: 1,
+      },
     ]);
     mockAuthenticatedAs(uid);
 
@@ -118,10 +140,10 @@ describe('POST /api/orders/cancel', () => {
     expect(orderSnap.data()?.status).toBe('cancelled');
 
     const productASnap = await adminDb.doc(`products/${productA}`).get();
-    expect(productASnap.data()).toMatchObject({ stock: 5, orderCount: 1, unitsSold: 2 });
+    expect(productASnap.data()).toMatchObject({ stock: 5, orderCount: 0, unitsSold: 0 });
 
     const productBSnap = await adminDb.doc(`products/${productB}`).get();
-    expect(productBSnap.data()).toMatchObject({ stock: 2, orderCount: 1, unitsSold: 2 });
+    expect(productBSnap.data()).toMatchObject({ stock: 2, orderCount: 0, unitsSold: 1 });
   });
 
   it('una orden que no existe rechaza con ORDER_NOT_FOUND', async () => {
@@ -141,7 +163,13 @@ describe('POST /api/orders/cancel', () => {
     const orderId = randomUUID();
     await seedProduct(productId, { stock: 3 });
     await seedOrder(orderId, owner, [
-      { productId, name: 'Teclado Aurora', unitPrice: 10000, imageUrl: 'https://placehold.co/600x400', quantity: 1 },
+      {
+        productId,
+        name: 'Teclado Aurora',
+        unitPrice: 10000,
+        imageUrl: 'https://placehold.co/600x400',
+        quantity: 1,
+      },
     ]);
     mockAuthenticatedAs(attacker);
 
@@ -165,7 +193,15 @@ describe('POST /api/orders/cancel', () => {
       await seedOrder(
         orderId,
         uid,
-        [{ productId, name: 'Teclado Aurora', unitPrice: 10000, imageUrl: 'https://placehold.co/600x400', quantity: 1 }],
+        [
+          {
+            productId,
+            name: 'Teclado Aurora',
+            unitPrice: 10000,
+            imageUrl: 'https://placehold.co/600x400',
+            quantity: 1,
+          },
+        ],
         { status },
       );
       mockAuthenticatedAs(uid);
@@ -174,7 +210,9 @@ describe('POST /api/orders/cancel', () => {
       await handler(buildRequest({ orderId }), res);
 
       expect(statusMock).toHaveBeenCalledWith(409);
-      expect(json).toHaveBeenCalledWith(expect.objectContaining({ code: 'INVALID_STATUS_TRANSITION' }));
+      expect(json).toHaveBeenCalledWith(
+        expect.objectContaining({ code: 'INVALID_STATUS_TRANSITION' }),
+      );
 
       const productSnap = await adminDb.doc(`products/${productId}`).get();
       expect(productSnap.data()?.stock).toBe(3);
@@ -188,8 +226,20 @@ describe('POST /api/orders/cancel', () => {
     const orderId = randomUUID();
     await seedProduct(stillExistingProductId, { stock: 1 });
     await seedOrder(orderId, uid, [
-      { productId: deletedProductId, name: 'Producto borrado', unitPrice: 10000, imageUrl: 'https://placehold.co/600x400', quantity: 1 },
-      { productId: stillExistingProductId, name: 'Teclado Aurora', unitPrice: 10000, imageUrl: 'https://placehold.co/600x400', quantity: 2 },
+      {
+        productId: deletedProductId,
+        name: 'Producto borrado',
+        unitPrice: 10000,
+        imageUrl: 'https://placehold.co/600x400',
+        quantity: 1,
+      },
+      {
+        productId: stillExistingProductId,
+        name: 'Teclado Aurora',
+        unitPrice: 10000,
+        imageUrl: 'https://placehold.co/600x400',
+        quantity: 2,
+      },
     ]);
     mockAuthenticatedAs(uid);
 
@@ -203,7 +253,7 @@ describe('POST /api/orders/cancel', () => {
     expect(orderSnap.data()?.status).toBe('cancelled');
 
     const stillExistingSnap = await adminDb.doc(`products/${stillExistingProductId}`).get();
-    expect(stillExistingSnap.data()?.stock).toBe(3);
+    expect(stillExistingSnap.data()).toMatchObject({ stock: 3, orderCount: 0, unitsSold: 0 });
   });
 
   it('si el snapshot de la orden tiene el mismo producto en dos lineas, suma la restitucion en un solo update', async () => {
@@ -212,8 +262,20 @@ describe('POST /api/orders/cancel', () => {
     const orderId = randomUUID();
     await seedProduct(productId, { stock: 1 });
     await seedOrder(orderId, uid, [
-      { productId, name: 'Teclado Aurora', unitPrice: 10000, imageUrl: 'https://placehold.co/600x400', quantity: 1 },
-      { productId, name: 'Teclado Aurora', unitPrice: 10000, imageUrl: 'https://placehold.co/600x400', quantity: 1 },
+      {
+        productId,
+        name: 'Teclado Aurora',
+        unitPrice: 10000,
+        imageUrl: 'https://placehold.co/600x400',
+        quantity: 1,
+      },
+      {
+        productId,
+        name: 'Teclado Aurora',
+        unitPrice: 10000,
+        imageUrl: 'https://placehold.co/600x400',
+        quantity: 1,
+      },
     ]);
     mockAuthenticatedAs(uid);
 
@@ -223,7 +285,7 @@ describe('POST /api/orders/cancel', () => {
     expect(status).toHaveBeenCalledWith(200);
 
     const productSnap = await adminDb.doc(`products/${productId}`).get();
-    expect(productSnap.data()?.stock).toBe(3);
+    expect(productSnap.data()).toMatchObject({ stock: 3, orderCount: 0, unitsSold: 0 });
   });
 
   it('sin token valido, rechaza con 401', async () => {
@@ -252,7 +314,13 @@ describe('POST /api/orders/cancel', () => {
     const orderId = randomUUID();
     await seedProduct(productId, { stock: 3 });
     await seedOrder(orderId, uid, [
-      { productId, name: 'Teclado Aurora', unitPrice: 10000, imageUrl: 'https://placehold.co/600x400', quantity: 1 },
+      {
+        productId,
+        name: 'Teclado Aurora',
+        unitPrice: 10000,
+        imageUrl: 'https://placehold.co/600x400',
+        quantity: 1,
+      },
     ]);
     mockAuthenticatedAs(uid);
     mockAuthenticatedAs(uid);
@@ -264,9 +332,11 @@ describe('POST /api/orders/cancel', () => {
     const second = buildResponse();
     await handler(buildRequest({ orderId }), second.res);
     expect(second.status).toHaveBeenCalledWith(409);
-    expect(second.json).toHaveBeenCalledWith(expect.objectContaining({ code: 'INVALID_STATUS_TRANSITION' }));
+    expect(second.json).toHaveBeenCalledWith(
+      expect.objectContaining({ code: 'INVALID_STATUS_TRANSITION' }),
+    );
 
     const productSnap = await adminDb.doc(`products/${productId}`).get();
-    expect(productSnap.data()?.stock).toBe(4);
+    expect(productSnap.data()).toMatchObject({ stock: 4, orderCount: 0, unitsSold: 1 });
   });
 });

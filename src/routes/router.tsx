@@ -10,6 +10,7 @@ import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { RegisterPage } from '@/features/auth/pages/RegisterPage';
 import { AdminProductsPage } from '@/features/admin/products/pages/AdminProductsPage';
 import { AdminProductFormPage } from '@/features/admin/products/pages/AdminProductFormPage';
+import { AdminOrdersPage } from '@/features/admin/orders/pages/AdminOrdersPage';
 import { PublicLayout } from '@/layouts/PublicLayout';
 import { PrivateLayout } from '@/layouts/PrivateLayout';
 import { AdminLayout } from '@/layouts/AdminLayout';
@@ -56,6 +57,7 @@ export const router = createBrowserRouter([
           { path: 'admin/products', element: <AdminProductsPage /> },
           { path: 'admin/products/new', element: <AdminProductFormPage /> },
           { path: 'admin/products/:id/edit', element: <AdminProductFormPage /> },
+          { path: 'admin/orders', element: <AdminOrdersPage /> },
         ],
       },
     ],

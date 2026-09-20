@@ -160,7 +160,15 @@ describe('firestore.rules (orders)', () => {
   function buildOrderData(overrides: Record<string, unknown> = {}) {
     return {
       userId: 'user-1',
-      items: [{ productId: 'product-1', name: 'Teclado', unitPrice: 1000, imageUrl: 'https://x.test/a.png', quantity: 1 }],
+      items: [
+        {
+          productId: 'product-1',
+          name: 'Teclado',
+          unitPrice: 1000,
+          imageUrl: 'https://x.test/a.png',
+          quantity: 1,
+        },
+      ],
       subtotal: 1000,
       shippingCost: 4999,
       total: 5999,
@@ -228,18 +236,30 @@ describe('firestore.rules (orders)', () => {
 
   it('permite listar solo las propias ordenes filtrando por userId', async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
-      await setDoc(doc(context.firestore(), 'orders/order-1'), buildOrderData({ userId: 'user-1' }));
-      await setDoc(doc(context.firestore(), 'orders/order-2'), buildOrderData({ userId: 'user-2' }));
+      await setDoc(
+        doc(context.firestore(), 'orders/order-1'),
+        buildOrderData({ userId: 'user-1' }),
+      );
+      await setDoc(
+        doc(context.firestore(), 'orders/order-2'),
+        buildOrderData({ userId: 'user-2' }),
+      );
     });
 
     const owner = testEnv.authenticatedContext('user-1');
-    const ownOrdersQuery = query(collection(owner.firestore(), 'orders'), where('userId', '==', 'user-1'));
+    const ownOrdersQuery = query(
+      collection(owner.firestore(), 'orders'),
+      where('userId', '==', 'user-1'),
+    );
     await assertSucceeds(getDocs(ownOrdersQuery));
   });
 
   it('deniega listar ordenes de otro usuario', async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
-      await setDoc(doc(context.firestore(), 'orders/order-1'), buildOrderData({ userId: 'user-1' }));
+      await setDoc(
+        doc(context.firestore(), 'orders/order-1'),
+        buildOrderData({ userId: 'user-1' }),
+      );
     });
 
     const otherUser = testEnv.authenticatedContext('user-2');
@@ -248,6 +268,75 @@ describe('firestore.rules (orders)', () => {
       where('userId', '==', 'user-1'),
     );
     await assertFails(getDocs(otherUsersOrdersQuery));
+  });
+
+  it('deniega a un customer listar todas las ordenes sin filtro de userId (F11.1)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(
+        doc(context.firestore(), 'orders/order-1'),
+        buildOrderData({ userId: 'user-1' }),
+      );
+    });
+
+    const customer = testEnv.authenticatedContext('user-2');
+    await assertFails(getDocs(collection(customer.firestore(), 'orders')));
+  });
+
+  it('permite a un admin leer la orden de cualquier usuario (F11.1)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(
+        doc(context.firestore(), 'orders/order-1'),
+        buildOrderData({ userId: 'user-1' }),
+      );
+    });
+
+    const admin = testEnv.authenticatedContext('admin-1', { role: 'admin' });
+    await assertSucceeds(getDoc(doc(admin.firestore(), 'orders/order-1')));
+  });
+
+  it('permite a un admin listar todas las ordenes sin filtro de userId (F11.1)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(
+        doc(context.firestore(), 'orders/order-1'),
+        buildOrderData({ userId: 'user-1' }),
+      );
+      await setDoc(
+        doc(context.firestore(), 'orders/order-2'),
+        buildOrderData({ userId: 'user-2' }),
+      );
+    });
+
+    const admin = testEnv.authenticatedContext('admin-1', { role: 'admin' });
+    await assertSucceeds(getDocs(collection(admin.firestore(), 'orders')));
+  });
+
+  it('permite a un admin listar ordenes filtradas por estado (F11.2)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(
+        doc(context.firestore(), 'orders/order-1'),
+        buildOrderData({ status: 'pending' }),
+      );
+      await setDoc(
+        doc(context.firestore(), 'orders/order-2'),
+        buildOrderData({ status: 'cancelled' }),
+      );
+    });
+
+    const admin = testEnv.authenticatedContext('admin-1', { role: 'admin' });
+    const pendingOrdersQuery = query(
+      collection(admin.firestore(), 'orders'),
+      where('status', '==', 'pending'),
+    );
+    await assertSucceeds(getDocs(pendingOrdersQuery));
+  });
+
+  it('deniega a un admin cambiar el estado de una orden directo desde el cliente (F11.7)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), 'orders/order-1'), buildOrderData());
+    });
+
+    const admin = testEnv.authenticatedContext('admin-1', { role: 'admin' });
+    await assertFails(updateDoc(doc(admin.firestore(), 'orders/order-1'), { status: 'cancelled' }));
   });
 });
 
@@ -275,7 +364,10 @@ describe('firestore.rules (reviews)', () => {
 
   it('permite leer las reseñas sin autenticacion', async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
-      await setDoc(doc(context.firestore(), reviewPath('product-read', 'user-1')), buildReviewData());
+      await setDoc(
+        doc(context.firestore(), reviewPath('product-read', 'user-1')),
+        buildReviewData(),
+      );
     });
 
     const anonymous = testEnv.unauthenticatedContext();
@@ -292,7 +384,10 @@ describe('firestore.rules (reviews)', () => {
   it('deniega crear una reseña bajo el id de otro usuario', async () => {
     const user = testEnv.authenticatedContext('user-1');
     await assertFails(
-      setDoc(doc(user.firestore(), reviewPath('product-create-wrong-id', 'user-2')), buildReviewData()),
+      setDoc(
+        doc(user.firestore(), reviewPath('product-create-wrong-id', 'user-2')),
+        buildReviewData(),
+      ),
     );
   });
 
@@ -427,12 +522,18 @@ describe('firestore.rules (reviews)', () => {
 
   it('deniega escribir ratingAverage/ratingCount en products directamente desde el cliente (F8.5)', async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
-      await setDoc(doc(context.firestore(), 'products/product-f85'), { ratingAverage: 0, ratingCount: 0 });
+      await setDoc(doc(context.firestore(), 'products/product-f85'), {
+        ratingAverage: 0,
+        ratingCount: 0,
+      });
     });
 
     const user = testEnv.authenticatedContext('user-1');
     await assertFails(
-      updateDoc(doc(user.firestore(), 'products/product-f85'), { ratingAverage: 5, ratingCount: 1000 }),
+      updateDoc(doc(user.firestore(), 'products/product-f85'), {
+        ratingAverage: 5,
+        ratingCount: 1000,
+      }),
     );
   });
 });

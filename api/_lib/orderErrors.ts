@@ -3,6 +3,7 @@ import type { OrderErrorCode, OrderErrorResponse } from '../../shared/schemas/or
 
 const ORDER_ERROR_HTTP_STATUS: Record<OrderErrorCode, number> = {
   UNAUTHENTICATED: 401,
+  FORBIDDEN: 403,
   INVALID_REQUEST: 400,
   EMPTY_CART: 400,
   PRODUCT_UNAVAILABLE: 409,
