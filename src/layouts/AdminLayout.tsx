@@ -14,6 +14,7 @@ function navLinkClassName({ isActive }: { isActive: boolean }): string {
 const ADMIN_NAV_LINKS = [
   { to: '/admin/products', label: 'Productos' },
   { to: '/admin/orders', label: 'Órdenes' },
+  { to: '/admin/analytics', label: 'Analytics' },
 ];
 
 export function AdminLayout() {
