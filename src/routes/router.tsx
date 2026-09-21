@@ -11,6 +11,7 @@ import { RegisterPage } from '@/features/auth/pages/RegisterPage';
 import { AdminProductsPage } from '@/features/admin/products/pages/AdminProductsPage';
 import { AdminProductFormPage } from '@/features/admin/products/pages/AdminProductFormPage';
 import { AdminOrdersPage } from '@/features/admin/orders/pages/AdminOrdersPage';
+import { AdminAnalyticsPage } from '@/features/admin/analytics/pages/AdminAnalyticsPage';
 import { PublicLayout } from '@/layouts/PublicLayout';
 import { PrivateLayout } from '@/layouts/PrivateLayout';
 import { AdminLayout } from '@/layouts/AdminLayout';
@@ -58,6 +59,7 @@ export const router = createBrowserRouter([
           { path: 'admin/products/new', element: <AdminProductFormPage /> },
           { path: 'admin/products/:id/edit', element: <AdminProductFormPage /> },
           { path: 'admin/orders', element: <AdminOrdersPage /> },
+          { path: 'admin/analytics', element: <AdminAnalyticsPage /> },
         ],
       },
     ],

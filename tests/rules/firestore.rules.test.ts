@@ -8,13 +8,16 @@ import {
 } from '@firebase/rules-unit-testing';
 import {
   collection,
+  count,
   deleteDoc,
   doc,
+  getAggregateFromServer,
   getDoc,
   getDocs,
   query,
   serverTimestamp,
   setDoc,
+  sum,
   Timestamp,
   updateDoc,
   where,
@@ -337,6 +340,46 @@ describe('firestore.rules (orders)', () => {
 
     const admin = testEnv.authenticatedContext('admin-1', { role: 'admin' });
     await assertFails(updateDoc(doc(admin.firestore(), 'orders/order-1'), { status: 'cancelled' }));
+  });
+
+  it('deniega a un customer agregar (sum/count) sobre todas las ordenes sin filtro de userId (F12.2)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(
+        doc(context.firestore(), 'orders/order-1'),
+        buildOrderData({ userId: 'user-1' }),
+      );
+    });
+
+    const customer = testEnv.authenticatedContext('user-2');
+    const nonCancelledOrdersQuery = query(
+      collection(customer.firestore(), 'orders'),
+      where('status', '!=', 'cancelled'),
+    );
+    await assertFails(
+      getAggregateFromServer(nonCancelledOrdersQuery, { totalRevenue: sum('total'), totalOrders: count() }),
+    );
+  });
+
+  it('permite a un admin agregar (sum/count) sobre todas las ordenes sin filtro de userId (F12.2)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(
+        doc(context.firestore(), 'orders/order-1'),
+        buildOrderData({ userId: 'user-1', total: 1000 }),
+      );
+      await setDoc(
+        doc(context.firestore(), 'orders/order-2'),
+        buildOrderData({ userId: 'user-2', total: 2000 }),
+      );
+    });
+
+    const admin = testEnv.authenticatedContext('admin-1', { role: 'admin' });
+    const nonCancelledOrdersQuery = query(
+      collection(admin.firestore(), 'orders'),
+      where('status', '!=', 'cancelled'),
+    );
+    await assertSucceeds(
+      getAggregateFromServer(nonCancelledOrdersQuery, { totalRevenue: sum('total'), totalOrders: count() }),
+    );
   });
 });
 
