@@ -7,6 +7,10 @@ import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { RegisterPage } from '@/features/auth/pages/RegisterPage';
 
 vi.mock('@/hooks/useAuth', () => ({ useAuth: vi.fn() }));
+vi.mock('@/features/auth/services/loginWithEmail', () => ({ loginWithEmail: vi.fn() }));
+vi.mock('@/features/auth/services/registerWithEmail', () => ({ registerWithEmail: vi.fn() }));
+vi.mock('@/features/auth/services/signInWithGoogle', () => ({ signInWithGoogle: vi.fn() }));
+vi.mock('@/features/auth/services/requestPasswordReset', () => ({ requestPasswordReset: vi.fn() }));
 
 function mockAuth(value: AuthContextValue): void {
   vi.mocked(useAuth).mockReturnValue(value);
