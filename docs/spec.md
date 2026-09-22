@@ -330,6 +330,59 @@ vocabulario y las trece reglas del dominio. Reemplaza a la sección 4 de esta es
 
 ## 9 · Flujos del recorrido
 
-Se deja vacía a propósito. Se completa en el primer Cierre, cuando se recorra la aplicación
-terminada y se sepa cuáles son los caminos reales. A partir del segundo release se lee de acá en
-vez de descubrirse.
+Completada en el Cierre del release 1 (2026-09-22), recorriendo la aplicación terminada en
+producción y en el emulador seedeado, con mouse y con teclado, en los dos temas y en 320px/desktop.
+A partir del release 2 se lee de acá en vez de redescubrirse.
+
+### Principal · Pública (visitante)
+
+Entra a `/`, ve la pieza destacada (hero) y la grilla debajo sin hacer scroll (F14.1). Filtra por
+categoría o busca por nombre (prefijo, con debounce); el filtro queda en la URL. Entra al detalle
+de un producto desde la grilla o desde el hero. Sin sesión, puede agregar al carrito desde la
+grilla (un paso) o desde el detalle (dos pasos, eligiendo cantidad).
+
+### Principal · Privada (comprador)
+
+Con algo en el carrito, va a `/cart`, ajusta cantidades, entra a `/checkout`. Completa los tres
+pasos del recibo continuo (envío → pago simulado → revisión), confirma la compra y es redirigido a
+`/orders/:id` con los datos reales de la orden ya creada (stock descontado, contadores del producto
+actualizados). Desde `/orders` ve el historial y puede cancelar una orden en `pending`, lo que
+devuelve el stock en la misma transacción. Desde el detalle de un producto que compró puede dejar
+una reseña.
+
+### Principal · Administración
+
+Entra a `/admin/products` con una cuenta con el claim `admin`. Corrige precio o stock en la celda
+sin salir de la tabla (dos interacciones), retira o reactiva un producto con un click, y solo ve
+"Eliminar definitivamente" en los productos sin ventas ni reseñas. Desde `/admin/orders` filtra por
+estado, cambia el estado de una orden respetando el grafo de transiciones (los botones que no
+corresponden al estado actual no se renderizan, nunca aparecen deshabilitados sin explicación), y
+al cancelar ve el stock devuelto reflejado en `/admin/products`. Desde `/admin/analytics` ve
+ingresos, cantidad de órdenes y el ranking de más vendidos, actualizados con la orden recién creada.
+
+### Usuario nuevo
+
+Es el único camino que atraviesa las tres superficies, y el que se recorrió con más cuidado en el
+Cierre porque un bug real solo aparecía acá: un invitado agrega un producto al carrito, va a pagar,
+es redirigido a `/login` con el destino guardado. Si **se registra** (el camino más probable para
+alguien sin cuenta) en vez de loguearse, antes del Cierre perdía ese destino y terminaba en el
+catálogo; arreglado para que el registro también respete el destino original, igual que el login.
+Completa el checkout, llega a la confirmación de la orden, y deja la primera reseña del producto
+que compró — la vista de reseñas parte de "todavía no hay reseñas" hasta ese momento.
+
+### Recuperación
+
+Cerrar sesión a mitad de un flujo privado vuelve al catálogo con el carrito de invitado vacío (no
+al carrito de Firestore de la sesión anterior). Recargar a mitad del checkout no pierde el paso en
+el que estaba (el borrador persiste en `localStorage`, con clave por `uid`). Un `customer` que
+intenta abrir una ruta de administración por URL directa recibe la pantalla de acceso denegado, no
+un redirect mudo. Ningún guard de ruta decide nada mientras el estado de autenticación o el rol
+todavía están cargando.
+
+### Error
+
+Un producto o una orden inexistentes (o de otro usuario) muestran el estado vacío correspondiente,
+nunca el error genérico ni una pantalla en blanco. Un fallo del servidor al crear una orden (sin
+stock, precio cambiado, carrito desincronizado) aborta sin escribir nada y nombra el producto
+afectado en el mensaje. Cortar la red muestra el estado de error reutilizable con la opción de
+reintentar, en cualquiera de las tres superficies.

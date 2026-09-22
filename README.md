@@ -4,9 +4,9 @@ Tienda curada de periféricos de computadora. Aplicación de página única con 
 que navega el catálogo y compra, y el administrador que gestiona productos y órdenes desde un panel
 protegido.
 
-**Estado: en planificación.** Todavía no hay código de aplicación. Lo que existe es la
-especificación, el modelo de dominio, las decisiones de arquitectura y la estructura de carpetas.
-Las instrucciones de instalación y la URL de producción se agregan cuando el andamiaje las cree.
+**Estado: en producción.** Las 14 slices del plan original y sus 3 extras (paginación, reseñas,
+dashboard de analytics) están construidas, mergeadas y en vivo. El release 1 cerró el
+[Cierre](https://github.com/HRamiroAlbornoz/e-commerce-platform/pull/29) el 22/09/2026.
 
 ---
 
@@ -48,11 +48,13 @@ con una opinión escrita sobre para quién es y para quién no. Esa es la difere
 
 | Documento | Qué contiene |
 |---|---|
-| [`docs/spec.md`](docs/spec.md) | Alcance, qué queda afuera, decisiones de infraestructura y 110 criterios de aceptación |
+| [`docs/spec.md`](docs/spec.md) | Alcance, qué queda afuera, decisiones de infraestructura, criterios de aceptación y los flujos reales del recorrido |
 | [`docs/arquitectura.md`](docs/arquitectura.md) | Modelo de dominio: entidades, campos, relaciones y las trece reglas del negocio, con diagramas |
-| [`docs/adr/`](docs/adr/) | Seis decisiones caras de revertir, una por archivo |
-| `PRODUCT.md` | Verdad de producto durable: usuarios, propósito, posicionamiento, compromisos de marca |
+| [`docs/adr/`](docs/adr/) | Ocho decisiones caras de revertir, una por archivo |
+| [`docs/pendientes.md`](docs/pendientes.md) | Deuda técnica clasificada en el Cierre |
+| `PRODUCT.md` / `DESIGN.md` | Verdad de producto durable y sistema visual global, gestionados por Impeccable |
 | `.impeccable/surfaces/` | Un brief de diseño por superficie, con su contrato de dirección |
+| `CLAUDE.md` | Bitácora completa de cada slice: decisiones, hallazgos y cómo se verificaron |
 
 ---
 
@@ -87,6 +89,17 @@ porque Firestore no borra subcolecciones al borrar el documento padre.
 escribir el promedio, puede escribir cualquier número, y ninguna regla puede verificarlo sin leer
 todas las reseñas. Lo recalcula una Vercel Function con el Admin SDK.
 
+**[0007] La orden se crea desde una Vercel Function con el Admin SDK, no con una transacción del
+cliente.** Validar stock, precio y crear la orden a la vez es un invariante entre varios documentos:
+frágil en security rules, e inseguro si el total lo manda el cliente. La función lee el carrito real
+del servidor, nunca lo que declara la request, y usa un id pre-generado para que un reintento no
+descuente stock dos veces.
+
+**[0008] Crear y editar productos también pasa por una Vercel Function.** A diferencia de las
+órdenes, acá el problema no es un invariante cruzado sino la riqueza de un solo documento: `specs`
+es un array de 1 a 12 objetos, y las security rules no iteran arrays de objetos sin reglas frágiles
+repetidas a mano.
+
 ---
 
 ## Estructura
@@ -95,12 +108,13 @@ todas las reseñas. Lo recalcula una Vercel Function con el Admin SDK.
 api/                  Vercel Functions. Cada archivo es un endpoint
   _lib/                 código compartido; el guion bajo lo excluye del enrutamiento
 shared/schemas/       el contrato Zod. Lo importan src/ y api/ por igual
-scripts/              seed del catálogo y asignación del rol admin
+scripts/              seed del catálogo (emulador y producción) y asignación del rol admin
 src/
   components/ui/        primitivos con accesibilidad incorporada una sola vez
   components/states/    LoadingState, EmptyState, ErrorState, Skeleton
   contexts/             AuthContext, CartContext y el cartReducer puro
-  features/             auth, products, cart, checkout, orders, reviews, analytics
+  features/             auth, products, cart, checkout, orders, reviews, admin, analytics
+  hooks/                hooks genéricos compartidos entre features (useKeyedAsync, etc.)
   layouts/              un marco por superficie: pública, privada, administración
   lib/                  firebase con sus converters, errores, dinero, validación de env
   routes/               un archivo de rutas por superficie, más los dos guards
@@ -122,12 +136,38 @@ Tres decisiones de esta estructura que no son obvias:
 
 ## Instalación y configuración
 
-Pendiente: se completa en el andamiaje, cuando existan `package.json` y los archivos de
-configuración. Va a incluir cómo obtener las credenciales de Firebase, cómo configurar el bucket de
-S3 con su política y su CORS, cómo levantar el Emulator Suite, y cómo cargar las variables en
-Vercel.
+Requiere Node 24.x y Java (el Firebase Emulator Suite corre sobre la JVM).
 
-Las variables necesarias, con su explicación, están en [`.env.example`](.env.example).
+```bash
+npm install
+cp .env.example .env
+```
+
+Completar `.env` con la config de un proyecto de Firebase propio (Auth + Firestore) y, si se va a
+probar la subida de imágenes, un bucket de S3 con las credenciales de un usuario IAM acotado a
+`PutObject` sobre el prefijo de productos. Las variables `FIRESTORE_EMULATOR_HOST` y
+`FIREBASE_AUTH_EMULATOR_HOST` de `.env.example` ya apuntan al emulador local; dejarlas así para
+desarrollo.
+
+**Frontend + emulador** (alcanza para trabajar sobre `src/`, sin tocar `api/`):
+
+```bash
+firebase emulators:start   # Firestore :8080, Auth :9099, UI :4000
+npm run seed                # carga el catálogo de 18 productos en el emulador
+npm run dev                 # Vite en :5173
+```
+
+**Para tocar también las Vercel Functions** (`api/`), hace falta un segundo proceso — `vercel dev`
+no puede servir el frontend de este proyecto directamente (ver la nota en `CLAUDE.md`, slice 7b):
+
+```bash
+vercel dev --listen 3000   # solo sirve /api/*; vite.config.ts ya proxea /api hacia acá
+npm run dev                 # en otra terminal, el frontend real
+```
+
+`npm run grant-admin -- <email>` promueve una cuenta ya registrada a `admin` (rol en Firestore +
+custom claim). `npm test` corre la suite de componentes/unitarios; `npm run test:functions` y
+`npm run test:rules` corren contra el emulador real (`firebase emulators:exec`).
 
 ## Flujo de subida de imágenes a S3
 
@@ -157,7 +197,9 @@ y al no llevar el prefijo `VITE_`, Vite no las puede incluir en el bundle ni por
 
 ## URL de producción
 
-Pendiente: se agrega con el deploy de humo del andamiaje.
+**[clack-liart.vercel.app](https://clack-liart.vercel.app)** — pública, sin login (`/api/health`
+responde `{ ok: true }`). Deploy continuo desde GitHub: cada merge a `main` despliega a producción;
+cada rama tiene su propio preview.
 
 ---
 
