@@ -13,7 +13,13 @@ describe('Textarea', () => {
   });
 
   it('asocia el error al textarea y oculta el hint cuando hay un error', () => {
-    render(<Textarea label="Comentario" hint="Máximo 500 caracteres." error="El comentario es obligatorio." />);
+    render(
+      <Textarea
+        label="Comentario"
+        hint="Máximo 500 caracteres."
+        error="El comentario es obligatorio."
+      />,
+    );
 
     const textarea = screen.getByLabelText('Comentario');
     const error = screen.getByText('El comentario es obligatorio.');

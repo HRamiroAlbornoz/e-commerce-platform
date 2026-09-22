@@ -1,7 +1,10 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { ShippingDetails } from '@shared/schemas/checkout';
-import { shippingFormSchema, type ShippingFormValues } from '@/features/checkout/schemas/checkoutForms';
+import {
+  shippingFormSchema,
+  type ShippingFormValues,
+} from '@/features/checkout/schemas/checkoutForms';
 import { TextField } from '@/components/ui/TextField';
 import { Button } from '@/components/ui/Button';
 

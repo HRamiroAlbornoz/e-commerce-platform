@@ -12,7 +12,11 @@ const shipping: ShippingDetails = {
   phone: '1122334455',
 };
 
-const payment: PaymentDraft = { cardholderName: 'Hernán Albornoz', method: 'card', outcome: 'success' };
+const payment: PaymentDraft = {
+  cardholderName: 'Hernán Albornoz',
+  method: 'card',
+  outcome: 'success',
+};
 
 function draftWith(overrides: Partial<CheckoutDraftState>): CheckoutDraftState {
   return {

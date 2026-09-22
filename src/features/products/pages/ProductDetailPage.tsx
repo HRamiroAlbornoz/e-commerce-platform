@@ -18,6 +18,8 @@ function ProductDetailContent({ product }: { product: Product }) {
         <img
           src={product.imageUrl}
           alt=""
+          width={600}
+          height={400}
           className="max-h-full w-full object-contain"
           loading="lazy"
         />
@@ -35,7 +37,7 @@ function ProductDetailContent({ product }: { product: Product }) {
             {product.ratingAverage.toFixed(1)} · {product.ratingCount} reseñas
           </Link>
         ) : (
-          <p className="font-body text-sm text-ink/70">Todavia sin reseñas</p>
+          <p className="font-body text-sm text-ink/70">Todavía sin reseñas</p>
         )}
 
         <p className="font-body text-sm text-ink/70 italic">{product.curatorialNote}</p>
@@ -71,7 +73,7 @@ export function ProductDetailPage() {
       {detail.status === 'not-found' ? (
         <EmptyState
           title="Producto no encontrado"
-          description="Este producto no existe o ya no esta disponible."
+          description="Este producto no existe o ya no está disponible."
         />
       ) : null}
 

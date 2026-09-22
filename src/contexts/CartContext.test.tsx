@@ -10,7 +10,9 @@ import { readGuestCart, writeGuestCart } from '@/features/cart/utils/guestCartSt
 import type { AuthContextValue, AuthState } from '@/contexts/AuthContext';
 
 vi.mock('@/hooks/useAuth', () => ({ useAuth: vi.fn() }));
-vi.mock('@/features/cart/services/loadAuthenticatedCart', () => ({ loadAuthenticatedCart: vi.fn() }));
+vi.mock('@/features/cart/services/loadAuthenticatedCart', () => ({
+  loadAuthenticatedCart: vi.fn(),
+}));
 vi.mock('@/features/cart/services/setCart', () => ({ setCart: vi.fn() }));
 vi.mock('@/features/cart/utils/guestCartStorage', () => ({
   readGuestCart: vi.fn(() => []),
@@ -103,19 +105,25 @@ describe('CartProvider', () => {
       );
     });
     expect(loadAuthenticatedCart).toHaveBeenCalledTimes(1);
-    expect(loadAuthenticatedCart).toHaveBeenCalledWith('user-1', [{ productId: 'product-1', quantity: 1 }]);
+    expect(loadAuthenticatedCart).toHaveBeenCalledWith('user-1', [
+      { productId: 'product-1', quantity: 1 },
+    ]);
     expect(setCart).not.toHaveBeenCalled();
   });
 
   it('un resultado de fusion que llega tarde, para un uid que ya no es el actual, no se aplica', async () => {
-    let resolveMerge: (result: { items: { productId: string; quantity: number }[]; exclusions: [] }) => void = () => {
+    let resolveMerge: (result: {
+      items: { productId: string; quantity: number }[];
+      exclusions: [];
+    }) => void = () => {
       return;
     };
-    const pendingMerge = new Promise<{ items: { productId: string; quantity: number }[]; exclusions: [] }>(
-      (resolve) => {
-        resolveMerge = resolve;
-      },
-    );
+    const pendingMerge = new Promise<{
+      items: { productId: string; quantity: number }[];
+      exclusions: [];
+    }>((resolve) => {
+      resolveMerge = resolve;
+    });
     vi.mocked(loadAuthenticatedCart).mockReturnValueOnce(pendingMerge);
     mockAuth({ status: 'authenticated', user: fakeUser, role: 'customer' });
 

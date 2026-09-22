@@ -66,11 +66,16 @@ describe('CartPage', () => {
 
   it('con el carrito vacio, muestra el mensaje y un link al catalogo (F5.8)', () => {
     vi.mocked(useCart).mockReturnValue(buildCartContextValue());
-    vi.mocked(useResolvedCart).mockReturnValue({ status: 'success', lines: [], total: 0, retry: vi.fn() });
+    vi.mocked(useResolvedCart).mockReturnValue({
+      status: 'success',
+      lines: [],
+      total: 0,
+      retry: vi.fn(),
+    });
 
     renderCartPage();
 
-    expect(screen.getByText('Tu carrito esta vacio')).toBeInTheDocument();
+    expect(screen.getByText('Tu carrito está vacío')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Ver catalogo' })).toHaveAttribute('href', '/');
   });
 
@@ -101,11 +106,18 @@ describe('CartPage', () => {
     const dismissMergeExclusions = vi.fn();
     vi.mocked(useCart).mockReturnValue(
       buildCartContextValue({
-        mergeExclusions: [{ productId: 'product-2', productName: 'Mouse Y', reason: 'out-of-stock' }],
+        mergeExclusions: [
+          { productId: 'product-2', productName: 'Mouse Y', reason: 'out-of-stock' },
+        ],
         dismissMergeExclusions,
       }),
     );
-    vi.mocked(useResolvedCart).mockReturnValue({ status: 'success', lines: [], total: 0, retry: vi.fn() });
+    vi.mocked(useResolvedCart).mockReturnValue({
+      status: 'success',
+      lines: [],
+      total: 0,
+      retry: vi.fn(),
+    });
 
     renderCartPage();
 

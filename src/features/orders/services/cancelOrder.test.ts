@@ -41,7 +41,11 @@ describe('cancelOrder', () => {
   });
 
   it('con un error de negocio del servidor, devuelve el mensaje', async () => {
-    mockFetchResponse(409, { code: 'INVALID_STATUS_TRANSITION', message: 'Esta orden ya no se puede cancelar.' });
+    mockFetchResponse(409, {
+      code: 'INVALID_STATUS_TRANSITION',
+      message: 'Esta orden ya no se puede cancelar.',
+      retryable: false,
+    });
 
     const result = await cancelOrder(fakeUser, 'order-1');
 
@@ -53,6 +57,9 @@ describe('cancelOrder', () => {
 
     const result = await cancelOrder(fakeUser, 'order-1');
 
-    expect(result).toEqual({ ok: false, message: 'No pudimos cancelar la orden. Intentá de nuevo.' });
+    expect(result).toEqual({
+      ok: false,
+      message: 'No pudimos cancelar la orden. Intenta de nuevo.',
+    });
   });
 });

@@ -8,6 +8,13 @@ const UPLOAD_ERROR_HTTP_STATUS: Record<UploadErrorCode, number> = {
   INTERNAL_ERROR: 500,
 };
 
+const UPLOAD_ERROR_RETRYABLE: Record<UploadErrorCode, boolean> = {
+  UNAUTHENTICATED: false,
+  FORBIDDEN: false,
+  INVALID_REQUEST: false,
+  INTERNAL_ERROR: true,
+};
+
 export class UploadError extends Error {
   readonly code: UploadErrorCode;
 
@@ -22,7 +29,11 @@ export function uploadErrorHttpStatus(code: UploadErrorCode): number {
 }
 
 export function toUploadErrorResponse(error: UploadError): UploadErrorResponse {
-  return { code: error.code, message: error.message };
+  return {
+    code: error.code,
+    message: error.message,
+    retryable: UPLOAD_ERROR_RETRYABLE[error.code],
+  };
 }
 
 export function logUploadError(requestId: string, error: UploadError): void {

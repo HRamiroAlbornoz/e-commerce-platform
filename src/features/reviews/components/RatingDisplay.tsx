@@ -8,7 +8,11 @@ type RatingDisplayProps = {
 export function RatingDisplay({ rating }: RatingDisplayProps) {
   return (
     <div className="flex items-center gap-2">
-      <div role="img" aria-label={`Calificación: ${rating} de ${SEGMENT_COUNT}`} className="flex gap-0.5">
+      <div
+        role="img"
+        aria-label={`Calificación: ${rating} de ${SEGMENT_COUNT}`}
+        className="flex gap-0.5"
+      >
         {SEGMENTS.map((segment) => (
           <span
             key={segment}

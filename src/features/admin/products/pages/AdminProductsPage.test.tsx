@@ -93,13 +93,15 @@ describe('AdminProductsPage', () => {
   it('si la consulta falla, muestra el error con reintentar', () => {
     vi.mocked(useAdminProducts).mockReturnValue({
       status: 'error',
-      message: 'No pudimos cargar los productos. Intentá de nuevo.',
+      message: 'No pudimos cargar los productos. Intenta de nuevo.',
       retry: vi.fn(),
     });
 
     renderPage();
 
-    expect(screen.getByText('No pudimos cargar los productos. Intentá de nuevo.')).toBeInTheDocument();
+    expect(
+      screen.getByText('No pudimos cargar los productos. Intenta de nuevo.'),
+    ).toBeInTheDocument();
   });
 
   it('un producto retirado se muestra en la tabla, no desaparece (F9.6: sigue siendo reversible)', () => {

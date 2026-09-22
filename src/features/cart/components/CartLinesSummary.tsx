@@ -47,7 +47,7 @@ export function CartLinesSummary({
 
       {cart.status === 'success' && cart.lines.length === 0 ? (
         <>
-          <EmptyState title="Tu carrito esta vacio" description={emptyStateDescription} />
+          <EmptyState title="Tu carrito está vacío" description={emptyStateDescription} />
           <div className="mt-6 flex justify-center">
             <Link
               to="/"
@@ -74,7 +74,11 @@ export function CartLinesSummary({
             ))}
           </ul>
 
-          <div className={totalVariant === 'sticky-bottom' ? STICKY_TOTAL_CLASSES : STATIC_TOTAL_CLASSES}>
+          <div
+            className={
+              totalVariant === 'sticky-bottom' ? STICKY_TOTAL_CLASSES : STATIC_TOTAL_CLASSES
+            }
+          >
             <p className="font-body text-xs font-medium tracking-widest text-ink/70 uppercase dark:text-bone/70">
               Total
             </p>

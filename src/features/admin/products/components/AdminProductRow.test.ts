@@ -1,8 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { canHardDeleteProduct, hardDeleteUnavailableReason } from '@/features/admin/products/components/AdminProductRow';
+import {
+  canHardDeleteProduct,
+  hardDeleteUnavailableReason,
+} from '@/features/admin/products/components/AdminProductRow';
 import type { Product } from '@shared/schemas/product';
 
-function buildProduct(overrides: Partial<Pick<Product, 'orderCount' | 'ratingCount'>> = {}): Product {
+function buildProduct(
+  overrides: Partial<Pick<Product, 'orderCount' | 'ratingCount'>> = {},
+): Product {
   return {
     id: 'p1',
     name: 'Teclado Aurora',

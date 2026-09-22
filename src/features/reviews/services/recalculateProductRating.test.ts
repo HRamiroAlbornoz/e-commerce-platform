@@ -47,7 +47,10 @@ describe('recalculateProductRating', () => {
   });
 
   it('si el servidor rechaza, no lanza al que llama, solo loguea (F8.7)', async () => {
-    mockFetchResponse(500, { code: 'INTERNAL_ERROR', message: 'No pudimos actualizar el promedio del producto.' });
+    mockFetchResponse(500, {
+      code: 'INTERNAL_ERROR',
+      message: 'No pudimos actualizar el promedio del producto.',
+    });
 
     await expect(recalculateProductRating(fakeUser, 'product-1')).resolves.toBeUndefined();
     expect(console.error).toHaveBeenCalled();

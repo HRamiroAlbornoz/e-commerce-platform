@@ -45,6 +45,7 @@ export type ReviewErrorCode = z.infer<typeof reviewErrorCodeSchema>;
 export const reviewErrorResponseSchema = z.object({
   code: reviewErrorCodeSchema,
   message: z.string().min(1),
+  retryable: z.boolean(),
 });
 
 export type ReviewErrorResponse = z.infer<typeof reviewErrorResponseSchema>;

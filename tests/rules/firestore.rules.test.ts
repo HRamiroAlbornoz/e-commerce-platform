@@ -356,7 +356,10 @@ describe('firestore.rules (orders)', () => {
       where('status', '!=', 'cancelled'),
     );
     await assertFails(
-      getAggregateFromServer(nonCancelledOrdersQuery, { totalRevenue: sum('total'), totalOrders: count() }),
+      getAggregateFromServer(nonCancelledOrdersQuery, {
+        totalRevenue: sum('total'),
+        totalOrders: count(),
+      }),
     );
   });
 
@@ -378,7 +381,10 @@ describe('firestore.rules (orders)', () => {
       where('status', '!=', 'cancelled'),
     );
     await assertSucceeds(
-      getAggregateFromServer(nonCancelledOrdersQuery, { totalRevenue: sum('total'), totalOrders: count() }),
+      getAggregateFromServer(nonCancelledOrdersQuery, {
+        totalRevenue: sum('total'),
+        totalOrders: count(),
+      }),
     );
   });
 });

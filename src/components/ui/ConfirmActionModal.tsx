@@ -35,7 +35,8 @@ export function ConfirmActionModal({
     } catch (err) {
       setSubmitState({
         status: 'error',
-        message: err instanceof Error ? err.message : 'Ocurrió un error inesperado. Intentá de nuevo.',
+        message:
+          err instanceof Error ? err.message : 'Ocurrió un error inesperado. Intenta de nuevo.',
       });
       return;
     }
@@ -44,7 +45,12 @@ export function ConfirmActionModal({
   }
 
   return (
-    <Modal title={title} onClose={onClose} closeDisabled={isSubmitting} initialFocusRef={backButtonRef}>
+    <Modal
+      title={title}
+      onClose={onClose}
+      closeDisabled={isSubmitting}
+      initialFocusRef={backButtonRef}
+    >
       <div className="font-body text-sm text-ink/80 dark:text-bone/80">{body}</div>
 
       <div aria-live="polite">

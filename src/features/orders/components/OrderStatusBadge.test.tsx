@@ -9,11 +9,14 @@ describe('OrderStatusBadge', () => {
     ['processing', 'En proceso'],
     ['completed', 'Completada'],
     ['cancelled', 'Cancelada'],
-  ] satisfies [OrderStatus, string][])('muestra siempre el texto del estado %s (F7.5)', (status, label) => {
-    render(<OrderStatusBadge status={status} />);
+  ] satisfies [OrderStatus, string][])(
+    'muestra siempre el texto del estado %s (F7.5)',
+    (status, label) => {
+      render(<OrderStatusBadge status={status} />);
 
-    expect(screen.getByText(label)).toBeInTheDocument();
-  });
+      expect(screen.getByText(label)).toBeInTheDocument();
+    },
+  );
 
   it('cada estado tiene una clase distinta, no solo un color (F7.5)', () => {
     const { unmount: unmountPending } = render(<OrderStatusBadge status="pending" />);

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { paymentDraftSchema, shippingDetailsSchema } from './checkout.js';
+import { productIdSchema } from './product.js';
 
 export const SHIPPING_COST = 4999;
 
@@ -8,7 +9,7 @@ export function roundToCents(value: number): number {
 }
 
 export const orderItemSchema = z.object({
-  productId: z.string().min(1),
+  productId: productIdSchema,
   name: z.string().min(1).max(120),
   unitPrice: z.number().positive(),
   imageUrl: z.url(),
@@ -51,7 +52,7 @@ export const orderSchema = z.object({
 export type Order = z.infer<typeof orderSchema>;
 
 export const expectedCartItemSchema = z.object({
-  productId: z.string().min(1),
+  productId: productIdSchema,
   quantity: z.number().int().positive(),
   unitPrice: z.number().positive(),
 });
@@ -124,6 +125,7 @@ export type OrderErrorCode = z.infer<typeof orderErrorCodeSchema>;
 export const orderErrorResponseSchema = z.object({
   code: orderErrorCodeSchema,
   message: z.string().min(1),
+  retryable: z.boolean(),
   details: z.object({ productId: z.string().min(1) }).optional(),
 });
 

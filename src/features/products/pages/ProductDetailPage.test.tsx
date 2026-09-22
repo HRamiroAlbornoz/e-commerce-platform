@@ -67,7 +67,9 @@ describe('ProductDetailPage', () => {
   });
 
   it('muestra un link a las reseñas cuando hay al menos una', async () => {
-    vi.mocked(getProductById).mockResolvedValue(buildProduct({ ratingCount: 12, ratingAverage: 4.5 }));
+    vi.mocked(getProductById).mockResolvedValue(
+      buildProduct({ ratingCount: 12, ratingAverage: 4.5 }),
+    );
 
     renderProductDetailPage();
 
@@ -75,12 +77,12 @@ describe('ProductDetailPage', () => {
     expect(reviewsLink).toHaveAttribute('href', '/products/product-1/reviews');
   });
 
-  it('muestra "todavia sin reseñas" cuando no hay ninguna', async () => {
+  it('muestra "todavía sin reseñas" cuando no hay ninguna', async () => {
     vi.mocked(getProductById).mockResolvedValue(buildProduct({ ratingCount: 0 }));
 
     renderProductDetailPage();
 
-    await waitFor(() => screen.getByText(/todavia sin reseñas/i));
+    await waitFor(() => screen.getByText(/todavía sin reseñas/i));
   });
 
   it('muestra la pantalla de no encontrado cuando el producto no existe', async () => {
@@ -97,7 +99,9 @@ describe('ProductDetailPage', () => {
     renderProductDetailPage();
 
     await waitFor(() => {
-      expect(screen.getByText('No pudimos cargar el producto. Intenta de nuevo.')).toBeInTheDocument();
+      expect(
+        screen.getByText('No pudimos cargar el producto. Intenta de nuevo.'),
+      ).toBeInTheDocument();
     });
   });
 

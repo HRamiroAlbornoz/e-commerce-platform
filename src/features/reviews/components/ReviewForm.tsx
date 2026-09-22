@@ -42,7 +42,7 @@ export function ReviewForm({ productId, user, existingReview, onSaved }: ReviewF
     } catch {
       setSubmitState({
         status: 'error',
-        message: 'No pudimos guardar tu reseña. Intentá de nuevo.',
+        message: 'No pudimos guardar tu reseña. Intenta de nuevo.',
       });
       return;
     }

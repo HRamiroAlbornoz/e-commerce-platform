@@ -5,7 +5,9 @@ import { orderConverter } from '@/lib/firebase/converters/order';
 import type { Order } from '@shared/schemas/order';
 
 function isPermissionDeniedError(err: unknown): boolean {
-  return typeof err === 'object' && err !== null && 'code' in err && err.code === 'permission-denied';
+  return (
+    typeof err === 'object' && err !== null && 'code' in err && err.code === 'permission-denied'
+  );
 }
 
 export async function getOrderById(id: string): Promise<Order | null> {

@@ -1,4 +1,9 @@
-import { useFieldArray, type Control, type FieldErrors, type UseFormRegister } from 'react-hook-form';
+import {
+  useFieldArray,
+  type Control,
+  type FieldErrors,
+  type UseFormRegister,
+} from 'react-hook-form';
 import { TextField } from '@/components/ui/TextField';
 import { InlineError } from '@/components/ui/InlineError';
 import type { CreateProductRequest } from '@shared/schemas/product';

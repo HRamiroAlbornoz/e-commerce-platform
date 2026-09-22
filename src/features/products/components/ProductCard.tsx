@@ -18,7 +18,10 @@ export function ProductCard({ product, pieceNumber }: ProductCardProps) {
 
   return (
     <div className="flex h-full flex-col">
-      <Link to={`/products/${product.id}`} aria-labelledby={`${nameId} ${descriptionId} ${priceId}`}>
+      <Link
+        to={`/products/${product.id}`}
+        aria-labelledby={`${nameId} ${descriptionId} ${priceId}`}
+      >
         <div
           className={`relative aspect-square overflow-hidden ${FIELD_COLOR_CLASSES[product.displayColor]}`}
         >
@@ -36,7 +39,10 @@ export function ProductCard({ product, pieceNumber }: ProductCardProps) {
           <h2 id={nameId} className="font-display text-lg leading-tight text-ink dark:text-bone">
             {product.name}
           </h2>
-          <p id={descriptionId} className="font-body line-clamp-1 text-sm text-ink/70 dark:text-bone/70">
+          <p
+            id={descriptionId}
+            className="font-body line-clamp-1 text-sm text-ink/70 dark:text-bone/70"
+          >
             {product.description}
           </p>
         </div>

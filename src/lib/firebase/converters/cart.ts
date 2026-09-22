@@ -16,7 +16,8 @@ export const cartConverter: FirestoreDataConverter<Cart> = {
   },
   fromFirestore(snapshot: QueryDocumentSnapshot, options?: SnapshotOptions): Cart {
     const data: Record<string, unknown> = snapshot.data(options);
-    const updatedAt = data.updatedAt instanceof Timestamp ? data.updatedAt.toDate() : data.updatedAt;
+    const updatedAt =
+      data.updatedAt instanceof Timestamp ? data.updatedAt.toDate() : data.updatedAt;
 
     return cartSchema.parse({ ...data, updatedAt });
   },

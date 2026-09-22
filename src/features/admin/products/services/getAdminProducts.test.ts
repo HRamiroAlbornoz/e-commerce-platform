@@ -5,7 +5,11 @@ const { whereMock, orderByMock, queryMock, getDocsMock, collectionMock } = vi.ho
   const withConverterMock = vi.fn(() => 'products-ref-with-converter');
   return {
     whereMock: vi.fn(),
-    orderByMock: vi.fn((field: string, direction?: string) => ({ type: 'orderBy', field, direction })),
+    orderByMock: vi.fn((field: string, direction?: string) => ({
+      type: 'orderBy',
+      field,
+      direction,
+    })),
     queryMock: vi.fn((_ref: unknown, ...constraints: unknown[]) => constraints),
     getDocsMock: vi.fn(),
     collectionMock: vi.fn(() => ({ withConverter: withConverterMock })),
@@ -46,6 +50,8 @@ describe('getAdminProducts', () => {
   it('rechaza el resultado si la respuesta viene de la cache local', async () => {
     getDocsMock.mockResolvedValue({ metadata: { fromCache: true }, docs: [] });
 
-    await expect(getAdminProducts()).rejects.toThrow('No se pudo confirmar el catálogo con el servidor.');
+    await expect(getAdminProducts()).rejects.toThrow(
+      'No se pudo confirmar el catálogo con el servidor.',
+    );
   });
 });

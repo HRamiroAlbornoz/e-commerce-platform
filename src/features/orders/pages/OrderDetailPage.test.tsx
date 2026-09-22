@@ -11,7 +11,13 @@ import type { Order, OrderStatus } from '@shared/schemas/order';
 vi.mock('@/hooks/useAuth', () => ({ useAuth: vi.fn() }));
 vi.mock('@/features/orders/hooks/useOrder', () => ({ useOrder: vi.fn() }));
 vi.mock('@/features/orders/components/CancelOrderModal', () => ({
-  CancelOrderModal: ({ onCancelled, onClose }: { onCancelled: () => void; onClose: () => void }) => (
+  CancelOrderModal: ({
+    onCancelled,
+    onClose,
+  }: {
+    onCancelled: () => void;
+    onClose: () => void;
+  }) => (
     <div role="dialog">
       <button onClick={onCancelled}>mock-confirmar-cancelacion</button>
       <button onClick={onClose}>mock-volver</button>
@@ -26,7 +32,13 @@ function orderFixture(status: OrderStatus = 'pending'): Order {
     id: 'aaaa1111-bbbb-2222-cccc-333344445555',
     userId: 'user-1',
     items: [
-      { productId: 'product-1', name: 'Teclado Aurora', unitPrice: 89999, imageUrl: 'https://placehold.co/600x400', quantity: 1 },
+      {
+        productId: 'product-1',
+        name: 'Teclado Aurora',
+        unitPrice: 89999,
+        imageUrl: 'https://placehold.co/600x400',
+        quantity: 1,
+      },
     ],
     subtotal: 89999,
     shippingCost: 4999,
@@ -66,7 +78,10 @@ describe('OrderDetailPage', () => {
     renderOrderDetailPage();
 
     expect(screen.getByText('Orden no encontrada')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Ver mis órdenes' })).toHaveAttribute('href', '/orders');
+    expect(screen.getByRole('link', { name: 'Ver mis órdenes' })).toHaveAttribute(
+      'href',
+      '/orders',
+    );
   });
 
   it('si la consulta falla, muestra el error', () => {
@@ -82,7 +97,11 @@ describe('OrderDetailPage', () => {
   });
 
   it('muestra items, totales y datos de envio de una orden encontrada (F7.3)', () => {
-    vi.mocked(useOrder).mockReturnValue({ status: 'success', order: orderFixture(), retry: vi.fn() });
+    vi.mocked(useOrder).mockReturnValue({
+      status: 'success',
+      order: orderFixture(),
+      retry: vi.fn(),
+    });
 
     renderOrderDetailPage();
 
@@ -93,7 +112,11 @@ describe('OrderDetailPage', () => {
 
   it('una orden pendiente ofrece cancelar; confirmarla refresca la orden (F7.6, F7.7)', () => {
     const retry = vi.fn();
-    vi.mocked(useOrder).mockReturnValue({ status: 'success', order: orderFixture('pending'), retry });
+    vi.mocked(useOrder).mockReturnValue({
+      status: 'success',
+      order: orderFixture('pending'),
+      retry,
+    });
 
     renderOrderDetailPage();
 
@@ -109,7 +132,11 @@ describe('OrderDetailPage', () => {
   it.each(['processing', 'completed', 'cancelled'] satisfies OrderStatus[])(
     'una orden en estado %s no ofrece la accion de cancelar (F7.8)',
     (status) => {
-      vi.mocked(useOrder).mockReturnValue({ status: 'success', order: orderFixture(status), retry: vi.fn() });
+      vi.mocked(useOrder).mockReturnValue({
+        status: 'success',
+        order: orderFixture(status),
+        retry: vi.fn(),
+      });
 
       renderOrderDetailPage();
 

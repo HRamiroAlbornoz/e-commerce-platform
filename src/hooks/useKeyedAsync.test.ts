@@ -32,9 +32,12 @@ describe('useKeyedAsync', () => {
   it('vuelve a loading y refetchea cuando cambia la key', async () => {
     const fetcher = vi.fn().mockResolvedValue('a');
 
-    const { result, rerender } = renderHook(({ key }: { key: string }) => useKeyedAsync(key, fetcher, 'Error'), {
-      initialProps: { key: 'key-a' },
-    });
+    const { result, rerender } = renderHook(
+      ({ key }: { key: string }) => useKeyedAsync(key, fetcher, 'Error'),
+      {
+        initialProps: { key: 'key-a' },
+      },
+    );
 
     await waitFor(() => expect(result.current.status).toBe('success'));
 

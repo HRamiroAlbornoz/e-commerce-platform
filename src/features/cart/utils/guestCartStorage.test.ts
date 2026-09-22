@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { clearGuestCart, readGuestCart, writeGuestCart } from '@/features/cart/utils/guestCartStorage';
+import {
+  clearGuestCart,
+  readGuestCart,
+  writeGuestCart,
+} from '@/features/cart/utils/guestCartStorage';
 
 const STORAGE_KEY = 'clack:guest-cart';
 

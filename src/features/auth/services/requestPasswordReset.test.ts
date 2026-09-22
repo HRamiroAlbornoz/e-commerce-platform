@@ -32,7 +32,7 @@ describe('requestPasswordReset', () => {
 
     await expect(requestPasswordReset('cliente@clack.com')).resolves.toEqual({
       ok: false,
-      message: 'No pudimos enviar el correo. Intentá de nuevo.',
+      message: 'No pudimos enviar el correo. Intenta de nuevo.',
     });
   });
 });

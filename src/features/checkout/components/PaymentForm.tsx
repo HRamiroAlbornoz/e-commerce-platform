@@ -1,7 +1,10 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { PaymentDraft } from '@shared/schemas/checkout';
-import { paymentFormSchema, type PaymentFormValues } from '@/features/checkout/schemas/checkoutForms';
+import {
+  paymentFormSchema,
+  type PaymentFormValues,
+} from '@/features/checkout/schemas/checkoutForms';
 import { TextField } from '@/components/ui/TextField';
 import { Button } from '@/components/ui/Button';
 import { InlineError } from '@/components/ui/InlineError';

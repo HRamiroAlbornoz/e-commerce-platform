@@ -7,7 +7,10 @@ export const registerFormSchema = z.object({
   email: z.email('Ingresá un email válido.'),
   password: z
     .string()
-    .min(MIN_PASSWORD_LENGTH, `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.`),
+    .min(
+      MIN_PASSWORD_LENGTH,
+      `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.`,
+    ),
 });
 
 export type RegisterFormValues = z.infer<typeof registerFormSchema>;

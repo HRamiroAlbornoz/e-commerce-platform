@@ -30,7 +30,9 @@ function ProductReviewsSection({ product, auth, reviews, retry }: ProductReviews
   const ratingAverage =
     ratingCount > 0 ? reviews.reduce((sum, review) => sum + review.rating, 0) / ratingCount : 0;
   const myReview =
-    auth.status === 'authenticated' ? (reviews.find((review) => review.userId === auth.user.uid) ?? null) : null;
+    auth.status === 'authenticated'
+      ? (reviews.find((review) => review.userId === auth.user.uid) ?? null)
+      : null;
 
   function handleChanged(): void {
     retry();
@@ -42,7 +44,9 @@ function ProductReviewsSection({ product, auth, reviews, retry }: ProductReviews
   return (
     <>
       <p className="font-body text-sm text-ink/70 dark:text-bone/70">
-        {ratingCount > 0 ? `${ratingAverage.toFixed(1)} · ${ratingCount} reseñas` : 'Todavia sin reseñas'}
+        {ratingCount > 0
+          ? `${ratingAverage.toFixed(1)} · ${ratingCount} reseñas`
+          : 'Todavía sin reseñas'}
       </p>
 
       {auth.status === 'authenticated' ? (
@@ -85,7 +89,7 @@ function ProductReviewsSection({ product, auth, reviews, retry }: ProductReviews
             state={buildRedirectState(`/products/${product.id}/reviews`)}
             className="underline decoration-1 underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-field-magenta dark:focus-visible:outline-field-cyan"
           >
-            Iniciá sesión
+            Inicia sesión
           </Link>{' '}
           para dejar tu reseña.
         </p>

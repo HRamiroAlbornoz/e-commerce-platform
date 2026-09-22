@@ -38,7 +38,7 @@ export function CheckoutPage() {
         cart={cart}
         onQuantityChange={setQuantity}
         onRemove={removeItem}
-        emptyStateDescription="Agregá productos al carrito antes de iniciar la compra."
+        emptyStateDescription="Agrega productos al carrito antes de iniciar la compra."
         totalVariant="sticky-bottom"
       />
 

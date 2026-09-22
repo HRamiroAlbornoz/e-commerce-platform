@@ -124,7 +124,7 @@ describe('uploadFileToS3', () => {
 
     await expect(resultPromise).resolves.toEqual({
       ok: false,
-      message: 'No pudimos subir la imagen. Intentá de nuevo.',
+      message: 'No pudimos subir la imagen. Intenta de nuevo.',
     });
   });
 });

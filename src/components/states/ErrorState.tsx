@@ -5,10 +5,7 @@ type ErrorStateProps = {
 
 export function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (
-    <div
-      role="alert"
-      className="flex flex-col items-center gap-4 px-6 py-24 text-center"
-    >
+    <div role="alert" className="flex flex-col items-center gap-4 px-6 py-24 text-center">
       <p className="font-display text-2xl text-ink dark:text-bone">{message}</p>
       <button
         type="button"

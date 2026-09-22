@@ -11,7 +11,13 @@ type ModalProps = {
   children: ReactNode;
 };
 
-export function Modal({ title, onClose, closeDisabled = false, initialFocusRef, children }: ModalProps) {
+export function Modal({
+  title,
+  onClose,
+  closeDisabled = false,
+  initialFocusRef,
+  children,
+}: ModalProps) {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const latestRef = useRef({ onClose, closeDisabled });

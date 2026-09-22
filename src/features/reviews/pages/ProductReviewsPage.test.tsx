@@ -68,12 +68,19 @@ function renderPage() {
 
 describe('ProductReviewsPage', () => {
   beforeEach(() => {
-    vi.mocked(useProduct).mockReturnValue({ status: 'success', product: productFixture, retry: vi.fn() });
+    vi.mocked(useProduct).mockReturnValue({
+      status: 'success',
+      product: productFixture,
+      retry: vi.fn(),
+    });
   });
 
   it('producto no encontrado muestra el mensaje correspondiente', () => {
     vi.mocked(useProduct).mockReturnValue({ status: 'not-found', retry: vi.fn() });
-    vi.mocked(useAuth).mockReturnValue({ status: 'anonymous', logout: vi.fn() } satisfies AuthContextValue);
+    vi.mocked(useAuth).mockReturnValue({
+      status: 'anonymous',
+      logout: vi.fn(),
+    } satisfies AuthContextValue);
 
     renderPage();
 
@@ -86,25 +93,40 @@ describe('ProductReviewsPage', () => {
       message: 'No pudimos cargar el producto. Intenta de nuevo.',
       retry: vi.fn(),
     });
-    vi.mocked(useAuth).mockReturnValue({ status: 'anonymous', logout: vi.fn() } satisfies AuthContextValue);
+    vi.mocked(useAuth).mockReturnValue({
+      status: 'anonymous',
+      logout: vi.fn(),
+    } satisfies AuthContextValue);
 
     renderPage();
 
-    expect(screen.getByText('No pudimos cargar el producto. Intenta de nuevo.')).toBeInTheDocument();
+    expect(
+      screen.getByText('No pudimos cargar el producto. Intenta de nuevo.'),
+    ).toBeInTheDocument();
   });
 
   it('sin reseñas, muestra el estado vacio que invita a escribir la primera (F8.6)', () => {
-    vi.mocked(useAuth).mockReturnValue({ status: 'anonymous', logout: vi.fn() } satisfies AuthContextValue);
-    vi.mocked(useProductReviews).mockReturnValue({ status: 'success', reviews: [], retry: vi.fn() });
+    vi.mocked(useAuth).mockReturnValue({
+      status: 'anonymous',
+      logout: vi.fn(),
+    } satisfies AuthContextValue);
+    vi.mocked(useProductReviews).mockReturnValue({
+      status: 'success',
+      reviews: [],
+      retry: vi.fn(),
+    });
 
     renderPage();
 
-    expect(screen.getByText('Todavia sin reseñas')).toBeInTheDocument();
+    expect(screen.getByText('Todavía sin reseñas')).toBeInTheDocument();
     expect(screen.getByText('Todavía no hay reseñas')).toBeInTheDocument();
   });
 
   it('con reseñas, muestra el promedio calculado y cada reseña de la lista', () => {
-    vi.mocked(useAuth).mockReturnValue({ status: 'anonymous', logout: vi.fn() } satisfies AuthContextValue);
+    vi.mocked(useAuth).mockReturnValue({
+      status: 'anonymous',
+      logout: vi.fn(),
+    } satisfies AuthContextValue);
     vi.mocked(useProductReviews).mockReturnValue({
       status: 'success',
       reviews: [reviewFixture({ rating: 5 }), reviewFixture({ userId: 'user-3', rating: 4 })],
@@ -118,22 +140,36 @@ describe('ProductReviewsPage', () => {
   });
 
   it('anonimo ve un link para iniciar sesion, sin formulario de reseña', () => {
-    vi.mocked(useAuth).mockReturnValue({ status: 'anonymous', logout: vi.fn() } satisfies AuthContextValue);
-    vi.mocked(useProductReviews).mockReturnValue({ status: 'success', reviews: [], retry: vi.fn() });
+    vi.mocked(useAuth).mockReturnValue({
+      status: 'anonymous',
+      logout: vi.fn(),
+    } satisfies AuthContextValue);
+    vi.mocked(useProductReviews).mockReturnValue({
+      status: 'success',
+      reviews: [],
+      retry: vi.fn(),
+    });
 
     renderPage();
 
-    expect(screen.getByRole('link', { name: 'Iniciá sesión' })).toHaveAttribute('href', '/login');
+    expect(screen.getByRole('link', { name: 'Inicia sesión' })).toHaveAttribute('href', '/login');
     expect(screen.queryByRole('button', { name: 'Publicar reseña' })).not.toBeInTheDocument();
   });
 
   it('mientras la sesion todavia no se confirmo, no muestra ni el formulario ni el prompt de login', () => {
-    vi.mocked(useAuth).mockReturnValue({ status: 'loading', logout: vi.fn() } satisfies AuthContextValue);
-    vi.mocked(useProductReviews).mockReturnValue({ status: 'success', reviews: [], retry: vi.fn() });
+    vi.mocked(useAuth).mockReturnValue({
+      status: 'loading',
+      logout: vi.fn(),
+    } satisfies AuthContextValue);
+    vi.mocked(useProductReviews).mockReturnValue({
+      status: 'success',
+      reviews: [],
+      retry: vi.fn(),
+    });
 
     renderPage();
 
-    expect(screen.queryByRole('link', { name: 'Iniciá sesión' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Inicia sesión' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Publicar reseña' })).not.toBeInTheDocument();
   });
 
@@ -144,7 +180,11 @@ describe('ProductReviewsPage', () => {
       role: 'customer',
       logout: vi.fn(),
     } satisfies AuthContextValue);
-    vi.mocked(useProductReviews).mockReturnValue({ status: 'success', reviews: [], retry: vi.fn() });
+    vi.mocked(useProductReviews).mockReturnValue({
+      status: 'success',
+      reviews: [],
+      retry: vi.fn(),
+    });
 
     renderPage();
 

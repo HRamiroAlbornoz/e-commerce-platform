@@ -90,7 +90,10 @@ describe('POST /api/admin/products/update', () => {
 
     expect(status).toHaveBeenCalledWith(200);
     const productSnap = await adminDb.doc(`products/${productId}`).get();
-    expect(productSnap.data()).toMatchObject({ name: 'Teclado Núcleo', nameLower: 'teclado nucleo' });
+    expect(productSnap.data()).toMatchObject({
+      name: 'Teclado Núcleo',
+      nameLower: 'teclado nucleo',
+    });
   });
 
   it('retirar del catalogo es un patch parcial con isActive:false', async () => {

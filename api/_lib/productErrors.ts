@@ -10,6 +10,15 @@ const PRODUCT_ERROR_HTTP_STATUS: Record<ProductErrorCode, number> = {
   INTERNAL_ERROR: 500,
 };
 
+const PRODUCT_ERROR_RETRYABLE: Record<ProductErrorCode, boolean> = {
+  UNAUTHENTICATED: false,
+  FORBIDDEN: false,
+  INVALID_REQUEST: false,
+  PRODUCT_NOT_FOUND: false,
+  PRODUCT_HAS_REFERENCES: false,
+  INTERNAL_ERROR: true,
+};
+
 export class ProductError extends Error {
   readonly code: ProductErrorCode;
   readonly details: { orderCount: number; ratingCount: number } | undefined;
@@ -33,6 +42,7 @@ export function toProductErrorResponse(error: ProductError): ProductErrorRespons
   return {
     code: error.code,
     message: error.message,
+    retryable: PRODUCT_ERROR_RETRYABLE[error.code],
     ...(error.details ? { details: error.details } : {}),
   };
 }

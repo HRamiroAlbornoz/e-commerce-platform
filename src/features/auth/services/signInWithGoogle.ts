@@ -19,7 +19,7 @@ export async function signInWithGoogle(): Promise<AuthResult> {
 
     if (!snapshot.exists()) {
       if (!credential.user.email) {
-        return { ok: false, message: 'No pudimos obtener tu email de Google. Intentá de nuevo.' };
+        return { ok: false, message: 'No pudimos obtener tu email de Google. Intenta de nuevo.' };
       }
 
       const displayName = credential.user.displayName ?? credential.user.email;

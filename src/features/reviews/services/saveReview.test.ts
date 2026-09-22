@@ -47,7 +47,12 @@ describe('saveReview', () => {
   it('al editar, conserva el createdAt original en vez de generar uno nuevo', async () => {
     const originalCreatedAt = new Date('2026-01-01');
 
-    await saveReview(buildUser(), 'product-1', { rating: 3, comment: 'Cambié de opinión' }, originalCreatedAt);
+    await saveReview(
+      buildUser(),
+      'product-1',
+      { rating: 3, comment: 'Cambié de opinión' },
+      originalCreatedAt,
+    );
 
     expect(setDocMock).toHaveBeenCalledWith(
       'review-ref-with-converter',

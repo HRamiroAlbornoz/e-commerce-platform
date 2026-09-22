@@ -6,7 +6,7 @@ import {
   type UpdateProductRequest,
 } from '@shared/schemas/product';
 
-const GENERIC_UPDATE_ERROR = 'No pudimos actualizar el producto. Intentá de nuevo.';
+const GENERIC_UPDATE_ERROR = 'No pudimos actualizar el producto. Intenta de nuevo.';
 
 export type UpdateProductResult = { ok: true } | { ok: false; message: string };
 

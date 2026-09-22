@@ -31,7 +31,7 @@ describe('useOrdersSummary', () => {
     await waitFor(() => {
       expect(result.current).toMatchObject({
         status: 'error',
-        message: 'No pudimos cargar el resumen de ventas. Intentá de nuevo.',
+        message: 'No pudimos cargar el resumen de ventas. Intenta de nuevo.',
       });
     });
   });

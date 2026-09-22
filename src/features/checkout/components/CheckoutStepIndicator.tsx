@@ -35,9 +35,7 @@ export function CheckoutStepIndicator({
         const isActive = draft.activeStep === step;
         const editHandler = editHandlers[step];
         const isReached = getStepVisibility(draft, step) !== 'hidden';
-        const textClasses = isReached
-          ? 'text-ink dark:text-bone'
-          : 'text-ink/40 dark:text-bone/40';
+        const textClasses = isReached ? 'text-ink dark:text-bone' : 'text-ink/40 dark:text-bone/40';
 
         return (
           <li key={step} aria-current={isActive ? 'step' : undefined}>

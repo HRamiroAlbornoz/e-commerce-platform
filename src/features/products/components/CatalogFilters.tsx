@@ -1,4 +1,8 @@
-import { PRODUCT_CATEGORIES, PRODUCT_DISPLAY_COLORS, type ProductCategory } from '@shared/schemas/product';
+import {
+  PRODUCT_CATEGORIES,
+  PRODUCT_DISPLAY_COLORS,
+  type ProductCategory,
+} from '@shared/schemas/product';
 import { CATEGORY_LABELS } from '@/features/products/constants/categoryLabels';
 import { FIELD_COLOR_CLASSES } from '@/features/products/constants/displayColors';
 import { FILTER_CHIP_CLASSES } from '@/features/products/constants/filterStyles';
@@ -39,7 +43,7 @@ export function CatalogFilters({
 
       <div
         role="group"
-        aria-label="Filtrar por categoria"
+        aria-label="Filtrar por categoría"
         className="catalog-category-rail flex gap-5 overflow-x-auto"
       >
         <button

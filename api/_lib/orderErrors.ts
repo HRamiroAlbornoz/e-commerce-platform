@@ -15,6 +15,20 @@ const ORDER_ERROR_HTTP_STATUS: Record<OrderErrorCode, number> = {
   INTERNAL_ERROR: 500,
 };
 
+const ORDER_ERROR_RETRYABLE: Record<OrderErrorCode, boolean> = {
+  UNAUTHENTICATED: false,
+  FORBIDDEN: false,
+  INVALID_REQUEST: false,
+  EMPTY_CART: false,
+  PRODUCT_UNAVAILABLE: false,
+  OUT_OF_STOCK: false,
+  PRICE_CHANGED: false,
+  CART_CHANGED: false,
+  ORDER_NOT_FOUND: false,
+  INVALID_STATUS_TRANSITION: false,
+  INTERNAL_ERROR: true,
+};
+
 export class OrderError extends Error {
   readonly code: OrderErrorCode;
   readonly productId: string | undefined;
@@ -34,6 +48,7 @@ export function toOrderErrorResponse(error: OrderError): OrderErrorResponse {
   return {
     code: error.code,
     message: error.message,
+    retryable: ORDER_ERROR_RETRYABLE[error.code],
     ...(error.productId ? { details: { productId: error.productId } } : {}),
   };
 }

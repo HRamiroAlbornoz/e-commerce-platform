@@ -50,7 +50,7 @@ describe('useTopSellingProducts', () => {
     await waitFor(() => {
       expect(result.current).toMatchObject({
         status: 'error',
-        message: 'No pudimos cargar el ranking de productos. Intentá de nuevo.',
+        message: 'No pudimos cargar el ranking de productos. Intenta de nuevo.',
       });
     });
   });

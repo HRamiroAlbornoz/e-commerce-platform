@@ -60,7 +60,7 @@ describe('useFeaturedProduct', () => {
     await waitFor(() => {
       expect(result.current).toMatchObject({
         status: 'error',
-        message: 'No pudimos cargar la pieza destacada. Intentá de nuevo.',
+        message: 'No pudimos cargar la pieza destacada. Intenta de nuevo.',
       });
     });
   });

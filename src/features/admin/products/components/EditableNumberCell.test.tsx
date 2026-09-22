@@ -5,7 +5,16 @@ import { EditableNumberCell } from '@/features/admin/products/components/Editabl
 describe('EditableNumberCell', () => {
   it('no llama a onSave si el valor no cambio al perder el foco', () => {
     const onSave = vi.fn();
-    render(<EditableNumberCell value={100} label="Precio — Teclado" min={0} step={1} disabled={false} onSave={onSave} />);
+    render(
+      <EditableNumberCell
+        value={100}
+        label="Precio — Teclado"
+        min={0}
+        step={1}
+        disabled={false}
+        onSave={onSave}
+      />,
+    );
 
     const input = screen.getByLabelText('Precio — Teclado');
     fireEvent.blur(input);
@@ -15,7 +24,16 @@ describe('EditableNumberCell', () => {
 
   it('guarda el nuevo valor cuando cambia y el guardado tiene exito', async () => {
     const onSave = vi.fn().mockResolvedValue(150);
-    render(<EditableNumberCell value={100} label="Precio — Teclado" min={0} step={1} disabled={false} onSave={onSave} />);
+    render(
+      <EditableNumberCell
+        value={100}
+        label="Precio — Teclado"
+        min={0}
+        step={1}
+        disabled={false}
+        onSave={onSave}
+      />,
+    );
 
     const input = screen.getByLabelText('Precio — Teclado');
     fireEvent.change(input, { target: { value: '150' } });
@@ -27,7 +45,16 @@ describe('EditableNumberCell', () => {
 
   it('muestra el valor normalizado por el servidor, no el que tipeo el usuario, cuando difieren', async () => {
     const onSave = vi.fn().mockResolvedValue(150.68);
-    render(<EditableNumberCell value={100} label="Precio — Teclado" min={0} step={0.01} disabled={false} onSave={onSave} />);
+    render(
+      <EditableNumberCell
+        value={100}
+        label="Precio — Teclado"
+        min={0}
+        step={0.01}
+        disabled={false}
+        onSave={onSave}
+      />,
+    );
 
     const input = screen.getByLabelText('Precio — Teclado');
     fireEvent.change(input, { target: { value: '150.678' } });
@@ -39,7 +66,16 @@ describe('EditableNumberCell', () => {
 
   it('revierte al valor anterior y explica el error cuando el guardado falla (F9.5)', async () => {
     const onSave = vi.fn().mockRejectedValue(new Error('El servidor rechazó el cambio.'));
-    render(<EditableNumberCell value={100} label="Stock — Teclado" min={0} step={1} disabled={false} onSave={onSave} />);
+    render(
+      <EditableNumberCell
+        value={100}
+        label="Stock — Teclado"
+        min={0}
+        step={1}
+        disabled={false}
+        onSave={onSave}
+      />,
+    );
 
     const input = screen.getByLabelText('Stock — Teclado');
     fireEvent.change(input, { target: { value: '200' } });
@@ -51,7 +87,16 @@ describe('EditableNumberCell', () => {
 
   it('con un valor invalido, revierte y no llama a onSave', () => {
     const onSave = vi.fn();
-    render(<EditableNumberCell value={100} label="Stock — Teclado" min={0} step={1} disabled={false} onSave={onSave} />);
+    render(
+      <EditableNumberCell
+        value={100}
+        label="Stock — Teclado"
+        min={0}
+        step={1}
+        disabled={false}
+        onSave={onSave}
+      />,
+    );
 
     const input = screen.getByLabelText('Stock — Teclado');
     fireEvent.change(input, { target: { value: '-5' } });
@@ -64,7 +109,14 @@ describe('EditableNumberCell', () => {
 
   it('deshabilitada mientras otra accion de la fila esta en curso', () => {
     render(
-      <EditableNumberCell value={100} label="Precio — Teclado" min={0} step={1} disabled onSave={vi.fn()} />,
+      <EditableNumberCell
+        value={100}
+        label="Precio — Teclado"
+        min={0}
+        step={1}
+        disabled
+        onSave={vi.fn()}
+      />,
     );
 
     expect(screen.getByLabelText('Precio — Teclado')).toBeDisabled();

@@ -11,7 +11,7 @@ export function useFeaturedProduct(): FeaturedProductState & { retry: () => void
   const result = useKeyedAsync(
     'featured-product',
     getFeaturedProduct,
-    'No pudimos cargar la pieza destacada. Intentá de nuevo.',
+    'No pudimos cargar la pieza destacada. Intenta de nuevo.',
   );
 
   if (result.status === 'success') {

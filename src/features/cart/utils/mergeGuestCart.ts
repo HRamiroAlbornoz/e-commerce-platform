@@ -1,11 +1,18 @@
 import type { CartItem } from '@shared/schemas/cart';
 import type { Product } from '@shared/schemas/product';
 
-export type MergeExclusion = { productId: string; productName: string; reason: 'inactive' | 'out-of-stock' };
+export type MergeExclusion = {
+  productId: string;
+  productName: string;
+  reason: 'inactive' | 'out-of-stock';
+};
 
 export type MergeResult = { items: CartItem[]; exclusions: MergeExclusion[] };
 
-function maxQuantityByProductId(guestItems: CartItem[], existingItems: CartItem[]): Map<string, number> {
+function maxQuantityByProductId(
+  guestItems: CartItem[],
+  existingItems: CartItem[],
+): Map<string, number> {
   const quantities = new Map<string, number>();
 
   for (const item of [...existingItems, ...guestItems]) {

@@ -17,7 +17,11 @@ export function useProduct(id: string | undefined): ProductDetailState & { retry
     return getProductById(id);
   }, [id]);
 
-  const result = useKeyedAsync(id ?? '', fetchProduct, 'No pudimos cargar el producto. Intenta de nuevo.');
+  const result = useKeyedAsync(
+    id ?? '',
+    fetchProduct,
+    'No pudimos cargar el producto. Intenta de nuevo.',
+  );
 
   if (!id) {
     return { status: 'not-found', retry: result.retry };

@@ -12,7 +12,13 @@ const orderFixture: Order = {
   id: 'order-1',
   userId: 'user-1',
   items: [
-    { productId: 'product-1', name: 'Teclado Aurora', unitPrice: 89999, imageUrl: 'https://placehold.co/600x400', quantity: 1 },
+    {
+      productId: 'product-1',
+      name: 'Teclado Aurora',
+      unitPrice: 89999,
+      imageUrl: 'https://placehold.co/600x400',
+      quantity: 1,
+    },
   ],
   subtotal: 89999,
   shippingCost: 4999,

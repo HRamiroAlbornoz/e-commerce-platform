@@ -33,9 +33,7 @@ describe('PaymentForm', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Revisar compra' }));
 
     await waitFor(() =>
-      expect(onSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({ outcome: 'error' }),
-      ),
+      expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ outcome: 'error' })),
     );
   });
 

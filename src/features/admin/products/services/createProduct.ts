@@ -6,7 +6,7 @@ import {
   type CreateProductRequest,
 } from '@shared/schemas/product';
 
-const GENERIC_CREATE_ERROR = 'No pudimos crear el producto. Intentá de nuevo.';
+const GENERIC_CREATE_ERROR = 'No pudimos crear el producto. Intenta de nuevo.';
 
 export type CreateProductResult = { ok: true; productId: string } | { ok: false; message: string };
 

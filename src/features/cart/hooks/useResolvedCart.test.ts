@@ -89,6 +89,8 @@ describe('useResolvedCart', () => {
     const { result } = renderHook(() => useResolvedCart());
 
     await waitFor(() => expect(result.current.status).toBe('error'));
-    expect(result.current).toMatchObject({ message: 'No pudimos cargar el carrito. Intenta de nuevo.' });
+    expect(result.current).toMatchObject({
+      message: 'No pudimos cargar el carrito. Intenta de nuevo.',
+    });
   });
 });

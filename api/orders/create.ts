@@ -28,7 +28,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     respondWithError(
       res,
       requestId,
-      new OrderError('UNAUTHENTICATED', 'Sesión inválida o expirada. Iniciá sesión de nuevo.'),
+      new OrderError('UNAUTHENTICATED', 'Sesión inválida o expirada. Inicia sesión de nuevo.'),
     );
     return;
   }
@@ -89,7 +89,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       const cartItemsWithSnaps = aggregatedItems.map((item, index) => {
         const snap = productSnaps[index];
         if (!snap) {
-          throw new OrderError('INTERNAL_ERROR', 'No pudimos leer uno de los productos del carrito.');
+          throw new OrderError(
+            'INTERNAL_ERROR',
+            'No pudimos leer uno de los productos del carrito.',
+          );
         }
         return { item, snap };
       });
@@ -108,9 +111,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
         const rawProduct: Record<string, unknown> = snap.data() ?? {};
         const createdAt =
-          rawProduct.createdAt instanceof Timestamp ? rawProduct.createdAt.toDate() : rawProduct.createdAt;
+          rawProduct.createdAt instanceof Timestamp
+            ? rawProduct.createdAt.toDate()
+            : rawProduct.createdAt;
         const updatedAt =
-          rawProduct.updatedAt instanceof Timestamp ? rawProduct.updatedAt.toDate() : rawProduct.updatedAt;
+          rawProduct.updatedAt instanceof Timestamp
+            ? rawProduct.updatedAt.toDate()
+            : rawProduct.updatedAt;
         const product = productSchema.parse({ ...rawProduct, id: snap.id, createdAt, updatedAt });
 
         if (!product.isActive) {
@@ -194,7 +201,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     respondWithError(
       res,
       requestId,
-      new OrderError('INTERNAL_ERROR', 'No pudimos procesar tu compra. Intentá de nuevo.'),
+      new OrderError('INTERNAL_ERROR', 'No pudimos procesar tu compra. Intenta de nuevo.'),
     );
   }
 }

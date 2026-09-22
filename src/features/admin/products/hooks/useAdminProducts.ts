@@ -8,6 +8,6 @@ export function useAdminProducts() {
   return useKeyedAsync(
     'admin-products',
     fetchProducts,
-    'No pudimos cargar los productos. Intentá de nuevo.',
+    'No pudimos cargar los productos. Intenta de nuevo.',
   );
 }

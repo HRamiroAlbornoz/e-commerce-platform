@@ -9,7 +9,9 @@ type AdminProductDetailState =
   | { status: 'not-found' }
   | { status: 'success'; product: Product };
 
-export function useAdminProduct(id: string | undefined): AdminProductDetailState & { retry: () => void } {
+export function useAdminProduct(
+  id: string | undefined,
+): AdminProductDetailState & { retry: () => void } {
   const fetchProduct = useCallback(() => {
     if (!id) {
       return Promise.resolve(null);
@@ -20,7 +22,7 @@ export function useAdminProduct(id: string | undefined): AdminProductDetailState
   const result = useKeyedAsync(
     id ?? '',
     fetchProduct,
-    'No pudimos cargar el producto. Intentá de nuevo.',
+    'No pudimos cargar el producto. Intenta de nuevo.',
   );
 
   if (!id) {
