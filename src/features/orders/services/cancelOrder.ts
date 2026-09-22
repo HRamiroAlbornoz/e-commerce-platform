@@ -2,7 +2,7 @@ import type { User } from 'firebase/auth';
 import { postJsonRequest } from '@/lib/apiRequest';
 import { cancelOrderResponseSchema, orderErrorResponseSchema } from '@shared/schemas/order';
 
-const GENERIC_CANCEL_ERROR = 'No pudimos cancelar la orden. Intentá de nuevo.';
+const GENERIC_CANCEL_ERROR = 'No pudimos cancelar la orden. Intenta de nuevo.';
 
 export type CancelOrderResult = { ok: true } | { ok: false; message: string };
 

@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  OrderError,
-  orderErrorHttpStatus,
-  toOrderErrorResponse,
-} from './orderErrors.js';
+import { OrderError, orderErrorHttpStatus, toOrderErrorResponse } from './orderErrors.js';
 
 describe('orderErrorHttpStatus', () => {
   it('mapea cada codigo de negocio al status HTTP correcto', () => {
@@ -27,6 +23,7 @@ describe('toOrderErrorResponse', () => {
     expect(toOrderErrorResponse(error)).toEqual({
       code: 'EMPTY_CART',
       message: 'Tu carrito está vacío.',
+      retryable: false,
     });
   });
 
@@ -36,6 +33,7 @@ describe('toOrderErrorResponse', () => {
     expect(toOrderErrorResponse(error)).toEqual({
       code: 'OUT_OF_STOCK',
       message: 'Nos quedamos sin stock de "X".',
+      retryable: false,
       details: { productId: 'product-1' },
     });
   });

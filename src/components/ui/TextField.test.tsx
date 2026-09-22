@@ -13,7 +13,9 @@ describe('TextField', () => {
   });
 
   it('asocia el error al input y oculta el hint cuando hay un error', () => {
-    render(<TextField label="Contraseña" hint="Mínimo 8 caracteres." error="Contraseña invalida." />);
+    render(
+      <TextField label="Contraseña" hint="Mínimo 8 caracteres." error="Contraseña invalida." />,
+    );
 
     const input = screen.getByLabelText('Contraseña');
     const error = screen.getByText('Contraseña invalida.');

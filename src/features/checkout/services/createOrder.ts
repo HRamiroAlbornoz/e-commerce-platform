@@ -6,7 +6,7 @@ import {
   type CreateOrderRequest,
 } from '@shared/schemas/order';
 
-const GENERIC_ORDER_ERROR = 'No pudimos procesar tu compra. Intentá de nuevo.';
+const GENERIC_ORDER_ERROR = 'No pudimos procesar tu compra. Intenta de nuevo.';
 
 export type CreateOrderResult = { ok: true; orderId: string } | { ok: false; message: string };
 

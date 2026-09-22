@@ -17,7 +17,7 @@ export function CartPage() {
         cart={cart}
         onQuantityChange={setQuantity}
         onRemove={removeItem}
-        emptyStateDescription="Todavia no agregaste ningun producto. Volve al catalogo para encontrar algo."
+        emptyStateDescription="Todavía no agregaste ningún producto. Vuelve al catálogo para encontrar algo."
         nonEmptyFooter={
           <div className="mt-6 flex justify-end">
             <Link to="/checkout" className={BUTTON_CLASSES}>

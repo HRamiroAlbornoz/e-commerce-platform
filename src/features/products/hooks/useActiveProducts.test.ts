@@ -1,7 +1,10 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useActiveProducts } from '@/features/products/hooks/useActiveProducts';
-import { getActiveProducts, type ProductsPage } from '@/features/products/services/getActiveProducts';
+import {
+  getActiveProducts,
+  type ProductsPage,
+} from '@/features/products/services/getActiveProducts';
 import type { Product } from '@shared/schemas/product';
 
 vi.mock('@/features/products/services/getActiveProducts', () => ({
@@ -32,10 +35,7 @@ function buildProduct(overrides: Partial<Product> = {}): Product {
   };
 }
 
-function buildPage(
-  products: Product[],
-  overrides: Partial<ProductsPage> = {},
-): ProductsPage {
+function buildPage(products: Product[], overrides: Partial<ProductsPage> = {}): ProductsPage {
   return { products, lastDoc: null, hasNextPage: false, ...overrides };
 }
 
@@ -98,9 +98,12 @@ describe('useActiveProducts', () => {
       buildPage([buildProduct()], { hasNextPage: true, lastDoc: lastDocPage1 }),
     );
 
-    const { result, rerender } = renderHook(({ page }: { page: number }) => useActiveProducts({}, page), {
-      initialProps: { page: 1 },
-    });
+    const { result, rerender } = renderHook(
+      ({ page }: { page: number }) => useActiveProducts({}, page),
+      {
+        initialProps: { page: 1 },
+      },
+    );
 
     await waitFor(() => expect(result.current.status).toBe('success'));
 
@@ -109,21 +112,34 @@ describe('useActiveProducts', () => {
     );
     rerender({ page: 2 });
 
-    await waitFor(() => expect(result.current).toMatchObject({ status: 'success', hasNextPage: false }));
+    await waitFor(() =>
+      expect(result.current).toMatchObject({ status: 'success', hasNextPage: false }),
+    );
 
     expect(getActiveProducts).toHaveBeenCalledTimes(2);
-    expect(getActiveProducts).toHaveBeenNthCalledWith(2, { category: undefined, searchTerm: undefined }, lastDocPage1);
+    expect(getActiveProducts).toHaveBeenNthCalledWith(
+      2,
+      { category: undefined, searchTerm: undefined },
+      lastDocPage1,
+    );
   });
 
   it('volver a una pagina ya visitada no vuelve a consultar Firestore', async () => {
     const lastDocPage1 = { id: 'cursor-1' } as never;
     vi.mocked(getActiveProducts)
-      .mockResolvedValueOnce(buildPage([buildProduct()], { hasNextPage: true, lastDoc: lastDocPage1 }))
-      .mockResolvedValueOnce(buildPage([buildProduct({ id: 'product-2' })], { hasNextPage: false }));
+      .mockResolvedValueOnce(
+        buildPage([buildProduct()], { hasNextPage: true, lastDoc: lastDocPage1 }),
+      )
+      .mockResolvedValueOnce(
+        buildPage([buildProduct({ id: 'product-2' })], { hasNextPage: false }),
+      );
 
-    const { result, rerender } = renderHook(({ page }: { page: number }) => useActiveProducts({}, page), {
-      initialProps: { page: 1 },
-    });
+    const { result, rerender } = renderHook(
+      ({ page }: { page: number }) => useActiveProducts({}, page),
+      {
+        initialProps: { page: 1 },
+      },
+    );
 
     await waitFor(() => expect(result.current.status).toBe('success'));
     rerender({ page: 2 });
@@ -141,27 +157,46 @@ describe('useActiveProducts', () => {
     const lastDocPage1 = { id: 'cursor-1' } as never;
     const lastDocPage2 = { id: 'cursor-2' } as never;
     vi.mocked(getActiveProducts)
-      .mockResolvedValueOnce(buildPage([buildProduct({ id: 'page-1' })], { hasNextPage: true, lastDoc: lastDocPage1 }))
-      .mockResolvedValueOnce(buildPage([buildProduct({ id: 'page-2' })], { hasNextPage: true, lastDoc: lastDocPage2 }))
+      .mockResolvedValueOnce(
+        buildPage([buildProduct({ id: 'page-1' })], { hasNextPage: true, lastDoc: lastDocPage1 }),
+      )
+      .mockResolvedValueOnce(
+        buildPage([buildProduct({ id: 'page-2' })], { hasNextPage: true, lastDoc: lastDocPage2 }),
+      )
       .mockResolvedValueOnce(buildPage([buildProduct({ id: 'page-3' })], { hasNextPage: false }));
 
     const { result } = renderHook(() => useActiveProducts({}, 3));
 
     await waitFor(() => {
-      expect(result.current).toMatchObject({ status: 'success', products: [buildProduct({ id: 'page-3' })] });
+      expect(result.current).toMatchObject({
+        status: 'success',
+        products: [buildProduct({ id: 'page-3' })],
+      });
     });
 
     expect(getActiveProducts).toHaveBeenCalledTimes(3);
-    expect(getActiveProducts).toHaveBeenNthCalledWith(1, { category: undefined, searchTerm: undefined });
-    expect(getActiveProducts).toHaveBeenNthCalledWith(2, { category: undefined, searchTerm: undefined }, lastDocPage1);
-    expect(getActiveProducts).toHaveBeenNthCalledWith(3, { category: undefined, searchTerm: undefined }, lastDocPage2);
+    expect(getActiveProducts).toHaveBeenNthCalledWith(1, {
+      category: undefined,
+      searchTerm: undefined,
+    });
+    expect(getActiveProducts).toHaveBeenNthCalledWith(
+      2,
+      { category: undefined, searchTerm: undefined },
+      lastDocPage1,
+    );
+    expect(getActiveProducts).toHaveBeenNthCalledWith(
+      3,
+      { category: undefined, searchTerm: undefined },
+      lastDocPage2,
+    );
   });
 
   it('cambiar la categoria descarta los cursores cacheados y vuelve a consultar desde el principio', async () => {
     vi.mocked(getActiveProducts).mockResolvedValue(buildPage([buildProduct()]));
 
     const { result, rerender } = renderHook(
-      ({ category }: { category?: 'keyboard' | 'mouse' | undefined }) => useActiveProducts({ category }, 1),
+      ({ category }: { category?: 'keyboard' | 'mouse' | undefined }) =>
+        useActiveProducts({ category }, 1),
       { initialProps: {} },
     );
 
@@ -170,7 +205,10 @@ describe('useActiveProducts', () => {
     rerender({ category: 'mouse' });
 
     await waitFor(() => {
-      expect(getActiveProducts).toHaveBeenLastCalledWith({ category: 'mouse', searchTerm: undefined });
+      expect(getActiveProducts).toHaveBeenLastCalledWith({
+        category: 'mouse',
+        searchTerm: undefined,
+      });
     });
   });
 

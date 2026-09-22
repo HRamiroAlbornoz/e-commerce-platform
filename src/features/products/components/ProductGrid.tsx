@@ -5,9 +5,7 @@ import { ProductCardSkeleton } from '@/features/products/components/ProductCardS
 
 const SKELETON_COUNT = 8;
 
-type ProductGridProps =
-  | { status: 'loading' }
-  | { status: 'success'; products: Product[] };
+type ProductGridProps = { status: 'loading' } | { status: 'success'; products: Product[] };
 
 export const ProductGrid = memo(function ProductGrid(props: ProductGridProps) {
   if (props.status === 'loading') {

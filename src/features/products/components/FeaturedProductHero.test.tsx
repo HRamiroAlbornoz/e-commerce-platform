@@ -53,14 +53,24 @@ describe('FeaturedProductHero', () => {
     ).toBeInTheDocument();
   });
 
-  it('el nombre y la imagen enlazan al detalle del producto', () => {
+  it('el nombre enlaza al detalle del producto como el unico link accesible por teclado', () => {
     vi.mocked(useCart).mockReturnValue(buildCartContextValue());
 
     renderFeaturedProductHero(buildProduct());
 
     const detailLinks = screen.getAllByRole('link', { name: /teclado aurora/i });
-    expect(detailLinks.length).toBeGreaterThan(0);
-    detailLinks.forEach((link) => expect(link).toHaveAttribute('href', '/products/product-1'));
+    expect(detailLinks).toHaveLength(1);
+    expect(detailLinks[0]).toHaveAttribute('href', '/products/product-1');
+  });
+
+  it('la imagen tambien enlaza al detalle, pero queda fuera del tabbing por ser redundante', () => {
+    vi.mocked(useCart).mockReturnValue(buildCartContextValue());
+
+    const { container } = renderFeaturedProductHero(buildProduct());
+
+    const imageLink = container.querySelector('a[aria-hidden="true"]');
+    expect(imageLink).toHaveAttribute('href', '/products/product-1');
+    expect(imageLink).toHaveAttribute('tabindex', '-1');
   });
 
   it('expone la accion primaria de agregar al carrito (F14.2)', () => {

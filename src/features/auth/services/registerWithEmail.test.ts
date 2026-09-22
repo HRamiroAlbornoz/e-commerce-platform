@@ -30,7 +30,10 @@ describe('registerWithEmail', () => {
     });
 
     expect(result).toEqual({ ok: true });
-    expect(updateProfileMock).toHaveBeenCalledWith({ uid: 'uid-1' }, { displayName: 'Nueva Cliente' });
+    expect(updateProfileMock).toHaveBeenCalledWith(
+      { uid: 'uid-1' },
+      { displayName: 'Nueva Cliente' },
+    );
     expect(createUserDocument).toHaveBeenCalledWith('uid-1', 'nueva@clack.com', 'Nueva Cliente');
   });
 
@@ -78,6 +81,6 @@ describe('registerWithEmail', () => {
       displayName: 'Cliente',
     });
 
-    expect(result).toEqual({ ok: false, message: 'Ocurrió un error. Intentá de nuevo.' });
+    expect(result).toEqual({ ok: false, message: 'Ocurrió un error. Intenta de nuevo.' });
   });
 });

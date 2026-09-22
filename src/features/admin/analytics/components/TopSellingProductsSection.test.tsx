@@ -27,14 +27,14 @@ describe('TopSellingProductsSection', () => {
     const retry = vi.fn();
     vi.mocked(useTopSellingProducts).mockReturnValue({
       status: 'error',
-      message: 'No pudimos cargar el ranking de productos. Intentá de nuevo.',
+      message: 'No pudimos cargar el ranking de productos. Intenta de nuevo.',
       retry,
     });
 
     render(<TopSellingProductsSection />);
 
     expect(
-      screen.getByText('No pudimos cargar el ranking de productos. Intentá de nuevo.'),
+      screen.getByText('No pudimos cargar el ranking de productos. Intenta de nuevo.'),
     ).toBeInTheDocument();
   });
 

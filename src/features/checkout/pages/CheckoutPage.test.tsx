@@ -56,8 +56,12 @@ function renderCheckoutPage() {
 }
 
 async function fillShipping() {
-  fireEvent.change(screen.getByLabelText('Nombre completo'), { target: { value: 'Hernán Albornoz' } });
-  fireEvent.change(screen.getByLabelText('Dirección'), { target: { value: 'Av. Siempre Viva 742' } });
+  fireEvent.change(screen.getByLabelText('Nombre completo'), {
+    target: { value: 'Hernán Albornoz' },
+  });
+  fireEvent.change(screen.getByLabelText('Dirección'), {
+    target: { value: 'Av. Siempre Viva 742' },
+  });
   fireEvent.change(screen.getByLabelText('Ciudad'), { target: { value: 'Springfield' } });
   fireEvent.change(screen.getByLabelText('Código postal'), { target: { value: '1000' } });
   fireEvent.change(screen.getByLabelText('Teléfono'), { target: { value: '1122334455' } });
@@ -66,7 +70,9 @@ async function fillShipping() {
 }
 
 async function fillPayment() {
-  fireEvent.change(screen.getByLabelText('Nombre del titular'), { target: { value: 'Hernán Albornoz' } });
+  fireEvent.change(screen.getByLabelText('Nombre del titular'), {
+    target: { value: 'Hernán Albornoz' },
+  });
   fireEvent.click(screen.getByRole('button', { name: 'Revisar compra' }));
   await waitFor(() => expect(screen.getByText('Revisión final')).toBeInTheDocument());
 }
@@ -84,11 +90,16 @@ describe('CheckoutPage', () => {
   });
 
   it('con el carrito vacio, muestra el mensaje y no renderiza ninguna seccion de checkout (F6.4)', () => {
-    vi.mocked(useResolvedCart).mockReturnValue({ status: 'success', lines: [], total: 0, retry: vi.fn() });
+    vi.mocked(useResolvedCart).mockReturnValue({
+      status: 'success',
+      lines: [],
+      total: 0,
+      retry: vi.fn(),
+    });
 
     renderCheckoutPage();
 
-    expect(screen.getByText('Tu carrito esta vacio')).toBeInTheDocument();
+    expect(screen.getByText('Tu carrito está vacío')).toBeInTheDocument();
     expect(screen.queryByLabelText('Nombre completo')).not.toBeInTheDocument();
   });
 
@@ -141,7 +152,12 @@ describe('CheckoutPage', () => {
 
   it('confirmar compra vacia el carrito, reinicia el borrador y navega al detalle de la orden (F6.5, F6.10)', async () => {
     const clearCart = vi.fn(() => {
-      vi.mocked(useResolvedCart).mockReturnValue({ status: 'success', lines: [], total: 0, retry: vi.fn() });
+      vi.mocked(useResolvedCart).mockReturnValue({
+        status: 'success',
+        lines: [],
+        total: 0,
+        retry: vi.fn(),
+      });
     });
     vi.mocked(useCart).mockReturnValue(buildCartContextValue({ clearCart }));
     vi.mocked(useResolvedCart).mockReturnValue({
@@ -150,7 +166,10 @@ describe('CheckoutPage', () => {
       total: 29999,
       retry: vi.fn(),
     });
-    vi.mocked(createOrder).mockResolvedValue({ ok: true, orderId: '11112222-3333-4444-5555-666677778888' });
+    vi.mocked(createOrder).mockResolvedValue({
+      ok: true,
+      orderId: '11112222-3333-4444-5555-666677778888',
+    });
 
     renderCheckoutPage();
     await fillShipping();

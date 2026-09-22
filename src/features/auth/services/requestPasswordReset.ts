@@ -12,6 +12,6 @@ export async function requestPasswordReset(email: string): Promise<AuthResult> {
       return { ok: true };
     }
 
-    return { ok: false, message: 'No pudimos enviar el correo. Intentá de nuevo.' };
+    return { ok: false, message: 'No pudimos enviar el correo. Intenta de nuevo.' };
   }
 }

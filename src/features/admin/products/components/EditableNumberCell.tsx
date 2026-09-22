@@ -10,12 +10,23 @@ type EditableNumberCellProps = {
   onSave: (newValue: number) => Promise<number>;
 };
 
-export function EditableNumberCell({ value, label, min, step, disabled, onSave }: EditableNumberCellProps) {
+export function EditableNumberCell({
+  value,
+  label,
+  min,
+  step,
+  disabled,
+  onSave,
+}: EditableNumberCellProps) {
   const [draft, setDraft] = useState(String(value));
   const [committed, setCommitted] = useState(value);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const { fieldId, errorId, describedBy } = useFieldDescribedBy(undefined, undefined, error ?? undefined);
+  const { fieldId, errorId, describedBy } = useFieldDescribedBy(
+    undefined,
+    undefined,
+    error ?? undefined,
+  );
 
   async function commit(): Promise<void> {
     const parsed = Number(draft);

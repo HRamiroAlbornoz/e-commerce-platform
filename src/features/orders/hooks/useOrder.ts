@@ -17,7 +17,11 @@ export function useOrder(id: string | undefined): OrderDetailState & { retry: ()
     return getOrderById(id);
   }, [id]);
 
-  const result = useKeyedAsync(id ?? '', fetchOrder, 'No pudimos cargar la orden. Intenta de nuevo.');
+  const result = useKeyedAsync(
+    id ?? '',
+    fetchOrder,
+    'No pudimos cargar la orden. Intenta de nuevo.',
+  );
 
   if (!id) {
     return { status: 'not-found', retry: result.retry };

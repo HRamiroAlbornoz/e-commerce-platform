@@ -116,11 +116,11 @@ export function CatalogPage() {
 
         {isCatalogEmpty ? (
           <EmptyState
-            title={hasActiveFilter ? 'Sin resultados' : 'Todavia no hay productos'}
+            title={hasActiveFilter ? 'Sin resultados' : 'Todavía no hay productos'}
             description={
               hasActiveFilter
-                ? 'Ningun producto coincide con esta busqueda o categoria. Probá con otro termino o mostrá todos los productos.'
-                : 'La sala esta vacia por ahora. Volve mas tarde.'
+                ? 'Ningún producto coincide con esta búsqueda o categoría. Prueba con otro término o muestra todos los productos.'
+                : 'La sala está vacía por ahora. Vuelve más tarde.'
             }
           />
         ) : null}

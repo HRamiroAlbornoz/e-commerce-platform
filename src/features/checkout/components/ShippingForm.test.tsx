@@ -12,10 +12,14 @@ const shipping: ShippingDetails = {
 };
 
 function fillValidForm() {
-  fireEvent.change(screen.getByLabelText('Nombre completo'), { target: { value: shipping.fullName } });
+  fireEvent.change(screen.getByLabelText('Nombre completo'), {
+    target: { value: shipping.fullName },
+  });
   fireEvent.change(screen.getByLabelText('Dirección'), { target: { value: shipping.address } });
   fireEvent.change(screen.getByLabelText('Ciudad'), { target: { value: shipping.city } });
-  fireEvent.change(screen.getByLabelText('Código postal'), { target: { value: shipping.postalCode } });
+  fireEvent.change(screen.getByLabelText('Código postal'), {
+    target: { value: shipping.postalCode },
+  });
   fireEvent.change(screen.getByLabelText('Teléfono'), { target: { value: shipping.phone } });
 }
 

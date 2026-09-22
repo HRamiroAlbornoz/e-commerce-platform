@@ -18,7 +18,13 @@ function orderFixture(overrides: Partial<Order> = {}): Order {
     id: 'aaaa1111-bbbb-2222-cccc-333344445555',
     userId: 'user-1',
     items: [
-      { productId: 'product-1', name: 'Teclado Aurora', unitPrice: 89999, imageUrl: 'https://placehold.co/600x400', quantity: 1 },
+      {
+        productId: 'product-1',
+        name: 'Teclado Aurora',
+        unitPrice: 89999,
+        imageUrl: 'https://placehold.co/600x400',
+        quantity: 1,
+      },
     ],
     subtotal: 89999,
     shippingCost: 4999,
@@ -84,6 +90,8 @@ describe('OrdersPage', () => {
 
     renderOrdersPage();
 
-    expect(screen.getByText('No pudimos cargar tus órdenes. Intenta de nuevo.')).toBeInTheDocument();
+    expect(
+      screen.getByText('No pudimos cargar tus órdenes. Intenta de nuevo.'),
+    ).toBeInTheDocument();
   });
 });

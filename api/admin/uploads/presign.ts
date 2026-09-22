@@ -59,7 +59,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     respondWithError(
       res,
       requestId,
-      new UploadError('INTERNAL_ERROR', 'No pudimos preparar la subida. Intentá de nuevo.'),
+      new UploadError('INTERNAL_ERROR', 'No pudimos preparar la subida. Intenta de nuevo.'),
     );
   }
 }

@@ -30,7 +30,7 @@ describe('ForgotPasswordForm', () => {
   it('muestra un error real cuando el envio falla por conexion', async () => {
     vi.mocked(requestPasswordReset).mockResolvedValue({
       ok: false,
-      message: 'No pudimos enviar el correo. Intentá de nuevo.',
+      message: 'No pudimos enviar el correo. Intenta de nuevo.',
     });
 
     render(<ForgotPasswordForm onBackToLogin={vi.fn()} />);
@@ -39,7 +39,9 @@ describe('ForgotPasswordForm', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Enviar enlace' }));
 
     await waitFor(() => {
-      expect(screen.getByText('No pudimos enviar el correo. Intentá de nuevo.')).toBeInTheDocument();
+      expect(
+        screen.getByText('No pudimos enviar el correo. Intenta de nuevo.'),
+      ).toBeInTheDocument();
     });
   });
 

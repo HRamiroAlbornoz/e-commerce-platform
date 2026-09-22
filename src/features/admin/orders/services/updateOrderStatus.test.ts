@@ -37,13 +37,16 @@ describe('updateOrderStatus', () => {
   it('con una respuesta 200 valida, devuelve ok', async () => {
     mockFetchResponse(200, { orderId: 'order-1', status: 'processing' });
 
-    await expect(updateOrderStatus(fakeUser, 'order-1', 'processing')).resolves.toEqual({ ok: true });
+    await expect(updateOrderStatus(fakeUser, 'order-1', 'processing')).resolves.toEqual({
+      ok: true,
+    });
   });
 
   it('con un error de negocio del servidor, devuelve el mensaje', async () => {
     mockFetchResponse(409, {
       code: 'INVALID_STATUS_TRANSITION',
       message: 'Esta orden no puede pasar de "completed" a "processing".',
+      retryable: false,
     });
 
     const result = await updateOrderStatus(fakeUser, 'order-1', 'processing');
@@ -61,7 +64,7 @@ describe('updateOrderStatus', () => {
 
     expect(result).toEqual({
       ok: false,
-      message: 'No pudimos cambiar el estado de la orden. Intentá de nuevo.',
+      message: 'No pudimos cambiar el estado de la orden. Intenta de nuevo.',
     });
   });
 });

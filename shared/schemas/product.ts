@@ -126,6 +126,7 @@ export type ProductErrorCode = z.infer<typeof productErrorCodeSchema>;
 export const productErrorResponseSchema = z.object({
   code: productErrorCodeSchema,
   message: z.string().min(1),
+  retryable: z.boolean(),
   details: z
     .object({
       orderCount: z.number().int().nonnegative(),

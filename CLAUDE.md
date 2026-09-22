@@ -416,3 +416,144 @@ Otros hallazgos de `/simplify` aplicados: `FIELD_LABEL_CLASSES` (duplicado entre
 - ✅ Paso 7 · Tres layouts base (`PublicLayout`, `PrivateLayout`, `AdminLayout`) con sus guards y el router real (PR #10)
 - ✅ Paso 8 · Lista de slices (`docs/spec.md`, sección 6)
 - ✅ Paso 9 · Verificación conjunta: producción responde (`/`, `/api/health`, deep link a `/account`), CI en verde, emulador con seed, los tres layouts probados con Chrome DevTools
+
+## Etapa 4 · Cierre
+
+**2026-09-22.** Con las 14 slices y los 3 extras completos, el Cierre siguió el orden de
+`~/.claude/flujo-desarrollo.md`: recorrido de los flujos completos (mouse y teclado) → hallazgos
+propios → dos agentes de código contra el diff completo desde el primer commit (Standards y Spec,
+vía `mattpocock-skills:code-review`) → un agente de seguridad de altitud (cruzando las cuatro
+slices que tocan Admin SDK, no un diff puntual) → `/impeccable critique` de la superficie pública
+(dos assessments aislados: revisión de diseño y evidencia de detector/navegador) → performance con
+Lighthouse y un trace de Chrome DevTools → triage y commit final.
+
+**Bloqueante resuelto antes de arrancar el recorrido**: el hallazgo de `docs/pendientes.md` #1
+(Firestore de producción sin reglas, índices ni catálogo real) seguía activo — confirmado con
+`403 PERMISSION_DENIED` contra `products` en `clack-add2a`. Se desplegaron `firestore.rules`/
+`firestore.indexes.json` (ya probados contra el emulador, sin cambios) y se sembró el catálogo real
+con un script nuevo (`scripts/seedProduction.ts`), que reusa el mismo catálogo de 18 productos de
+`scripts/seed.ts` — extraído a `scripts/catalogSeedData.ts` para que los dos scripts no dupliquen
+los datos — pero apunta al proyecto real: borra explícitamente `FIRESTORE_EMULATOR_HOST`/
+`FIREBASE_AUTH_EMULATOR_HOST` del entorno antes de inicializar el Admin SDK (si no, los toma de
+`.env` y escribe en el emulador por error) y aborta sin escribir nada si `products` ya tiene
+documentos, para que un segundo `npm run seed:production` no duplique el catálogo. Verificado en
+vivo contra `https://clack-liart.vercel.app/`: landing, catálogo y `/api/health` responden con
+datos reales, sin errores de consola.
+
+**Bug real encontrado en el recorrido de usuario nuevo** (el único camino que atraviesa invitado →
+registro → checkout, tal como anuncia el flujo): un invitado con carrito que es redirigido a
+`/login?state.from=/checkout` y en vez de loguearse hace click en "Creá una" perdía el destino
+original — `RegisterPage` fijaba `redirectTo="/"` a mano en vez de leer `location.state` como sí
+hacía `LoginPage`, y el link "Creá una" de `LoginPage` (y el "Iniciá sesión" de `RegisterPage`) no
+reenviaban el `state` de React Router al navegar entre las dos pantallas. Con carrito+checkout es
+justamente el camino más común para un usuario nuevo, no un caso de borde. Arreglado en las dos
+direcciones (`buildRedirectState`/`getRedirectPath`, ya existentes desde la slice 5, reusados sin
+tocar su contrato) y cubierto con tres tests nuevos en `authRedirectHandoff.test.tsx` que ejercitan
+el flujo real vía `createRoutesStub`, no solo la lectura del state en aislado.
+
+**Dos agentes de código contra el diff completo (`5192b0f...HEAD`, el proyecto entero, no una
+slice)**, corridos en paralelo sin verse entre sí:
+- **Standards**: un hallazgo duro — los cuatro módulos de error (`api/_lib/{order,product,upload,review}Errors.ts`)
+  no llevaban `retryable: boolean`, el campo que `checklist-errores` pide explícitamente para que
+  el cliente distinga "mostrar Reintentar" de "no tiene sentido, hay que corregir el input" — un
+  gap real de checklist, no cubierto por ningún `/security-review` de slice porque es una
+  inconsistencia de *patrón repetido a través de cuatro dominios*, no algo visible en un diff
+  aislado. Agregado un mapa `code → retryable` por dominio (mismo patrón que los mapas de status
+  HTTP ya existentes) y el campo a los cuatro `*ErrorResponse` de `shared/schemas/`. Un hallazgo de
+  juicio, no aplicado: proponía además una jerarquía `AppError` genérica con subclases; se descartó
+  porque las cuatro clases de error de dominio que ya existen (`OrderError`, `ProductError`,
+  `UploadError`, `ReviewError`) cumplen el mismo rol de "4-5 tipos, la especificidad va en
+  `message`/`details`" que pide el checklist, solo organizadas por dominio en vez de por una base
+  genérica — introducir la base ahora sería un refactor grande y mayormente cosmético sobre cuatro
+  módulos ya probados.
+- **Spec** (contra `docs/spec.md`, F1-F14): sin hallazgos. Cero requisitos faltantes, cero scope
+  creep fuera de los tres extras ya planificados, cero lógica que se vea completa pero no lo esté,
+  en el muestreo hecho sobre los criterios de mayor riesgo.
+
+**Auditoría de seguridad de altitud (no un `/security-review` de diff)**: un hallazgo real MEDIUM —
+`cartItemSchema.productId`/`orderItemSchema.productId`/`expectedCartItemSchema.productId`
+(`shared/schemas/cart.ts`, `order.ts`) seguían con `z.string().min(1)` sin el charset cerrado que
+sí se aplicó a `productId` en `reviews/recalculate.ts` (slice 9) y se retrofiteó a `orderId` y a los
+endpoints admin de productos (slice 12) — la misma clase de inyección de path vía Admin SDK ya
+encontrada dos veces, esta vez sin cerrar en el carrito. Impacto práctico bajo hoy (`api/orders/create.ts`
+valida el resultado contra `productSchema.parse()` antes de cualquier escritura, así que un
+`productId` malicioso rompe con `INTERNAL_ERROR` en vez de corromper datos), pero es exactamente el
+tipo de "funciona por casualidad de que ningún otro documento cumple esa forma" que el proyecto ya
+decidió no aceptar como límite de seguridad. Cerrado reusando `productIdSchema` (el mismo regex
+`^[A-Za-z0-9_-]+$` de slice 9/12) en los tres schemas. El resto de la auditoría (gate de admin,
+`checkRevoked`, confianza de precio/stock/total, whitelist de S3, `firestore.rules` leída completa)
+no encontró nada nuevo.
+
+**`/impeccable critique` de la superficie pública** (`PublicLayout`/`CatalogPage`+`FeaturedProductHero`/
+`ProductDetailPage`), dos assessments aislados en paralelo:
+- **Detector mecánico**: 0 hallazgos.
+- **Evidencia de navegador, un hallazgo real y medido, no de opinión**: a 320×800, con el producto
+  destacado real más largo del catálogo ("Mousepad con carga inalámbrica PowerPad"), el botón
+  "Agregar al carrito" medía `top: 815px` en un viewport de 800px — **por debajo del fold**,
+  contradiciendo directamente la medición de la propia slice 14 (`top: 700px`), que se había probado
+  solo contra un producto de copy más corta. El piso del hero (`h-64` en mobile, fijado en la slice
+  14) es un techo de *altura de imagen*, pero nunca acotó la altura *variable* del nombre y la nota
+  curatorial — cualquier producto futuro con nombre o nota más largos podía reabrir el defecto en
+  cualquier momento, sin que nadie lo notara, porque "destacado" es automático (el más reciente).
+  Arreglado acotando las dos piezas de texto variables con `line-clamp-2` (mobile únicamente,
+  `md:line-clamp-none` las libera en desktop, donde no compiten por el fold) — el mismo idioma que
+  `ProductCard` ya usa para su descripción (`line-clamp-1`) desde la slice 1, aplicado acá por
+  primera vez a un título. Verificado con el mismo producto que rompía el fold: `top: 680px`, con
+  120px de margen, en los dos temas.
+- **Revisión de diseño, hallazgos reales aplicados**: (1) el link que envuelve solo la imagen del
+  hero (`FeaturedProductHero.tsx`) resultaba un segundo stop de tabulación idéntico al del nombre —
+  a diferencia de `ProductCard`, que envuelve imagen+nombre+descripción en un único link desde la
+  slice 1. Arreglado con `aria-hidden="true"`/`tabIndex={-1}` en el link de la imagen (deja de
+  competir por el foco; el mouse lo sigue usando, el teclado y los lectores de pantalla ven un solo
+  link real, el del `<h2>`) en vez de simplemente darle un nombre accesible propio (que hubiera
+  resuelto el hallazgo de Lighthouse pero no el de duplicación). (2) **Inconsistencia de voseo/tuteo
+  en toda la aplicación**, contra la regla explícita de `PRODUCT.md` ("española neutra, sin
+  modismos regionales"): ~60 ocurrencias de voseo (`Intentá`, `Creá una`, `Iniciá sesión`, `tenés`,
+  `Volve`, `Agregá`, `Probá`, `mostrá`, `elegi`, `Quedate`, `preferis`) mezcladas con la forma neutra
+  (`Intenta`, `tienes`) ya dominante en el resto del código — normalizado todo a tuteo neutro,
+  incluidas las notas curatoriales del catálogo semilla. (3) **Tildes y eñes faltantes en el
+  catálogo semilla** (`scripts/catalogSeedData.ts`): la prosa exacta en la que se apoya el
+  posicionamiento ("la opinión es el producto") tenía docenas de palabras mal escritas
+  (`ergonomica`, `Reclinacion`, `bateria`, `proposito`, `microfono`, `tactiles`, etc.) en los 18
+  productos — corregido por completo, más los mismos huecos en varios componentes de UI
+  (`categoria`, `esta disponible`, `Todavia`, `esta vacio`/`vacio`, `Ningun`/`busqueda`/`termino`).
+  Sin este agente, nada en el ciclo de una sola slice iba a notar una inconsistencia de tono que
+  solo se ve mirando la app entera de una sentada.
+
+**Otros hallazgos aplicados, encontrados directamente (no por ningún agente)**: `npm run test:functions`
+(66 tests de las Vercel Functions, incluida la transacción de creación de orden) y
+`npm run format:check` nunca se habían agregado a `.github/workflows/ci.yml` — un vacío real desde
+que `test:functions` se creó en la slice 7b, nunca enforced en CI, solo corrido a mano en cada
+slice. Agregados los dos pasos; `format:check` destapó drift de Prettier en 87 archivos ya
+mergeados (nunca antes revisado en CI), corregido con `npm run format`. También: la imagen del
+detalle de producto (`ProductDetailPage.tsx`) no tenía `width`/`height` explícitos (el DevTools
+Issues panel lo marca como riesgo de CLS aunque el frame ya reserva alto por CSS) — agregados
+`600`/`400`, las dimensiones reales del placeholder actual.
+
+**Performance**: Lighthouse (mobile, producción) pasó de accesibilidad 96 a **100** tras el fix del
+link duplicado del hero. Trace de Chrome DevTools sobre `https://clack-liart.vercel.app/`: **LCP
+906ms** (TTFB 51ms, casi todo el resto es el delay de carga de la imagen del hero, dentro de lo
+esperable) y **CLS 0.05** — los dos muy por debajo de los umbrales "good" de Core Web Vitals, sin
+acción necesaria. Best Practices/SEO/Agentic Browsing (meta description, `robots.txt`, `llms.txt`,
+cookies de terceros del widget de Google Sign-In) quedaron con hallazgos menores, no perseguidos:
+fuera del alcance de los checklists obligatorios del proyecto y de bajo valor para una pieza de
+portfolio sin dominio propio de verdad indexado.
+
+**Hallazgos evaluados y dejados como están, con motivo**: la exclusión del índice "No. XX" del
+nombre accesible de `ProductCard` (que un detector de accesibilidad marca como
+`label-content-name-mismatch`) es la misma decisión ya documentada desde la slice 3 — el índice es
+arbitrario y cambia con el filtro/orden, así que no tiene sentido que un lector de pantalla lo
+anuncie como si fuera un identificador estable. `useKeyedAsync` sigue con un flag `isMounted` en vez
+de `AbortController` para ignorar respuestas obsoletas — defendible porque los métodos de Firestore
+que envuelve (`getDoc`/`getDocs`) no aceptan una `AbortSignal`, así que no hay nada real que cancelar;
+quedó sin ADR propio por ser una decisión chica, pero registrada acá para que no se lea como un
+descuido. Las fotos del catálogo siguen siendo el placeholder gris con el nombre superpuesto — ya
+documentado en `PRODUCT.md` como pendiente ("Las fotos salen de bancos de licencia libre... Todavía
+no están descargadas"), no es un defecto de esta build.
+
+**Verificación final**: `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm test`
+(435 tests), `npm run test:functions` (66 tests, 1 skip ya documentado) y `npm run test:rules` (46
+tests) — los seis en verde, replicando exactamente el pipeline de CI ya actualizado. Recorrido en
+vivo repetido de punta a punta tras cada fix (invitado → registro → checkout → orden real → reseña
+→ panel admin con la misma cuenta promovida a admin → cambio de estado de orden), sin errores de
+consola, en mobile 320px, desktop, y los dos temas.

@@ -11,7 +11,7 @@ export function useTopSellingProducts(): TopSellingProductsState & { retry: () =
   const result = useKeyedAsync(
     'admin-analytics-top-products',
     getTopSellingProducts,
-    'No pudimos cargar el ranking de productos. Intentá de nuevo.',
+    'No pudimos cargar el ranking de productos. Intenta de nuevo.',
   );
 
   if (result.status === 'success') {

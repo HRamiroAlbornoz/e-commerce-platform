@@ -81,7 +81,12 @@ describe('checkoutDraftStorage', () => {
   it('si el orderRequestId guardado no es un uuid valido, vuelve al estado inicial', () => {
     localStorage.setItem(
       `clack:checkout-draft:${UID}`,
-      JSON.stringify({ shipping: null, payment: null, activeStep: 'shipping', orderRequestId: 'no-es-un-uuid' }),
+      JSON.stringify({
+        shipping: null,
+        payment: null,
+        activeStep: 'shipping',
+        orderRequestId: 'no-es-un-uuid',
+      }),
     );
 
     expect(readCheckoutDraft(UID)).toEqual(freshDraftShape);

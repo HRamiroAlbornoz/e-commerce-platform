@@ -6,7 +6,7 @@ import {
   type ImageContentType,
 } from '@shared/schemas/upload';
 
-const GENERIC_PRESIGN_ERROR = 'No pudimos preparar la subida. Intentá de nuevo.';
+const GENERIC_PRESIGN_ERROR = 'No pudimos preparar la subida. Intenta de nuevo.';
 
 export type RequestUploadUrlResult =
   { ok: true; uploadUrl: string; publicUrl: string } | { ok: false; message: string };

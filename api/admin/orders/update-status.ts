@@ -31,7 +31,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     respondWithError(
       res,
       requestId,
-      new OrderError('INVALID_REQUEST', 'La solicitud de cambio de estado no tiene un formato válido.'),
+      new OrderError(
+        'INVALID_REQUEST',
+        'La solicitud de cambio de estado no tiene un formato válido.',
+      ),
     );
     return;
   }
@@ -80,7 +83,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     respondWithError(
       res,
       requestId,
-      new OrderError('INTERNAL_ERROR', 'No pudimos cambiar el estado de la orden. Intentá de nuevo.'),
+      new OrderError(
+        'INTERNAL_ERROR',
+        'No pudimos cambiar el estado de la orden. Intenta de nuevo.',
+      ),
     );
   }
 }

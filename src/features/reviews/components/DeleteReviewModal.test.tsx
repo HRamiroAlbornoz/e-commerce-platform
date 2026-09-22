@@ -63,7 +63,9 @@ describe('DeleteReviewModal', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Borrar reseña' }));
 
     await waitFor(() => {
-      expect(screen.getByRole('alert')).toHaveTextContent('No pudimos borrar tu reseña. Intentá de nuevo.');
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        'No pudimos borrar tu reseña. Intenta de nuevo.',
+      );
     });
     expect(onDeleted).not.toHaveBeenCalled();
     expect(screen.getByRole('dialog')).toBeInTheDocument();

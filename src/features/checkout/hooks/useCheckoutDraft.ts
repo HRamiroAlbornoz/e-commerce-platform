@@ -5,7 +5,10 @@ import {
   INITIAL_CHECKOUT_DRAFT_STATE,
   type CheckoutDraftState,
 } from '@/features/checkout/state/checkoutDraftReducer';
-import { readCheckoutDraft, writeCheckoutDraft } from '@/features/checkout/state/checkoutDraftStorage';
+import {
+  readCheckoutDraft,
+  writeCheckoutDraft,
+} from '@/features/checkout/state/checkoutDraftStorage';
 
 export type UseCheckoutDraftResult = CheckoutDraftState & {
   submitShipping: (shipping: ShippingDetails) => void;

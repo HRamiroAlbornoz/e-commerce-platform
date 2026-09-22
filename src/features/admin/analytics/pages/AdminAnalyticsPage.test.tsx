@@ -23,14 +23,14 @@ describe('AdminAnalyticsPage', () => {
   it('si la consulta falla, muestra el error con reintentar', () => {
     vi.mocked(useOrdersSummary).mockReturnValue({
       status: 'error',
-      message: 'No pudimos cargar el resumen de ventas. Intentá de nuevo.',
+      message: 'No pudimos cargar el resumen de ventas. Intenta de nuevo.',
       retry: vi.fn(),
     });
 
     render(<AdminAnalyticsPage />);
 
     expect(
-      screen.getByText('No pudimos cargar el resumen de ventas. Intentá de nuevo.'),
+      screen.getByText('No pudimos cargar el resumen de ventas. Intenta de nuevo.'),
     ).toBeInTheDocument();
   });
 

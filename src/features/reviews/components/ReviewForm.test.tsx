@@ -64,7 +64,9 @@ describe('ReviewForm', () => {
     );
 
     fireEvent.click(screen.getByRole('radio', { name: '5' }));
-    fireEvent.change(screen.getByLabelText('Comentario'), { target: { value: 'Excelente producto.' } });
+    fireEvent.change(screen.getByLabelText('Comentario'), {
+      target: { value: 'Excelente producto.' },
+    });
     fireEvent.click(screen.getByRole('button', { name: 'Publicar reseña' }));
 
     await waitFor(() => expect(onSaved).toHaveBeenCalledTimes(1));
@@ -107,11 +109,15 @@ describe('ReviewForm', () => {
     );
 
     fireEvent.click(screen.getByRole('radio', { name: '5' }));
-    fireEvent.change(screen.getByLabelText('Comentario'), { target: { value: 'Excelente producto.' } });
+    fireEvent.change(screen.getByLabelText('Comentario'), {
+      target: { value: 'Excelente producto.' },
+    });
     fireEvent.click(screen.getByRole('button', { name: 'Publicar reseña' }));
 
     await waitFor(() => {
-      expect(screen.getByRole('alert')).toHaveTextContent('No pudimos guardar tu reseña. Intentá de nuevo.');
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        'No pudimos guardar tu reseña. Intenta de nuevo.',
+      );
     });
     expect(onSaved).not.toHaveBeenCalled();
     expect(screen.getByLabelText('Comentario')).toHaveValue('Excelente producto.');

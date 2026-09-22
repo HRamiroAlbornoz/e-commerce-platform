@@ -53,7 +53,10 @@ async function seedProduct(id: string, overrides: Record<string, unknown> = {}):
   });
 }
 
-async function seedCart(uid: string, items: { productId: string; quantity: number }[]): Promise<void> {
+async function seedCart(
+  uid: string,
+  items: { productId: string; quantity: number }[],
+): Promise<void> {
   await adminDb.doc(`carts/${uid}`).set({ items, updatedAt: Timestamp.now() });
 }
 
@@ -69,7 +72,11 @@ function buildRequest(body: unknown): VercelRequest {
   } as unknown as VercelRequest;
 }
 
-function buildResponse(): { res: VercelResponse; status: ReturnType<typeof vi.fn>; json: ReturnType<typeof vi.fn> } {
+function buildResponse(): {
+  res: VercelResponse;
+  status: ReturnType<typeof vi.fn>;
+  json: ReturnType<typeof vi.fn>;
+} {
   const json = vi.fn();
   const status = vi.fn(() => ({ json }));
   const res = { status, setHeader: vi.fn() } as unknown as VercelResponse;
@@ -112,7 +119,15 @@ describe('POST /api/orders/create', () => {
       subtotal: 20000,
       shippingCost: SHIPPING_COST,
       total: 20000 + SHIPPING_COST,
-      items: [{ productId, name: 'Teclado Aurora', unitPrice: 10000, quantity: 2, imageUrl: 'https://placehold.co/600x400' }],
+      items: [
+        {
+          productId,
+          name: 'Teclado Aurora',
+          unitPrice: 10000,
+          quantity: 2,
+          imageUrl: 'https://placehold.co/600x400',
+        },
+      ],
     });
   });
 
@@ -138,6 +153,7 @@ describe('POST /api/orders/create', () => {
     expect(json).toHaveBeenCalledWith({
       code: 'OUT_OF_STOCK',
       message: expect.stringContaining('Mouse Vector'),
+      retryable: false,
       details: { productId },
     });
 
@@ -202,9 +218,7 @@ describe('POST /api/orders/create', () => {
     expect(productSnap.data()).toMatchObject({ stock: 3, orderCount: 1, unitsSold: 2 });
 
     const orderSnap = await adminDb.doc(`orders/${orderRequestId}`).get();
-    expect(orderSnap.data()?.items).toEqual([
-      expect.objectContaining({ productId, quantity: 2 }),
-    ]);
+    expect(orderSnap.data()?.items).toEqual([expect.objectContaining({ productId, quantity: 2 })]);
   });
 
   it('si el precio cambio desde que se revisó, falla sin escribir y nombra el producto (F6.8)', async () => {

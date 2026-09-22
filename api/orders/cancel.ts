@@ -25,7 +25,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     respondWithError(
       res,
       requestId,
-      new OrderError('UNAUTHENTICATED', 'Sesión inválida o expirada. Iniciá sesión de nuevo.'),
+      new OrderError('UNAUTHENTICATED', 'Sesión inválida o expirada. Inicia sesión de nuevo.'),
     );
     return;
   }
@@ -80,7 +80,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     respondWithError(
       res,
       requestId,
-      new OrderError('INTERNAL_ERROR', 'No pudimos cancelar la orden. Intentá de nuevo.'),
+      new OrderError('INTERNAL_ERROR', 'No pudimos cancelar la orden. Intenta de nuevo.'),
     );
   }
 }

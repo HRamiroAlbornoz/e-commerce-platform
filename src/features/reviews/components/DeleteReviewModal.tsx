@@ -21,7 +21,7 @@ export function DeleteReviewModal({
     try {
       await deleteReview(productId, user.uid);
     } catch {
-      throw new Error('No pudimos borrar tu reseña. Intentá de nuevo.');
+      throw new Error('No pudimos borrar tu reseña. Intenta de nuevo.');
     }
   }
 

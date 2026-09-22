@@ -1,7 +1,8 @@
 import { z } from 'zod';
+import { productIdSchema } from './product.js';
 
 export const cartItemSchema = z.object({
-  productId: z.string().min(1),
+  productId: productIdSchema,
   quantity: z.number().int().positive(),
 });
 

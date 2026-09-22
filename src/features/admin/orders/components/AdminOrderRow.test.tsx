@@ -16,7 +16,13 @@ function orderFixture(overrides: Partial<Order> = {}): Order {
     id: 'aaaa1111-bbbb-2222-cccc-333344445555',
     userId: 'user-1',
     items: [
-      { productId: 'product-1', name: 'Teclado Aurora', unitPrice: 89999, imageUrl: 'https://placehold.co/600x400', quantity: 1 },
+      {
+        productId: 'product-1',
+        name: 'Teclado Aurora',
+        unitPrice: 89999,
+        imageUrl: 'https://placehold.co/600x400',
+        quantity: 1,
+      },
     ],
     subtotal: 89999,
     shippingCost: 4999,
@@ -127,7 +133,7 @@ describe('AdminOrderRow', () => {
   it('si el cambio de estado falla, muestra el error y vuelve a habilitar los botones', async () => {
     vi.mocked(updateOrderStatus).mockResolvedValue({
       ok: false,
-      message: 'No pudimos cambiar el estado de la orden. Intentá de nuevo.',
+      message: 'No pudimos cambiar el estado de la orden. Intenta de nuevo.',
     });
     const { onMutated } = renderRow('pending');
 
@@ -135,7 +141,7 @@ describe('AdminOrderRow', () => {
 
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent(
-        'No pudimos cambiar el estado de la orden. Intentá de nuevo.',
+        'No pudimos cambiar el estado de la orden. Intenta de nuevo.',
       );
     });
     expect(onMutated).not.toHaveBeenCalled();

@@ -18,6 +18,8 @@ export function FeaturedProductHero({ product }: FeaturedProductHeroProps) {
     <section aria-labelledby={nameId} className={FEATURED_PRODUCT_HERO_LAYOUT_CLASSES}>
       <Link
         to={`/products/${product.id}`}
+        aria-hidden="true"
+        tabIndex={-1}
         className={`flex h-64 items-center justify-center p-12 md:h-auto md:min-h-144 ${FIELD_COLOR_CLASSES[product.displayColor]}`}
       >
         <img
@@ -30,11 +32,16 @@ export function FeaturedProductHero({ product }: FeaturedProductHeroProps) {
       </Link>
 
       <div className="flex flex-col gap-4 bg-bone px-6 py-10 text-ink md:px-12">
-        <h2 id={nameId} className="font-display text-3xl text-balance leading-tight">
+        <h2
+          id={nameId}
+          className="line-clamp-2 font-display text-3xl text-balance leading-tight md:line-clamp-none"
+        >
           <Link to={`/products/${product.id}`}>{product.name}</Link>
         </h2>
 
-        <p className="font-body text-sm text-ink/70 italic">{product.curatorialNote}</p>
+        <p className="line-clamp-2 font-body text-sm text-ink/70 italic md:line-clamp-none">
+          {product.curatorialNote}
+        </p>
 
         <div className="mt-auto flex flex-col gap-4 pt-4 md:flex-row md:items-end md:justify-between md:pt-6">
           <p className="font-display text-2xl">{formatPrice(product.price)}</p>

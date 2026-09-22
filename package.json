@@ -20,7 +20,9 @@
     "test:rules": "firebase emulators:exec \"vitest run tests/rules/firestore.rules.test.ts\"",
     "test:functions": "firebase emulators:exec \"vitest run api/orders/create.test.ts api/orders/cancel.test.ts api/reviews/recalculate.test.ts api/admin/products/create.test.ts api/admin/products/update.test.ts api/admin/products/delete.test.ts api/admin/orders/update-status.test.ts\"",
     "seed": "tsx scripts/seed.ts",
-    "grant-admin": "tsx --env-file=.env scripts/grant-admin.ts"
+    "seed:production": "tsx --env-file=.env scripts/seedProduction.ts",
+    "grant-admin": "tsx --env-file=.env scripts/grant-admin.ts",
+    "deploy:rules": "firebase deploy --only firestore:rules,firestore:indexes --project clack-add2a"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1135.0",

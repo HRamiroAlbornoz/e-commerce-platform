@@ -31,7 +31,7 @@ export function AdminProductFilters({
         />
       </div>
 
-      <div role="group" aria-label="Filtrar por categoria" className="flex gap-5 overflow-x-auto">
+      <div role="group" aria-label="Filtrar por categoría" className="flex gap-5 overflow-x-auto">
         <button
           type="button"
           aria-pressed={category === undefined}

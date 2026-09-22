@@ -11,7 +11,7 @@ export function useOrdersSummary(): OrdersSummaryState & { retry: () => void } {
   const result = useKeyedAsync(
     'admin-analytics-summary',
     getOrdersSummary,
-    'No pudimos cargar el resumen de ventas. Intentá de nuevo.',
+    'No pudimos cargar el resumen de ventas. Intenta de nuevo.',
   );
 
   if (result.status === 'success') {

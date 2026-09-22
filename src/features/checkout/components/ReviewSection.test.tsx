@@ -111,7 +111,9 @@ describe('ReviewSection', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar compra' }));
 
     await waitFor(() => {
-      expect(screen.getByRole('alert')).toHaveTextContent('Nos quedamos sin stock de "Mousepad PowerPad".');
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        'Nos quedamos sin stock de "Mousepad PowerPad".',
+      );
     });
     expect(onOrderCreated).not.toHaveBeenCalled();
   });

@@ -66,7 +66,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     respondWithError(
       res,
       requestId,
-      new ProductError('INTERNAL_ERROR', 'No pudimos actualizar el producto. Intentá de nuevo.'),
+      new ProductError('INTERNAL_ERROR', 'No pudimos actualizar el producto. Intenta de nuevo.'),
     );
   }
 }

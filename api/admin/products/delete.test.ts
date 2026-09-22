@@ -110,7 +110,10 @@ describe('POST /api/admin/products/delete', () => {
 
     expect(status).toHaveBeenCalledWith(409);
     expect(json).toHaveBeenCalledWith(
-      expect.objectContaining({ code: 'PRODUCT_HAS_REFERENCES', details: { orderCount: 0, ratingCount: 2 } }),
+      expect.objectContaining({
+        code: 'PRODUCT_HAS_REFERENCES',
+        details: { orderCount: 0, ratingCount: 2 },
+      }),
     );
   });
 

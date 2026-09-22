@@ -1,7 +1,7 @@
 export type UploadFileResult = { ok: true } | { ok: false; message: string };
 
 const EXPIRED_URL_MESSAGE = 'La URL para subir venció. Volvé a intentar.';
-const GENERIC_UPLOAD_ERROR = 'No pudimos subir la imagen. Intentá de nuevo.';
+const GENERIC_UPLOAD_ERROR = 'No pudimos subir la imagen. Intenta de nuevo.';
 
 export function uploadFileToS3(
   uploadUrl: string,

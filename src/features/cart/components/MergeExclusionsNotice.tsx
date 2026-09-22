@@ -6,8 +6,8 @@ type MergeExclusionsNoticeProps = {
 };
 
 const REASON_LABELS: Record<MergeExclusion['reason'], string> = {
-  inactive: 'ya no esta disponible',
-  'out-of-stock': 'se quedo sin stock',
+  inactive: 'ya no está disponible',
+  'out-of-stock': 'se quedó sin stock',
 };
 
 export function MergeExclusionsNotice({ exclusions, onDismiss }: MergeExclusionsNoticeProps) {

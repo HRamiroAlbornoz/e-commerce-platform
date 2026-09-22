@@ -27,7 +27,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     respondWithError(
       res,
       requestId,
-      new ReviewError('UNAUTHENTICATED', 'Sesión inválida o expirada. Iniciá sesión de nuevo.'),
+      new ReviewError('UNAUTHENTICATED', 'Sesión inválida o expirada. Inicia sesión de nuevo.'),
     );
     return;
   }

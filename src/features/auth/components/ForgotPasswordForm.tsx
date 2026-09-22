@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { forgotPasswordFormSchema, type ForgotPasswordFormValues } from '@/features/auth/schemas/authForms';
+import {
+  forgotPasswordFormSchema,
+  type ForgotPasswordFormValues,
+} from '@/features/auth/schemas/authForms';
 import { requestPasswordReset } from '@/features/auth/services/requestPasswordReset';
 import { TextField } from '@/components/ui/TextField';
 import { Button } from '@/components/ui/Button';
@@ -44,7 +47,11 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
           Si existe una cuenta con ese email, te enviamos un correo para restablecer la contraseña.
         </p>
       ) : (
-        <form onSubmit={(event) => void handleSubmit(onSubmit)(event)} noValidate className="flex flex-col gap-4">
+        <form
+          onSubmit={(event) => void handleSubmit(onSubmit)(event)}
+          noValidate
+          className="flex flex-col gap-4"
+        >
           <p className="font-body text-sm text-ink/70 dark:text-bone/70">
             Ingresá tu email y te enviamos un enlace para restablecer la contraseña.
           </p>

@@ -59,7 +59,11 @@ describe('signInWithGoogle', () => {
 
     await signInWithGoogle();
 
-    expect(createUserDocument).toHaveBeenCalledWith('uid-1', 'cliente@gmail.com', 'cliente@gmail.com');
+    expect(createUserDocument).toHaveBeenCalledWith(
+      'uid-1',
+      'cliente@gmail.com',
+      'cliente@gmail.com',
+    );
   });
 
   it('falla de forma controlada si Google no entrega un email', async () => {

@@ -8,6 +8,13 @@ const REVIEW_ERROR_HTTP_STATUS: Record<ReviewErrorCode, number> = {
   INTERNAL_ERROR: 500,
 };
 
+const REVIEW_ERROR_RETRYABLE: Record<ReviewErrorCode, boolean> = {
+  UNAUTHENTICATED: false,
+  INVALID_REQUEST: false,
+  PRODUCT_NOT_FOUND: false,
+  INTERNAL_ERROR: true,
+};
+
 export class ReviewError extends Error {
   readonly code: ReviewErrorCode;
 
@@ -25,6 +32,7 @@ export function toReviewErrorResponse(error: ReviewError): ReviewErrorResponse {
   return {
     code: error.code,
     message: error.message,
+    retryable: REVIEW_ERROR_RETRYABLE[error.code],
   };
 }
 

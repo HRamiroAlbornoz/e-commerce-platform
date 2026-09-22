@@ -7,7 +7,7 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   'auth/too-many-requests': 'Demasiados intentos. Esperá un momento e intentá de nuevo.',
 };
 
-const DEFAULT_AUTH_ERROR_MESSAGE = 'Ocurrió un error. Intentá de nuevo.';
+const DEFAULT_AUTH_ERROR_MESSAGE = 'Ocurrió un error. Intenta de nuevo.';
 
 export function getAuthErrorMessage(code: string): string {
   return AUTH_ERROR_MESSAGES[code] ?? DEFAULT_AUTH_ERROR_MESSAGE;

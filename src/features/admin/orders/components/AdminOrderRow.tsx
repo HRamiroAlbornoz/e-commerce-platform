@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import type { User } from 'firebase/auth';
-import { DestructiveTriggerButton, TEXT_ACTION_BUTTON_CLASSES } from '@/components/ui/DestructiveTriggerButton';
+import {
+  DestructiveTriggerButton,
+  TEXT_ACTION_BUTTON_CLASSES,
+} from '@/components/ui/DestructiveTriggerButton';
 import { InlineError } from '@/components/ui/InlineError';
 import { OrderStatusBadge } from '@/features/orders/components/OrderStatusBadge';
 import { CancelOrderModal } from '@/features/orders/components/CancelOrderModal';

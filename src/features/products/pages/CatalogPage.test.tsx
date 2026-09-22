@@ -2,7 +2,10 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createRoutesStub } from 'react-router';
 import { CatalogPage } from '@/features/products/pages/CatalogPage';
-import { getActiveProducts, type ProductsPage } from '@/features/products/services/getActiveProducts';
+import {
+  getActiveProducts,
+  type ProductsPage,
+} from '@/features/products/services/getActiveProducts';
 import { getFeaturedProduct } from '@/features/products/services/getFeaturedProduct';
 import { useCart } from '@/hooks/useCart';
 import { buildCartContextValue } from '@/test/mocks/cartContextValue';
@@ -112,7 +115,10 @@ describe('CatalogPage', () => {
     fireEvent.change(searchInput, { target: { value: 'tec' } });
 
     await waitFor(() => {
-      expect(getActiveProducts).toHaveBeenLastCalledWith({ category: undefined, searchTerm: 'tec' });
+      expect(getActiveProducts).toHaveBeenLastCalledWith({
+        category: undefined,
+        searchTerm: 'tec',
+      });
     });
 
     expect(getActiveProducts).toHaveBeenCalledTimes(2);
@@ -131,11 +137,13 @@ describe('CatalogPage', () => {
 
     renderCatalogPage('/');
 
-    await waitFor(() => screen.getByText('Todavia no hay productos'));
+    await waitFor(() => screen.getByText('Todavía no hay productos'));
   });
 
   it('no muestra controles de paginacion cuando todo entra en una sola pagina', async () => {
-    vi.mocked(getActiveProducts).mockResolvedValue(buildPage([keyboardFixture], { hasNextPage: false }));
+    vi.mocked(getActiveProducts).mockResolvedValue(
+      buildPage([keyboardFixture], { hasNextPage: false }),
+    );
 
     renderCatalogPage('/');
 
@@ -186,9 +194,9 @@ describe('CatalogPage', () => {
     renderCatalogPage('/');
 
     await waitFor(() => screen.getByText('Mouse ergonomico Y'));
-    expect(
-      screen.getAllByRole('heading', { level: 2, name: 'Teclado mecanico X' }),
-    ).toHaveLength(1);
+    expect(screen.getAllByRole('heading', { level: 2, name: 'Teclado mecanico X' })).toHaveLength(
+      1,
+    );
   });
 
   it('no excluye la pieza destacada de la grilla cuando hay una busqueda o filtro activo', async () => {
@@ -198,9 +206,9 @@ describe('CatalogPage', () => {
     renderCatalogPage('/?category=keyboard');
 
     await waitFor(() => {
-      expect(
-        screen.getAllByRole('heading', { level: 2, name: 'Teclado mecanico X' }),
-      ).toHaveLength(2);
+      expect(screen.getAllByRole('heading', { level: 2, name: 'Teclado mecanico X' })).toHaveLength(
+        2,
+      );
     });
   });
 
@@ -210,7 +218,7 @@ describe('CatalogPage', () => {
 
     renderCatalogPage('/');
 
-    await waitFor(() => screen.getByText('Todavia no hay productos'));
+    await waitFor(() => screen.getByText('Todavía no hay productos'));
     expect(screen.queryByRole('heading', { level: 2 })).not.toBeInTheDocument();
   });
 
@@ -220,13 +228,11 @@ describe('CatalogPage', () => {
 
     renderCatalogPage('/');
 
-    await waitFor(() =>
-      screen.getByRole('heading', { level: 2, name: 'Teclado mecanico X' }),
+    await waitFor(() => screen.getByRole('heading', { level: 2, name: 'Teclado mecanico X' }));
+    expect(screen.queryByText('Todavía no hay productos')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('heading', { level: 2, name: 'Teclado mecanico X' })).toHaveLength(
+      1,
     );
-    expect(screen.queryByText('Todavia no hay productos')).not.toBeInTheDocument();
-    expect(
-      screen.getAllByRole('heading', { level: 2, name: 'Teclado mecanico X' }),
-    ).toHaveLength(1);
   });
 
   it('si falla la pieza destacada, muestra su propio error sin bloquear la grilla', async () => {
@@ -237,7 +243,7 @@ describe('CatalogPage', () => {
 
     await waitFor(() => screen.getByText('Mouse ergonomico Y'));
     expect(
-      screen.getByText('No pudimos cargar la pieza destacada. Intentá de nuevo.'),
+      screen.getByText('No pudimos cargar la pieza destacada. Intenta de nuevo.'),
     ).toBeInTheDocument();
   });
 });

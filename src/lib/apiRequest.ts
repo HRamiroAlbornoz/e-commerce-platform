@@ -23,7 +23,9 @@ export async function postJsonRequest<T>(
 
     if (response.ok) {
       const parsed = responseSchema.safeParse(responseBody);
-      return parsed.success ? { ok: true, data: parsed.data } : { ok: false, message: genericErrorMessage };
+      return parsed.success
+        ? { ok: true, data: parsed.data }
+        : { ok: false, message: genericErrorMessage };
     }
 
     const parsedError = errorSchema.safeParse(responseBody);

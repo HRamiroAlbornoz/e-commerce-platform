@@ -28,7 +28,13 @@ async function resolveCartLines(items: CartItem[]): Promise<CartLine[]> {
   return items.flatMap((item) => {
     const product = productsById.get(item.productId);
     return product
-      ? [{ product, quantity: item.quantity, lineTotal: roundToCents(product.price * item.quantity) }]
+      ? [
+          {
+            product,
+            quantity: item.quantity,
+            lineTotal: roundToCents(product.price * item.quantity),
+          },
+        ]
       : [];
   });
 }
@@ -37,7 +43,11 @@ export function useResolvedCart(): ResolvedCartState & { retry: () => void } {
   const { items } = useCart();
   const itemsKey = toItemsKey(items);
   const fetchLines = useCallback(() => resolveCartLines(items), [items]);
-  const result = useKeyedAsync(itemsKey, fetchLines, 'No pudimos cargar el carrito. Intenta de nuevo.');
+  const result = useKeyedAsync(
+    itemsKey,
+    fetchLines,
+    'No pudimos cargar el carrito. Intenta de nuevo.',
+  );
 
   if (result.status !== 'success') {
     return result;

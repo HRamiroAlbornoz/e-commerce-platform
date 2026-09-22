@@ -60,12 +60,16 @@ describe('createOrder', () => {
     mockFetchResponse(409, {
       code: 'OUT_OF_STOCK',
       message: 'Nos quedamos sin stock de "Mousepad PowerPad".',
+      retryable: false,
       details: { productId: 'product-1' },
     });
 
     const result = await createOrder(fakeUser, request);
 
-    expect(result).toEqual({ ok: false, message: 'Nos quedamos sin stock de "Mousepad PowerPad".' });
+    expect(result).toEqual({
+      ok: false,
+      message: 'Nos quedamos sin stock de "Mousepad PowerPad".',
+    });
   });
 
   it('con una respuesta de error que no tiene el formato esperado, devuelve un mensaje generico', async () => {
@@ -73,7 +77,10 @@ describe('createOrder', () => {
 
     const result = await createOrder(fakeUser, request);
 
-    expect(result).toEqual({ ok: false, message: 'No pudimos procesar tu compra. Intentá de nuevo.' });
+    expect(result).toEqual({
+      ok: false,
+      message: 'No pudimos procesar tu compra. Intenta de nuevo.',
+    });
   });
 
   it('si la red falla, devuelve un mensaje generico en vez de propagar la excepcion', async () => {
@@ -81,6 +88,9 @@ describe('createOrder', () => {
 
     const result = await createOrder(fakeUser, request);
 
-    expect(result).toEqual({ ok: false, message: 'No pudimos procesar tu compra. Intentá de nuevo.' });
+    expect(result).toEqual({
+      ok: false,
+      message: 'No pudimos procesar tu compra. Intenta de nuevo.',
+    });
   });
 });

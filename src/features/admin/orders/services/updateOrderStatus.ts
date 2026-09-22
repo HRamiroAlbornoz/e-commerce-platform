@@ -6,7 +6,7 @@ import {
   type OrderStatus,
 } from '@shared/schemas/order';
 
-const GENERIC_UPDATE_ERROR = 'No pudimos cambiar el estado de la orden. Intentá de nuevo.';
+const GENERIC_UPDATE_ERROR = 'No pudimos cambiar el estado de la orden. Intenta de nuevo.';
 
 export type UpdateOrderStatusResult = { ok: true } | { ok: false; message: string };
 

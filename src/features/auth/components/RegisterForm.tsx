@@ -58,7 +58,11 @@ export function RegisterForm() {
   }
 
   return (
-    <form onSubmit={(event) => void handleSubmit(onSubmit)(event)} noValidate className="flex flex-col gap-4">
+    <form
+      onSubmit={(event) => void handleSubmit(onSubmit)(event)}
+      noValidate
+      className="flex flex-col gap-4"
+    >
       <fieldset disabled={isSubmitting || isRedirecting} className="contents">
         <TextField
           label="Nombre"

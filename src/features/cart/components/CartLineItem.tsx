@@ -16,7 +16,10 @@ export function CartLineItem({ line, onQuantityChange, onRemove }: CartLineItemP
 
   return (
     <li className="flex gap-4 py-6">
-      <span aria-hidden="true" className={`w-1 shrink-0 ${FIELD_COLOR_CLASSES[product.displayColor]}`} />
+      <span
+        aria-hidden="true"
+        className={`w-1 shrink-0 ${FIELD_COLOR_CLASSES[product.displayColor]}`}
+      />
 
       <div className="flex flex-1 flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-col gap-1">

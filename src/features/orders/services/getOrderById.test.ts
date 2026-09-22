@@ -23,7 +23,11 @@ function buildFirebaseError(code: string, message: string): Error {
 
 describe('getOrderById', () => {
   it('pide el documento correcto por id', async () => {
-    getDocMock.mockResolvedValue({ metadata: { fromCache: false }, exists: () => false, data: () => undefined });
+    getDocMock.mockResolvedValue({
+      metadata: { fromCache: false },
+      exists: () => false,
+      data: () => undefined,
+    });
 
     await getOrderById('order-1');
 
@@ -32,13 +36,21 @@ describe('getOrderById', () => {
 
   it('devuelve la orden cuando existe', async () => {
     const order = { id: 'order-1' };
-    getDocMock.mockResolvedValue({ metadata: { fromCache: false }, exists: () => true, data: () => order });
+    getDocMock.mockResolvedValue({
+      metadata: { fromCache: false },
+      exists: () => true,
+      data: () => order,
+    });
 
     await expect(getOrderById('order-1')).resolves.toEqual(order);
   });
 
   it('devuelve null cuando la orden no existe', async () => {
-    getDocMock.mockResolvedValue({ metadata: { fromCache: false }, exists: () => false, data: () => undefined });
+    getDocMock.mockResolvedValue({
+      metadata: { fromCache: false },
+      exists: () => false,
+      data: () => undefined,
+    });
 
     await expect(getOrderById('order-1')).resolves.toBeNull();
   });

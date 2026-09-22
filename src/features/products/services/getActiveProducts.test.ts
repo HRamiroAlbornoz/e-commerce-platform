@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import { getActiveProducts, PRODUCTS_PAGE_SIZE } from '@/features/products/services/getActiveProducts';
+import {
+  getActiveProducts,
+  PRODUCTS_PAGE_SIZE,
+} from '@/features/products/services/getActiveProducts';
 
 type RecordedConstraint = {
   type: string;
@@ -9,32 +12,38 @@ type RecordedConstraint = {
   direction?: string | undefined;
 };
 
-const { whereMock, orderByMock, limitMock, startAfterMock, queryMock, getDocsMock, collectionMock } =
-  vi.hoisted(() => {
-    const withConverterMock = vi.fn(() => 'products-ref-with-converter');
-    return {
-      whereMock: vi.fn(
-        (field: string, op: string, value: unknown): RecordedConstraint => ({
-          type: 'where',
-          field,
-          op,
-          value,
-        }),
-      ),
-      orderByMock: vi.fn(
-        (field: string, direction?: string): RecordedConstraint => ({
-          type: 'orderBy',
-          field,
-          direction,
-        }),
-      ),
-      limitMock: vi.fn((value: number): RecordedConstraint => ({ type: 'limit', value })),
-      startAfterMock: vi.fn((cursor: unknown): RecordedConstraint => ({ type: 'startAfter', value: cursor })),
-      queryMock: vi.fn((_ref: unknown, ...constraints: RecordedConstraint[]) => constraints),
-      getDocsMock: vi.fn(),
-      collectionMock: vi.fn(() => ({ withConverter: withConverterMock })),
-    };
-  });
+const {
+  whereMock,
+  orderByMock,
+  limitMock,
+  startAfterMock,
+  queryMock,
+  getDocsMock,
+  collectionMock,
+} = vi.hoisted(() => {
+  const withConverterMock = vi.fn(() => 'products-ref-with-converter');
+  return {
+    whereMock: vi.fn((field: string, op: string, value: unknown): RecordedConstraint => ({
+      type: 'where',
+      field,
+      op,
+      value,
+    })),
+    orderByMock: vi.fn((field: string, direction?: string): RecordedConstraint => ({
+      type: 'orderBy',
+      field,
+      direction,
+    })),
+    limitMock: vi.fn((value: number): RecordedConstraint => ({ type: 'limit', value })),
+    startAfterMock: vi.fn((cursor: unknown): RecordedConstraint => ({
+      type: 'startAfter',
+      value: cursor,
+    })),
+    queryMock: vi.fn((_ref: unknown, ...constraints: RecordedConstraint[]) => constraints),
+    getDocsMock: vi.fn(),
+    collectionMock: vi.fn(() => ({ withConverter: withConverterMock })),
+  };
+});
 
 vi.mock('firebase/firestore', () => ({
   collection: collectionMock,

@@ -42,6 +42,7 @@ export type UploadErrorCode = z.infer<typeof uploadErrorCodeSchema>;
 export const uploadErrorResponseSchema = z.object({
   code: uploadErrorCodeSchema,
   message: z.string().min(1),
+  retryable: z.boolean(),
 });
 
 export type UploadErrorResponse = z.infer<typeof uploadErrorResponseSchema>;
