@@ -5,6 +5,7 @@ import { ProductDetailSkeleton } from '@/features/products/components/ProductDet
 import { EmptyState } from '@/components/states/EmptyState';
 import { ErrorState } from '@/components/states/ErrorState';
 import { FIELD_COLOR_CLASSES } from '@/features/products/constants/displayColors';
+import { PRODUCT_IMAGE_FRAME_HEIGHT_CLASSES } from '@/features/products/constants/productImageFrame';
 import { formatPrice } from '@/features/products/utils/formatPrice';
 import type { Product } from '@shared/schemas/product';
 
@@ -12,7 +13,7 @@ function ProductDetailContent({ product }: { product: Product }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2">
       <div
-        className={`flex min-h-96 items-center justify-center p-12 md:min-h-144 ${FIELD_COLOR_CLASSES[product.displayColor]}`}
+        className={`flex items-center justify-center p-12 ${PRODUCT_IMAGE_FRAME_HEIGHT_CLASSES} ${FIELD_COLOR_CLASSES[product.displayColor]}`}
       >
         <img
           src={product.imageUrl}

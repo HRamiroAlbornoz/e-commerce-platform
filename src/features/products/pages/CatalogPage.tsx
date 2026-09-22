@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { useActiveProducts } from '@/features/products/hooks/useActiveProducts';
+import { useFeaturedProduct } from '@/features/products/hooks/useFeaturedProduct';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { ProductGrid } from '@/features/products/components/ProductGrid';
 import { CatalogFilters } from '@/features/products/components/CatalogFilters';
 import { PaginationControls } from '@/features/products/components/PaginationControls';
+import { FeaturedProductHero } from '@/features/products/components/FeaturedProductHero';
+import { FeaturedProductHeroSkeleton } from '@/features/products/components/FeaturedProductHeroSkeleton';
 import { EmptyState } from '@/components/states/EmptyState';
 import { ErrorState } from '@/components/states/ErrorState';
 import {
@@ -63,6 +66,20 @@ export function CatalogPage() {
   const catalog = useActiveProducts({ category, searchTerm: debouncedSearchTerm }, effectivePage);
   const hasActiveFilter = category !== undefined || debouncedSearchTerm !== '';
 
+  const featured = useFeaturedProduct();
+  const featuredProduct = featured.status === 'success' ? featured.product : null;
+
+  const hasNextPage = catalog.status === 'success' ? catalog.hasNextPage : false;
+  const isCatalogEmpty = catalog.status === 'success' && catalog.products.length === 0;
+  const featuredIdToHide =
+    !hasActiveFilter && effectivePage === 1 ? featuredProduct?.id : undefined;
+  const displayedProducts =
+    catalog.status !== 'success'
+      ? null
+      : featuredIdToHide
+        ? catalog.products.filter((product) => product.id !== featuredIdToHide)
+        : catalog.products;
+
   function handleCategoryChange(nextCategory: string | undefined) {
     setSearchParams((currentParams) => withFilterChange(currentParams, 'category', nextCategory));
   }
@@ -75,42 +92,52 @@ export function CatalogPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 md:px-8 lg:px-12">
-      <CatalogFilters
-        category={category}
-        searchInputValue={searchInputValue}
-        onCategoryChange={handleCategoryChange}
-        onSearchInputChange={setSearchInputValue}
-      />
+      {featured.status === 'loading' ? <FeaturedProductHeroSkeleton /> : null}
 
-      {catalog.status === 'loading' ? <ProductGrid status="loading" /> : null}
-
-      {catalog.status === 'error' ? (
-        <ErrorState message={catalog.message} onRetry={catalog.retry} />
+      {featured.status === 'error' ? (
+        <ErrorState message={featured.message} onRetry={featured.retry} />
       ) : null}
 
-      {catalog.status === 'success' && catalog.products.length === 0 ? (
-        <EmptyState
-          title={hasActiveFilter ? 'Sin resultados' : 'Todavia no hay productos'}
-          description={
-            hasActiveFilter
-              ? 'Ningun producto coincide con esta busqueda o categoria. Probá con otro termino o mostrá todos los productos.'
-              : 'La sala esta vacia por ahora. Volve mas tarde.'
-          }
+      {featuredProduct ? <FeaturedProductHero product={featuredProduct} /> : null}
+
+      <div id="catalogo">
+        <CatalogFilters
+          category={category}
+          searchInputValue={searchInputValue}
+          onCategoryChange={handleCategoryChange}
+          onSearchInputChange={setSearchInputValue}
         />
-      ) : null}
 
-      {catalog.status === 'success' && catalog.products.length > 0 ? (
-        <>
-          <ProductGrid status="success" products={catalog.products} />
-          {effectivePage > 1 || catalog.hasNextPage ? (
-            <PaginationControls
-              page={effectivePage}
-              hasNextPage={catalog.hasNextPage}
-              onPageChange={handlePageChange}
-            />
-          ) : null}
-        </>
-      ) : null}
+        {catalog.status === 'loading' ? <ProductGrid status="loading" /> : null}
+
+        {catalog.status === 'error' ? (
+          <ErrorState message={catalog.message} onRetry={catalog.retry} />
+        ) : null}
+
+        {isCatalogEmpty ? (
+          <EmptyState
+            title={hasActiveFilter ? 'Sin resultados' : 'Todavia no hay productos'}
+            description={
+              hasActiveFilter
+                ? 'Ningun producto coincide con esta busqueda o categoria. Probá con otro termino o mostrá todos los productos.'
+                : 'La sala esta vacia por ahora. Volve mas tarde.'
+            }
+          />
+        ) : null}
+
+        {displayedProducts && displayedProducts.length > 0 ? (
+          <>
+            <ProductGrid status="success" products={displayedProducts} />
+            {effectivePage > 1 || hasNextPage ? (
+              <PaginationControls
+                page={effectivePage}
+                hasNextPage={hasNextPage}
+                onPageChange={handlePageChange}
+              />
+            ) : null}
+          </>
+        ) : null}
+      </div>
     </main>
   );
 }

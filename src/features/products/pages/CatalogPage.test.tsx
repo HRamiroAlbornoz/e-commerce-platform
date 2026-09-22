@@ -3,12 +3,17 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createRoutesStub } from 'react-router';
 import { CatalogPage } from '@/features/products/pages/CatalogPage';
 import { getActiveProducts, type ProductsPage } from '@/features/products/services/getActiveProducts';
+import { getFeaturedProduct } from '@/features/products/services/getFeaturedProduct';
 import { useCart } from '@/hooks/useCart';
 import { buildCartContextValue } from '@/test/mocks/cartContextValue';
 import type { Product } from '@shared/schemas/product';
 
 vi.mock('@/features/products/services/getActiveProducts', () => ({
   getActiveProducts: vi.fn(),
+}));
+
+vi.mock('@/features/products/services/getFeaturedProduct', () => ({
+  getFeaturedProduct: vi.fn(),
 }));
 
 vi.mock('@/hooks/useCart', () => ({ useCart: vi.fn() }));
@@ -59,6 +64,8 @@ function renderCatalogPage(initialPath = '/') {
 describe('CatalogPage', () => {
   beforeEach(() => {
     vi.mocked(getActiveProducts).mockReset();
+    vi.mocked(getFeaturedProduct).mockReset();
+    vi.mocked(getFeaturedProduct).mockResolvedValue(null);
   });
 
   it('lee la categoria inicial de la URL y consulta con ese filtro', async () => {
@@ -170,5 +177,67 @@ describe('CatalogPage', () => {
     await waitFor(() => {
       expect(getActiveProducts).toHaveBeenLastCalledWith({ category: 'mouse', searchTerm: '' });
     });
+  });
+
+  it('muestra la pieza destacada y la excluye de la grilla en la pagina 1 sin filtro (F14.1)', async () => {
+    vi.mocked(getFeaturedProduct).mockResolvedValue(keyboardFixture);
+    vi.mocked(getActiveProducts).mockResolvedValue(buildPage([keyboardFixture, mouseFixture]));
+
+    renderCatalogPage('/');
+
+    await waitFor(() => screen.getByText('Mouse ergonomico Y'));
+    expect(
+      screen.getAllByRole('heading', { level: 2, name: 'Teclado mecanico X' }),
+    ).toHaveLength(1);
+  });
+
+  it('no excluye la pieza destacada de la grilla cuando hay una busqueda o filtro activo', async () => {
+    vi.mocked(getFeaturedProduct).mockResolvedValue(keyboardFixture);
+    vi.mocked(getActiveProducts).mockResolvedValue(buildPage([keyboardFixture]));
+
+    renderCatalogPage('/?category=keyboard');
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByRole('heading', { level: 2, name: 'Teclado mecanico X' }),
+      ).toHaveLength(2);
+    });
+  });
+
+  it('sin ningun producto activo, no muestra el hero y la grilla usa el mensaje de catalogo vacio', async () => {
+    vi.mocked(getFeaturedProduct).mockResolvedValue(null);
+    vi.mocked(getActiveProducts).mockResolvedValue(buildPage([]));
+
+    renderCatalogPage('/');
+
+    await waitFor(() => screen.getByText('Todavia no hay productos'));
+    expect(screen.queryByRole('heading', { level: 2 })).not.toBeInTheDocument();
+  });
+
+  it('cuando la pieza destacada es el unico producto activo, omite la grilla sin mostrar el mensaje de catalogo vacio', async () => {
+    vi.mocked(getFeaturedProduct).mockResolvedValue(keyboardFixture);
+    vi.mocked(getActiveProducts).mockResolvedValue(buildPage([keyboardFixture]));
+
+    renderCatalogPage('/');
+
+    await waitFor(() =>
+      screen.getByRole('heading', { level: 2, name: 'Teclado mecanico X' }),
+    );
+    expect(screen.queryByText('Todavia no hay productos')).not.toBeInTheDocument();
+    expect(
+      screen.getAllByRole('heading', { level: 2, name: 'Teclado mecanico X' }),
+    ).toHaveLength(1);
+  });
+
+  it('si falla la pieza destacada, muestra su propio error sin bloquear la grilla', async () => {
+    vi.mocked(getFeaturedProduct).mockRejectedValue(new Error('network-error'));
+    vi.mocked(getActiveProducts).mockResolvedValue(buildPage([mouseFixture]));
+
+    renderCatalogPage('/');
+
+    await waitFor(() => screen.getByText('Mouse ergonomico Y'));
+    expect(
+      screen.getByText('No pudimos cargar la pieza destacada. Intentá de nuevo.'),
+    ).toBeInTheDocument();
   });
 });
