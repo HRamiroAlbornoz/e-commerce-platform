@@ -1,7 +1,7 @@
 ---
 version: 1
 slug: "src-routes-admin-adminlayout-tsx"
-primary_target: "src/routes/admin/AdminLayout.tsx"
+primary_target: "src/layouts/AdminLayout.tsx"
 related_targets: []
 ---
 

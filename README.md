@@ -60,13 +60,17 @@ El detalle, con las alternativas descartadas y las consecuencias, está en
 [`docs/adr/`](docs/adr/):
 
 - **[0001]** El rol vive en Firestore y se espeja a un custom claim (lectura sin costo en las rules).
-- **[0002]** Context API + useReducer para el estado global, sin librería externa de estado.
-- **[0003]** Imágenes en S3 con presigned URLs firmadas por una Vercel Function autenticada.
-- **[0004]** El carrito admite invitados y se fusiona al iniciar sesión (gana la cantidad mayor).
-- **[0005]** Borrar productos en dos niveles: retirar (reversible) y eliminar (solo sin ventas ni reseñas).
+- **[0002]** Reemplazado por 0009.
+- **[0003]** Reemplazado por 0010.
+- **[0004]** Reemplazado por 0011.
+- **[0005]** Reemplazado por 0012.
 - **[0006]** El promedio de reseñas lo calcula el servidor, no el cliente.
 - **[0007]** La orden se crea en una Vercel Function con el Admin SDK, en una sola transacción.
 - **[0008]** Crear y editar productos también pasa por una Vercel Function (schema con arrays de objetos).
+- **[0009]** Context API + useReducer para el estado global, sin librería externa de estado.
+- **[0010]** Imágenes en S3 con presigned URLs firmadas por una Vercel Function autenticada.
+- **[0011]** El carrito admite invitados y se fusiona al iniciar sesión (gana la cantidad mayor).
+- **[0012]** Borrar productos en dos niveles: retirar (reversible) y eliminar (solo sin ventas ni reseñas).
 
 ---
 
