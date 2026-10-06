@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-13T00:00:00Z",
+  "generatedAt": "2026-10-06T01:59:38.727Z",
   "title": "Design System: CLACK",
   "extensions": {
     "colorMeta": {
@@ -110,8 +110,14 @@
       }
     },
     "breakpoints": [
-      { "name": "md", "value": "768px" },
-      { "name": "lg", "value": "1024px" }
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
     ]
   },
   "components": [
@@ -230,60 +236,113 @@
   ],
   "narrative": {
     "northStar": "The Numbered Specimen Case",
-    "overview": "CLACK's shipped catalog is a flat grid of specimens: every product sits inside its own full-bleed field of color, badged with a piece number, and described underneath in two weights of type — a didone name/price and a grotesque description. It is the teletext half of the direction contract's museum thesis: the closed four-color field, the numbering, and the didone/grotesque split all shipped exactly as specified. The catalog's search field and category rail from the surface brief's FIRST VIEWPORT have also shipped, as a filter strip on the catalog route rather than fused into the shared header markup. The cartela and its dotted spec table have also shipped — but as a standalone product detail page reached from a card, not as the split-hero composition the brief originally described. Slice 5 added the account-facing surfaces (register, login, forgot-password, Google sign-in, logout, and an admin-access-denied state); it introduced no new color, typeface, or elevation model. Slice 4 added pagination to the catalog listing (PaginationControls): a pure application of the existing Button primitive, hairline-divider vocabulary, and established support-text pattern. Slice 6 added the cart surface (CartPage at /cart, inside the existing PublicLayout): a receipt-style list of CartLineItems, each with a closed-four-color stripe and a tabular-nums line total, closed by a running total, on the page's own theme-swapping ground like the auth pages — no fixed-tone panel. It also added a quick-add button to the Product Card itself, restructuring the card from a single full-card Link into a div wrapping a Link plus a sibling action row, because a button cannot legally nest inside an anchor. Its one structural extension to the existing vocabulary is reusing the dotted-rule divider — previously scoped to the cartela's spec table — for a second context, an itemized receipt-style list. Slice 7a added the checkout stepper (CheckoutPage at /checkout, inside PrivateLayout/ProtectedRoute): the cart and its three steps (Envio, Pago, Revision) render as one continuous growing document, never a per-step screen swap or modal, with the dotted-rule divider reused a third time to separate step sections. Its genuinely new decision resolves the base-breakpoint pinning the direction contract had left open: the step indicator becomes sticky-top and the running total becomes fixed-bottom at the base/mobile breakpoint only, both opaque with a hairline border, both resetting to in-flow layout at md:. It also extracted CartLinesSummary, a shared cart-lines-plus-total block now used by both CartPage and CheckoutPage, and gave Button an exported BUTTON_CLASSES constant so a plain Link styled as a button doesn't retype its classes. The payment step deliberately collects no card number/expiry/CVV, only a cardholder name and a forceable success/failure outcome. The review step's 'Confirmar compra' button is intentionally inert (no onClick) — order creation is deferred to a future slice, the same disclosed pattern 'Agregar al carrito' followed before it was wired. There is still no hero or landing composition anywhere in the build (that remains slice 14's work). This document records what was actually built. Depth is never simulated. There are no shadows, no gradients, and no border-radius anywhere in the sampled components — flatness is total, not partial. The dark theme (ink ground, bone text) is primary; the light theme is currently a literal swap of the same two neutrals rather than a separately-designed surface. The cartela is the one deliberate exception to theme-swapping altogether: it stays bone/ink regardless of the active theme.",
+    "overview": "CLACK's catalog is a flat grid of specimens: every product sits inside its own full-bleed field of color, badged with a piece number, and described underneath in two weights of type — a didone name and price, and a grotesque description. The closed four-color field, the numbering, and the didone/grotesque split are the core of the system. Every other surface (product detail, account, cart, checkout, orders, reviews, administration) reuses the same vocabulary: hairline rules, square corners, no elevation, and one headline per component.\n\nDepth is never simulated. There are no shadows, gradients, or border-radius anywhere in the system. The dark theme (ink ground, bone text) is primary; the light theme is a literal swap of the same two neutrals, not a separately designed surface. Two surfaces are fixed-tone exceptions: the product cartela and the featured-product hero keep bone/ink regardless of theme, because they present a product as a physical paper specimen label (see The Fixed Paper Rule).\n\nAdministration is the one place the density changes. The admin screens are built in Operate mode: the table is the screen, the per-product color field shrinks to a thumbnail, and grotesque carries everything except the screen title. They use the same palette and type, with no new tokens.",
     "keyCharacteristics": [
       "Closed four-color field system (lime, magenta, cyan, amber) — flat, full-strength, no tints or intermediate variants.",
       "Didone (Bodoni Moda) carries the single most important line on a view; grotesque (Archivo) carries everything else.",
       "Zero elevation: no shadows, no gradients, no border-radius anywhere in the system.",
       "Skeletons mirror the exact shape of loaded content; no spinners.",
-      "Interactive accent color is theme-owned: magenta in light mode, cyan in dark mode, never a fixed hover color — except the one fixed-tone surface (the cartela), which never theme-swaps at all."
+      "Interactive accent color is theme-owned: magenta in light mode, cyan in dark mode, never a fixed hover color — except the fixed-tone surfaces (the cartela, and the catalog's featured-product hero), which never theme-swap at all."
     ],
     "rules": [
-      { "name": "The Closed Four Rule", "body": "Only these four hexes exist as field colors anywhere in the system, enforced at the data layer by PRODUCT_DISPLAY_COLORS. No tints, no opacity variants, no fifth color.", "section": "colors" },
-      { "name": "The Theme-Owned Accent Rule", "body": "The interactive accent is never a fixed hardcoded hue: it is magenta in light mode and cyan in dark mode. Amber and lime are identity fields only and never carry interaction state. Now also governs Button/TextField focus-hover states, the auth pages' secondary links, the cart's quick-add/remove/dismiss controls, and (slice 7a) CheckoutStepIndicator's completed-step buttons/active-step underline and every CheckoutSummaryCard's 'Editar' control.", "section": "colors" },
-      { "name": "The Cycled-Not-Identity Rule", "body": "Small color swatches (product displayColor, the category-rail dot, and the CartLineItem stripe) cycle through the four closed field colors by index rather than mapping 1:1 to items. With six categories and four colors, two pairs necessarily repeat — the swatch is a scan-rhythm cue, the uppercase label is the disambiguator. Don't add a fifth color to eliminate a repeat.", "section": "colors" },
-      { "name": "The Fixed Paper Rule", "body": "The product detail page's cartela panel (bg-bone text-ink) is bone-on-ink unconditionally and does not theme-swap with the page's dark mode — a fixed paper object in the scene regardless of the room's lighting. Any component placed inside it must not assume the page's theme-swap reaches it. Scoped to the cartela; does not license a second fixed-tone surface elsewhere without the same editorial reason. Confirmed by slice 5, slice 6, and slice 7a: the auth pages, the cart page, and the checkout page all had the same choice and did not take it, even where checkout pins chrome to the viewport edge — pinning is a position change, not a fixed-tone-surface change.", "section": "colors" },
-      { "name": "The One Headline Rule", "body": "Bodoni Moda appears at most once per component as the highest-weight line — the product name, the price, or a state's message title — never for two competing strings on the same card or screen. Disclosed exception: the product detail page carries two h1s (header wordmark + cartela name), an accepted single-item-page trade-off. AccessDeniedState, CartPage, and CheckoutPage all demote their own heading to h2 to keep the strict rule. Slice 7a clarifies the rule is scoped per component, not per page: several Display headlines coexist on the one continuous checkout document (one per step section), and that's compliant because each stays the single headline within its own component.", "section": "typography" },
-      { "name": "The Flat Ground Rule", "body": "Surfaces never lift with a shadow. If a component needs to stand out, it gets a field color, not an elevation. Holds even for position: sticky/fixed chrome (see the Pinned Chrome Rule) — pinning changes position, never elevation.", "section": "elevation" },
-      { "name": "The Hairline-With-One-Exception Rule", "body": "Borders default to hairline, low-opacity (ink/15 / bone/15). The catalog search input's and TextField's resting border (ink/50 / bone/40) is a deliberate, scoped exception to clear the WCAG 3:1 non-text UI-boundary contrast floor for bare-bottom-border interactive controls — not a new default border weight. Button clears the same floor differently, with a full-opacity border-current. The cartela's own hairline border is scoped to the two edges abutting page-bone only. PaginationControls, CartPage, and CheckoutPage's pinned chrome all close their respective lists/edges with this same default hairline, no new weight.", "section": "shapes" },
-      { "name": "The Border-Current Rule", "body": "Any reusable component that might be dropped inside a fixed-tone surface (like the cartela) must use border-current/currentColor rather than a hardcoded dark: variant tied to the page's own theme-swap. Originated as a real bug fix in QuantitySelector; Button independently follows the same convention.", "section": "colors" },
-      { "name": "The Dotted-List Rule", "body": "The dotted divider (divide-dotted) is scoped to three confirmed contexts: dl-style spec/attribute tables (the cartela), itemized receipt-style lists (CartPage's line-item list), and sequential document sections (CheckoutPage's step sections, slice 7a). Not a general substitute for the hairline convention on arbitrary content lists.", "section": "shapes" },
-      { "name": "The Pinned Chrome Rule", "body": "At the base/mobile breakpoint only, CheckoutStepIndicator becomes sticky top-0 and the running total (CartLinesSummary's totalVariant='sticky-bottom') becomes fixed inset-x-0 bottom-0, both with an opaque bg-bone/dark:bg-ink background and a hairline border on the edge facing the content, so content passes visibly underneath/behind them. Both reset to normal in-flow positioning at md: and up. Resolves a 'decision sin resolver' the direction contract left open. The pinning mechanism is always an opaque background plus a hairline border, never a shadow — pinned chrome still obeys the Flat Ground Rule.", "section": "layout" }
+      {
+        "name": "The Closed Four Rule",
+        "body": "Only these four hexes exist as field colors anywhere in the system (enforced at the data layer by `PRODUCT_DISPLAY_COLORS` in `shared/schemas/product.ts`). No tints, no opacity variants, no fifth color. A new field color is a palette decision, not a per-screen choice.",
+        "section": "colors"
+      },
+      {
+        "name": "The Theme-Owned Accent Rule",
+        "body": "The interactive accent is never a fixed hardcoded hue: it is magenta in light mode and cyan in dark mode. It covers every hover, focus, and active state of text links, retry links, the active category chip, `Button` and `TextField` focus and hover, `AuthNav` links, the Product Card's quick-add button, `CartLineItem`'s \"Quitar\" control, `MergeExclusionsNotice`'s \"Entendido\" control, the checkout step indicator's completed-step buttons and active underline, and every checkout summary card's \"Editar\" control. Amber and lime are identity fields only and never carry interaction state.",
+        "section": "colors"
+      },
+      {
+        "name": "The Cycled-Not-Identity Rule",
+        "body": "The four field colors are a rhythm device, not a unique key per item. `displayColor` cycles across product tiles, and it also fills the image panel on the product detail page, the featured-product hero, and the `w-1` stripe on each `CartLineItem`. `CatalogFilters`' category dot cycles the same way across six categories, so two pairs necessarily repeat (Teclados/Sillas both lime, Mouse/Mousepads both magenta). This is intentional: the dot is a scan cue, and the uppercase label is the actual disambiguator. Do not fix a repeated swatch by adding a fifth hue.",
+        "section": "colors"
+      },
+      {
+        "name": "The Fixed Paper Rule",
+        "body": "The product cartela (`bg-bone text-ink`) and the featured-product hero's text panel are bone-on-ink **unconditionally**: they do not theme-swap. Each is a physical paper specimen label sitting in the scene regardless of the room's lighting. Any component placed inside one of these surfaces must not assume the page's theme-swap reaches it (see The Border-Current Rule). The rule covers specimen-shaped content only. Forms, receipts, and lists stay on the page's own theme-swapping ground: the auth pages, the cart, and the checkout all deliberately do so, even where they pin chrome to the viewport edge.",
+        "section": "colors"
+      },
+      {
+        "name": "The Border-Current Rule",
+        "body": "Reusable components that may sit inside a fixed-tone surface use `currentColor` or `border-current` for their color, never a `dark:` variant tied to the page's theme. A hardcoded `dark:border-bone` pair would render bone-on-bone and vanish inside the cartela in dark mode, because the cartela never swaps. `QuantitySelector` and `Button` follow this rule. Any chart, SVG, or third-party component follows it too, using `currentColor` for every color prop it exposes.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Headline Rule",
+        "body": "Bodoni Moda appears at most once per component as the highest-weight line: a product name, a price, or a state's message title, never two competing strings on one card or screen. The rule is scoped per component, not per page: a checkout page or the catalog-with-hero page can carry several Display lines, each owned by its own component. Pages keep a single `h1`, which is the `SiteHeader` wordmark on public and private pages. Titles of sub-screens are `h2`.",
+        "section": "typography"
+      },
+      {
+        "name": "The Pinned Chrome Rule",
+        "body": "At the base/mobile breakpoint only, two pieces of checkout chrome pin to the viewport instead of scrolling. `CheckoutStepIndicator` becomes `sticky top-0 z-10`, bleeding to the viewport edge (`-mx-4`) with an opaque `bg-bone dark:bg-ink` and a `border-b` hairline. The running total inside `CartLinesSummary` (with `totalVariant=\"sticky-bottom\"`) becomes `fixed inset-x-0 bottom-0 z-10` with the same opaque background and a `border-t` hairline on the opposite edge. Both reset to normal in-flow layout at `md:` and up (`md:static`). The pinning mechanism is always an opaque background plus a hairline border, never a shadow.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat Ground Rule",
+        "body": "Surfaces never lift with a shadow. If a component needs to stand out, it gets a field color, not an elevation. This holds even for `position: sticky` and `fixed` chrome: pinning changes an element's position in the viewport, never its elevation.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Hairline-With-One-Exception Rule",
+        "body": "Bare-bottom-border interactive controls (the catalog search input, `TextField`, and the admin inline number editor) use a heavier resting border, `border-ink/50` in light and `border-bone/40` in dark. The heavier value is what clears the WCAG 3:1 non-text contrast floor for an interactive control's boundary, which a hairline cannot reliably meet. This is a targeted exception for that control class. Do not carry `ink/50` or `bone/40` into non-interactive hairlines. `Button` does not use it: it has a full border, `border border-current`, at full opacity, which clears the same floor by itself.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Dotted-List Rule",
+        "body": "The dotted divider, `divide-y divide-dotted divide-ink/30 dark:divide-bone/30`, is reserved for discrete, itemized or sequential vertical content. It has five confirmed uses: the cartela's spec table, the cart's line items, the checkout's step sections, the order list and order items, and the review list. Analytics totals and the featured hero are not lists, so they use the hairline treatment instead. It is not a general alternative to the hairline for arbitrary content.",
+        "section": "shapes"
+      }
     ],
     "dos": [
-      "Do assign exactly one of the four closed field colors, full-strength and full-bleed, per product tile — and, on the product detail page, to the image panel itself, and, on the cart page, to each CartLineItem's color stripe.",
-      "Do keep Bodoni Moda to one headline-weight string per component (name, price, or state message) — never stack two didone lines competing for attention within the same component, even on a continuously-scrolling document like checkout where several components each carry their own single headline.",
-      "Do build any new skeleton to the exact shape of its loaded content, and gate its animation behind motion-safe:.",
-      "Do source interactive accent color from the active theme (magenta light / cyan dark), not a hardcoded hex — except inside the cartela's fixed-tone surface, where hardcoded colors are correct.",
-      "Do keep corners square and surfaces shadow-free; depth comes from the field color, never from elevation.",
-      "Do cycle small color swatches (category-rail dots, product displayColor, the cart line-item stripe) through the closed four-field set by index, and let the adjacent text label disambiguate — repeated colors across items are expected, not a bug.",
-      "Do keep a heavier-than-hairline border scoped to bare-bottom-border interactive controls that need it to clear a contrast floor (search input, TextField); a fully-bordered control like Button clears the same floor with full-opacity border-current instead.",
-      "Do use border-current/currentColor (not a dark: variant) in any reusable component that might be dropped inside a fixed-tone surface like the cartela — see QuantitySelector and Button.",
-      "Do use aria-labelledby referencing separate name/description/price ids for card-as-link components, following the Product Card's pattern.",
-      "Do validate forms with react-hook-form's mode: 'onTouched' and isolate live-computed per-keystroke UI state into a child component subscribed with useWatch, not the form's whole-subscribing watch().",
-      "Do share one aria-describedby slot between a field's hint and its error, hiding the hint once an error is present, when the error message already restates the hint's content.",
-      "Do reuse the stock Button primitive and its existing disabled treatment for prior/next-style controls (see PaginationControls) instead of building a bespoke state for 'can't go further'.",
-      "Do reuse the dotted-rule divider for itemized receipt-style lists and sequential document sections (see CartPage's line-item list and CheckoutPage's step sections), alongside its original dl spec-table use — a confirmed three-context pattern, not a one-off.",
-      "Do render a label-plus-count control (see CartIndicator) as a single interpolated string inside one text node, not a label text node followed by a separately-rendered count span.",
-      "Do export a primitive's className string as a named constant (see Button's BUTTON_CLASSES, AuthNav's AUTH_NAV_LINK_CLASSES) when a non-primitive element needs to look identical to the primitive without duplicating its class string.",
-      "Do use position: sticky/fixed with an opaque bg-bone/dark:bg-ink background and a hairline border (never a shadow) when pinning navigational chrome or a running total at the base/mobile breakpoint — see the Pinned Chrome Rule. Reset to normal in-flow layout at md: and up.",
-      "Do render a completed multi-step form's step as a clickable non-disabled button and an unreached step as a plain non-interactive dimmed label, not a disabled button — see CheckoutStepIndicator."
+      "**Do** assign exactly one of the four closed field colors, full-strength and full-bleed, per product tile. On the product detail page and the featured hero, it fills the image panel. On the cart page, it is each `CartLineItem`'s color stripe.",
+      "**Do** keep Bodoni Moda to one headline-weight string per component (name, price, or state message). Several components on one page may each carry their own headline, as on checkout or on the catalog-with-hero home page.",
+      "**Do** build any new skeleton to the exact shape of its loaded content, and gate its animation behind `motion-safe:`. The exception is a generic dense table or a chart with no fixed column or series shape. There, a shared flat block is the right choice.",
+      "**Do** source interactive accent color from the active theme (magenta light, cyan dark), not a hardcoded hex. The exception is a fixed-tone surface (the cartela and the featured hero), where hardcoded ink and accent colors are correct because that surface never swaps.",
+      "**Do** keep corners square and surfaces shadow-free. Depth comes from the field color, never from elevation.",
+      "**Do** cycle small color swatches (category dots, `displayColor`, the cart stripe) through the closed four-field set by index. Let the adjacent text label do the disambiguation. Repeated colors are expected, not a bug.",
+      "**Do** put a control that needs to clear the WCAG 3:1 boundary floor on the heavier bare-border value (`ink/50`, `bone/40`). A fully bordered control like `Button` uses its own full-opacity `border-current` instead.",
+      "**Do** use `border-current` or `currentColor`, not a `dark:` variant, in any reusable component that might sit inside a fixed-tone surface. Any chart, SVG, or third-party component uses `currentColor` for every color prop, as `TopSellingProductsChart` does.",
+      "**Do** use `aria-labelledby` pointing at separate name, description, and price ids for card-as-link components, following the Product Card. Do not use a single flattened `aria-label`.",
+      "**Do** validate forms with `react-hook-form`'s `mode: 'onTouched'`. Isolate any live-computed, per-keystroke UI state (such as a disabled submit button) into a small child that uses `useWatch`, not the form's whole-subscribing `watch()`.",
+      "**Do** share one `aria-describedby` slot between a field's hint and its error. Hide the hint once an error is present, when the error restates the hint.",
+      "**Do** reuse the stock `Button` and its `disabled` treatment for prior and next controls (see `PaginationControls`). Do not build a bespoke \"can't go further\" state.",
+      "**Do** use `divide-dotted` for itemized receipt-style lists and sequential document sections (see The Dotted-List Rule). Do not use it as a general divider.",
+      "**Do** render a label-plus-count control (see `CartIndicator`) as one interpolated text node. Splitting it collapses the space in the accessible name.",
+      "**Do** export a primitive's class string as a named constant (`BUTTON_CLASSES`, `AUTH_NAV_LINK_CLASSES`, `TEXT_ACTION_BUTTON_CLASSES`, `ANALYTICS_SUMMARY_CLASSES`, `FEATURED_PRODUCT_HERO_LAYOUT_CLASSES`) when a non-primitive element, a same-visual sibling control, or the component's own skeleton needs the identical look.",
+      "**Do** use `position: sticky` or `fixed` with an opaque `bg-bone` or `dark:bg-ink` background and a hairline border, never a shadow, to pin navigational chrome or a running total at base width. Reset to in-flow layout from `md:` up (see The Pinned Chrome Rule).",
+      "**Do** render an unreached step as a plain dimmed label, and a completed step as a clickable `<button>`. Do not use a `disabled` button for either. The same applies to row actions bound to a state machine: a transition the graph does not allow from the current state is not rendered at all (see `AdminOrderRow`).",
+      "**Do** use one of the system's verified text-opacity steps (`/60`, `/70`, `/80`) for de-emphasized text. Never pick a value by eye. `/50` is verified only as a border exception, and it fails AA at text weight.",
+      "**Do** use `Controller`, not `register()`, for any radio or checkbox group bound to a non-string field (see `RatingInput`).",
+      "**Do** compute a live summary (an average, a count) from a list already loaded in memory when the screen holds that list. See `ProductReviewsPage`. This keeps the summary accurate and updates it without waiting on a server recalculation.",
+      "**Do** key a self-contained editable control by the external value it displays (see `EditableNumberCell`'s `key={product.price}`) when that value can change from outside its own edits. No manual resync code is needed. The control's own edit does not remount itself.",
+      "**Do** lift an async sub-flow's busy state (a file upload, a secondary fetch) into the parent form when the parent's submit gate must account for it. See `ImageUploadField` and `useImageUpload`, called from `AdminProductForm`. A presentational child is a pure function of its props, so the parent stays the single source of truth for \"busy\".",
+      "**Do** inject a caller-supplied async action into a shared confirmation modal (see `CancelOrderModal`'s `onCancel`), once a second caller needs a differently scoped action through the same shell.",
+      "**Do** put an admin table's filter state in the URL only when the surface brief asks for a shareable filter (see `AdminOrderFilters`). Otherwise keep it local (see `AdminProductFilters`). The two tables are allowed to differ on this.",
+      "**Do** show a small set of admin totals (two to a handful of numbers) as a flowing `<dl>`, with label and value pairs separated by a hairline. Use a Label `<dt>` and a Display `<dd>`. Never use a grid of bordered metric cards (see Analytics Summary Tiles).",
+      "**Do** keep independent sections of a dashboard-style page on separate hooks and queries, each with its own loading, error, and empty handling. A failure in one section must never block a sibling that does not depend on it.",
+      "**Do** let a component that shares another's visual family diverge in sizing when one consumer has a competing element the other lacks. The featured hero's capped mobile image is the example. Verify any divergence by measuring the real viewport before recording it as intentional.",
+      "**Do** exclude a page's featured item from the list below it only on the default, unfiltered view, where duplication is guaranteed. Under a filter or search, let the item reappear. When the exclusion would leave a non-empty source looking empty, omit the downstream section rather than showing an empty state."
     ],
     "donts": [
-      "Don't add border-radius, drop shadows, gradients, or glassmorphism — none exist in the shipped system and none are implied by the direction contract.",
-      "Don't introduce a tint, opacity variant, or fifth color into the closed four-field set — including as a 'fix' for a cycled swatch repeat.",
-      "Don't assume a full-width split-hero/landing composition exists just because the cartela shipped — the cartela is a standalone product detail page; the hero/landing composition remains unbuilt (slice 14).",
-      "Don't treat the current light theme (a literal ink/bone swap) as the finished 'separately designed' light mode the direction contract calls for — it is recorded here as shipped behavior, not as an approved target for future light-theme work.",
-      "Don't generalize the search input's/TextField's heavier border (ink/50 / bone/40) into the system's default border weight — it's a one-off contrast-floor exception for bare-bottom-border controls, not a replacement for the hairline convention.",
-      "Don't fold catalog-specific filtering controls into PublicLayout's shared header — it also wraps routes (product detail, auth pages, cart, checkout, future landing) that don't need them.",
-      "Don't generalize the Fixed Paper Rule into a second fixed-tone surface elsewhere without the same editorial reason — the auth pages, the cart page, and the checkout page all confirm this by staying on the page's own theme-swapping ground instead, even where checkout pins chrome to the viewport edge.",
-      "Don't wire a hardcoded dark: color pair onto a component that could end up inside a fixed-tone surface; use currentColor/border-current or an explicit non-conditional value instead.",
-      "Don't treat the product detail page's two h1 elements as a pattern to reproduce deliberately elsewhere — it's a disclosed single-item-page trade-off. AccessDeniedState, CartPage, and CheckoutPage all demote to h2 for exactly this reason.",
-      "Don't read PaginationControls' small text-xs page-label caption as a precedent for a new uppercase/tracked kicker or eyebrow treatment — it is plain Body-family support text at a smaller size, not the Label token, and no kicker/eyebrow component exists anywhere in this system.",
-      "Don't nest a button inside an anchor (or vice versa) — invalid HTML. When a card or list item needs both a navigation link and an independent action, wrap both in a container element and keep the interactive controls as siblings, not nested.",
-      "Don't use a disabled button to represent an unreached step in a multi-step flow — render it as a plain non-interactive element instead; a disabled control implies the action exists but is temporarily blocked, which isn't true for a step not yet reached.",
-      "Don't treat the payment step's absence of a card-number/expiry/CVV field as a gap to complete — it's a confirmed, scoped simplification; the spec requires only a forceable success/failure outcome, not a realistic card form.",
-      "Don't wire ReviewSection's 'Confirmar compra' button with a stub handler to make it feel functional — the inert button is the disclosed, correct state for this slice; order creation is deferred."
+      "**Don't** add border-radius, drop shadows, gradients, or glassmorphism. None exist in the system.",
+      "**Don't** introduce a tint, opacity variant, or fifth color into the closed four-field set, not even to \"fix\" a repeated swatch.",
+      "**Don't** assume the home page hero lives on a separate landing route, or that it shows a full spec table the way the cartela does. `FeaturedProductHero` is a section of `CatalogPage` (`/`) and shows only name, curatorial note, price, and add-to-cart.",
+      "**Don't** treat the current light theme, a literal ink and bone swap, as a finished light mode. It is the shipped behavior, not an approved target.",
+      "**Don't** generalize the heavier border (`ink/50`, `bone/40`) into the default border weight. It is a floor for bare-border interactive controls, not a replacement for the hairline.",
+      "**Don't** fold catalog filtering controls into `PublicLayout`'s shared header. `PublicLayout` also wraps routes that do not need them. Keep filter UI on the routes that use it.",
+      "**Don't** extend the Fixed Paper Rule to a third fixed-tone surface without the same editorial reason, a physical paper specimen object in the scene. Forms, receipts, and lists stay on the theme-swapping ground.",
+      "**Don't** hardcode a `dark:` color pair onto a component that could sit inside a fixed-tone surface. Use `currentColor`, `border-current`, or an explicit non-conditional value.",
+      "**Don't** reproduce the product detail page's two `h1` elements elsewhere. It is a disclosed trade-off for a single-item page. All other pages keep one `h1`.",
+      "**Don't** read `PaginationControls`' `text-xs` page label as precedent for an uppercase, tracked kicker or eyebrow. It is plain Body support text, and no kicker component exists.",
+      "**Don't** nest a `<button>` inside an `<a>`, or the reverse. When a card needs both a link and an action, wrap both in a container and keep the controls as siblings.",
+      "**Don't** use a `disabled` `<button>` for an unreached step or a transition the state machine does not allow. Render a plain non-interactive element, or do not render it. A disabled control implies the action exists and is temporarily blocked.",
+      "**Don't** treat the payment step's lack of card fields as a gap to complete. It is a deliberate, scoped simplification.",
+      "**Don't** use URL-based status filtering as the default for every admin filter. It is a deliberate divergence, justified by the shareable-filter requirement. Do not retrofit it onto the product table without the same requirement.",
+      "**Don't** show admin totals as a grid of bordered metric-card tiles. Use the flowing `<dl>` pattern (see Analytics Summary Tiles).",
+      "**Don't** \"fix\" the featured hero's capped mobile image (`h-64`) back to the cartela's floor-only `min-h-96`. The two diverge on purpose, and matching them would reopen the below-the-fold CTA defect."
     ]
   }
 }
