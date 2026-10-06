@@ -395,3 +395,48 @@ tests) — los seis en verde, replicando exactamente el pipeline de CI ya actual
 vivo repetido de punta a punta tras cada fix (invitado → registro → checkout → orden real → reseña
 → panel admin con la misma cuenta promovida a admin → cambio de estado de orden), sin errores de
 consola, en mobile 320px, desktop, y los dos temas.
+
+## Mantenimiento posterior al release 1
+
+**2026-10-06 · PR #38 (`fix/nav-cursor-cart-flicker`).** Tres problemas reportados por Hernán
+usando la app en producción, ninguno detectado en el Cierre:
+- **No había forma de volver a Home.** El wordmark "CLACK" de `SiteHeader` era texto plano dentro
+  del `<h1>`; ahora es un `<Link to="/">` dentro del mismo `<h1>`, con hover y foco visible en el
+  acento del tema (magenta en claro, cian en oscuro). `PrivateLayout` ya tenía el link pero sin
+  esos estados, y se le sumaron. `AdminLayout` no tenía ninguna salida a la tienda: ganó un link
+  "Ver tienda" junto a "Cerrar sesión".
+- **Los botones no mostraban la mano al pasar el mouse.** Tailwind v4 dejó de poner
+  `cursor: pointer` en los `<button>` por defecto (Preflight lo quitó). Se agregó una sola regla en
+  `@layer base` de `src/index.css` (`button:not(:disabled) { cursor: pointer; }`) en vez de repetir
+  `cursor-pointer` en cada componente; los botones deshabilitados conservan su cursor propio. Los
+  chips de categoría (`filterStyles.ts`) además ganaron un hover de borde y texto, porque el cursor
+  solo no comunicaba que eran clickeables.
+- **El carrito parpadeaba al cambiar una cantidad.** `useResolvedCart` usaba como clave de
+  `useKeyedAsync` los ids *y las cantidades*; `useKeyedAsync` vuelve a `loading` cada vez que la
+  clave cambia, así que cada "+" desmontaba la lista, mostraba el skeleton y volvía a pedir los
+  productos a Firestore. La clave pasó a ser solo los ids, y el cálculo de líneas y total quedó
+  fuera del fetch: cambiar una cantidad es ahora un cálculo local, sin lectura facturable.
+
+**2026-10-06 · PR #39 (`fix/cart-stable-loading-and-404`).** Las dos continuaciones que quedaron
+abiertas del PR anterior:
+- **Agregar o quitar un producto todavía pasaba por el skeleton**, porque la clave seguía cambiando
+  con la lista de ids. `useResolvedCart` ahora guarda los productos ya resueltos en un `Map` y la
+  clave es solo la lista de ids que *faltan* en ese mapa. Quitar un producto no deja nada faltante
+  (clave vacía, cero lecturas); agregar uno pide únicamente ese producto, y mientras llega las
+  líneas que ya estaban siguen en pantalla. El skeleton queda solo para la carga inicial (carrito
+  con ítems y ninguna línea resuelta todavía). Cubierto con tres tests de `renderHook`: cambiar la
+  cantidad, quitar un producto y agregar uno con la respuesta pendiente, verificando en cada caso
+  que no hay estado de carga y que `getProductsByIds` se llama solo con lo que falta.
+- **Una URL inexistente mostraba la pantalla de error genérica de React Router.** Nuevo
+  `NotFoundState` ("Página no encontrada" + link "Volver a la tienda"), registrado como ruta `*` al
+  final de los hijos de `PublicLayout`, así conserva el header. Las URLs de admin que no existen
+  también caen ahí, porque las rutas de `AdminRoute` son todas explícitas.
+
+**Verificación**: `npm test` (439 tests), `npm run lint`, `npm run typecheck` y
+`npm run format:check` en verde, más CI en cada PR. En local, con el emulador seedeado y Chrome
+DevTools, un `MutationObserver` sobre `<main>` confirmó que cambiar la cantidad y quitar un producto
+no desmontan las filas restantes ni muestran el skeleton. Repetido en producción después del merge,
+en un contexto de navegador aislado: la 404 se ve con el header y su link vuelve al catálogo;
+agregar tres productos desde el catálogo los muestra a los tres con el total correcto; quitar uno
+mantiene las otras dos filas como los mismos nodos del DOM, sin skeleton, con el total y el contador
+del header actualizados. Sin errores ni advertencias de consola en todo el recorrido.
