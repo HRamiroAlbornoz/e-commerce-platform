@@ -1,7 +1,7 @@
 ---
 version: 1
 slug: "src-routes-account-accountlayout-tsx"
-primary_target: "src/routes/account/AccountLayout.tsx"
+primary_target: "src/features/cart/pages/CartPage.tsx"
 related_targets: []
 ---
 
