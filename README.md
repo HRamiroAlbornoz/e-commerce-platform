@@ -61,44 +61,16 @@ con una opinión escrita sobre para quién es y para quién no. Esa es la difere
 ## Decisiones de arquitectura
 
 El detalle, con las alternativas descartadas y las consecuencias, está en
-[`docs/adr/`](docs/adr/). El resumen:
+[`docs/adr/`](docs/adr/):
 
-**[0001] El rol vive en Firestore y se espeja a un custom claim.** Cada `get()` dentro de una
-security rule se factura como lectura; un custom claim se lee del token sin costo. El rol se asigna
-con un script de operador, no con un endpoint HTTP, porque un endpoint que otorga privilegios es
-una vía de escalación.
-
-**[0002] Context API + useReducer para el estado global.** Es una restricción del enunciado, no una
-elección: en 2026 el default serían Zustand y TanStack Query. Se registra para que no se lea como
-desconocimiento, y la estructura aísla el acceso a datos para que ese techo se pueda levantar sin
-reescribir la aplicación.
-
-**[0003] Imágenes en S3 con presigned URLs.** El frontend nunca ve una credencial de AWS: pide una
-URL firmada a una Vercel Function que verifica el ID token de Firebase y exige el claim de
-administrador, y después sube el archivo directo a S3. La autenticación de esa función no la pide
-el enunciado; sin ella, cualquiera sube archivos al bucket.
-
-**[0004] El carrito admite invitados y se fusiona al iniciar sesión.** Un producto en los dos
-carritos queda con la cantidad mayor, no con la suma.
-
-**[0005] Borrar un producto tiene dos niveles.** "Retirar del catálogo" es reversible y es la acción
-normal. "Eliminar definitivamente" solo está disponible si el producto no tiene ventas ni reseñas,
-porque Firestore no borra subcolecciones al borrar el documento padre.
-
-**[0006] El promedio de reseñas lo calcula el servidor.** Si la regla le permite a un cliente
-escribir el promedio, puede escribir cualquier número, y ninguna regla puede verificarlo sin leer
-todas las reseñas. Lo recalcula una Vercel Function con el Admin SDK.
-
-**[0007] La orden se crea desde una Vercel Function con el Admin SDK, no con una transacción del
-cliente.** Validar stock, precio y crear la orden a la vez es un invariante entre varios documentos:
-frágil en security rules, e inseguro si el total lo manda el cliente. La función lee el carrito real
-del servidor, nunca lo que declara la request, y usa un id pre-generado para que un reintento no
-descuente stock dos veces.
-
-**[0008] Crear y editar productos también pasa por una Vercel Function.** A diferencia de las
-órdenes, acá el problema no es un invariante cruzado sino la riqueza de un solo documento: `specs`
-es un array de 1 a 12 objetos, y las security rules no iteran arrays de objetos sin reglas frágiles
-repetidas a mano.
+- **[0001]** El rol vive en Firestore y se espeja a un custom claim (lectura sin costo en las rules).
+- **[0002]** Context API + useReducer para el estado global (restricción del enunciado).
+- **[0003]** Imágenes en S3 con presigned URLs firmadas por una Vercel Function autenticada.
+- **[0004]** El carrito admite invitados y se fusiona al iniciar sesión (gana la cantidad mayor).
+- **[0005]** Borrar productos en dos niveles: retirar (reversible) y eliminar (solo sin ventas ni reseñas).
+- **[0006]** El promedio de reseñas lo calcula el servidor, no el cliente.
+- **[0007]** La orden se crea en una Vercel Function con el Admin SDK, en una sola transacción.
+- **[0008]** Crear y editar productos también pasa por una Vercel Function (schema con arrays de objetos).
 
 ---
 
