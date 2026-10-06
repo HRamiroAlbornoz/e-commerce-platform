@@ -23,6 +23,10 @@
     color: var(--color-ink);
   }
 
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
   @media (prefers-color-scheme: dark) {
     body {
       background-color: var(--color-ink);
