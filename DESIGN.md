@@ -160,7 +160,7 @@ Four named, flat, equal-weight fields carry product identity; two neutrals (ink 
 
 ## Layout
 
-Mobile-first, with exactly two upward breakpoints: `md` (768px) and `lg` (1024px). `xl` and `2xl` are not used anywhere. `sm` (640px) appears in one place only: the analytics summary totals, which switch to side-by-side at `sm:` (see the exception below). Everything else in the system is base-to-`md`-to-`lg`.
+Mobile-first, with exactly two upward breakpoints: `md` (768px) and `lg` (1024px). `sm`, `xl`, and `2xl` are not used anywhere. Every responsive rule is written at base, `md:`, or `lg:`.
 
 The product grid is `grid-cols-1` at base, `md:grid-cols-2`, and `lg:grid-cols-4`, with a `1.5rem` horizontal gap and a `2.5rem` vertical gap. The vertical gap is wider so rows read as distinct specimens rather than a continuous mat. Cards are `aspect-square` image tiles with `2rem` of inset padding, followed by a `1rem`-gap text stack. State screens (empty, error) center their content with `6rem` of vertical padding, deliberately more generous than the card rhythm.
 
@@ -176,8 +176,6 @@ The three admin screens share one shell: `mx-auto max-w-6xl px-4 py-10 md:px-8 l
 
 ### Named Rules
 **The Pinned Chrome Rule.** At the base/mobile breakpoint only, two pieces of checkout chrome pin to the viewport instead of scrolling. `CheckoutStepIndicator` becomes `sticky top-0 z-10`, bleeding to the viewport edge (`-mx-4`) with an opaque `bg-bone dark:bg-ink` and a `border-b` hairline. The running total inside `CartLinesSummary` (with `totalVariant="sticky-bottom"`) becomes `fixed inset-x-0 bottom-0 z-10` with the same opaque background and a `border-t` hairline on the opposite edge. Both reset to normal in-flow layout at `md:` and up (`md:static`). The pinning mechanism is always an opaque background plus a hairline border, never a shadow.
-
-**Exception: analytics summary totals use `sm:`.** `AnalyticsSummaryTiles` switches its two totals to side-by-side at `sm:` (640px), with a vertical hairline between them. This is the only use of `sm:` in the codebase. It is a deviation from the admin brief, which says `sm:` is never used. Treat it as a recorded exception, not as a pattern to repeat.
 
 ## Elevation & Depth
 
@@ -389,8 +387,7 @@ Each `AdminOrderRow` shows the order number, date, customer name, tabular-nums t
 `TopSellingProductsSection` is a second, independent unit, with its own hook (`useTopSellingProducts`), skeleton, and `ErrorState` with retry. It is deliberately not merged with the summary fetch, so a slow or failed ranking never blocks the totals, and the reverse. If orders exist but no product has any units sold yet, it shows a plain sentence ("Todavía no hay unidades vendidas para armar el ranking") instead of a second `EmptyState`. The ranking query excludes zero-unit products with `where('unitsSold','>',0)`, so a product that never sold can never appear as a top seller.
 
 ### Analytics Summary Tiles
-`AnalyticsSummaryTiles` (`src/features/admin/analytics/components/AnalyticsSummaryTiles.tsx`) shows "Ingresos totales" and "Cantidad de órdenes" as two label and value pairs inside one flowing `<dl>`. **These are not boxed metric cards.** The block opens with `border-t border-ink/15 pt-6` and stacks on mobile (`flex-col gap-6`). From `sm:` it sits side by side (`sm:flex-row`), with a vertical hairline between the totals (`sm:divide-x sm:divide-ink/15`). `<dt>` uses `TABLE_LABEL_CLASSES`. `<dd>` is Display, `text-3xl`, `tabular-nums`. The container classes are exported as `ANALYTICS_SUMMARY_CLASSES`, shared with the skeleton. This is the `sm:` exception recorded under Layout.
-
+`AnalyticsSummaryTiles` (`src/features/admin/analytics/components/AnalyticsSummaryTiles.tsx`) shows "Ingresos totales" and "Cantidad de órdenes" as two label and value pairs inside one flowing `<dl>`. **These are not boxed metric cards.** The block opens with `border-t border-ink/15 pt-6` and stacks on mobile (`flex-col gap-6`). From `md:` it sits side by side (`md:flex-row`), with a vertical hairline between the totals (`md:divide-x md:divide-ink/15`). `<dt>` uses `TABLE_LABEL_CLASSES`. `<dd>` is Display, `text-3xl`, `tabular-nums`. The container classes are exported as `ANALYTICS_SUMMARY_CLASSES`, shared with the skeleton.
 A bordered grid of metric cards, one box per number, was tried and rejected. It reads as the generic product-analytics dashboard that the admin brief's thesis rejects by name. Any admin screen that shows a small set of totals should use this flowing list instead.
 
 ### Top Selling Products Chart
