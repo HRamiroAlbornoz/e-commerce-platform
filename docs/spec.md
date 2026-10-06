@@ -34,17 +34,17 @@ Lista explícita. Nada de esto es un olvido ni una tarea pendiente: es alcance d
 
 | Decisión | Resultado | Estado y motivo |
 |---|---|---|
-| Base de datos | Firestore | **Impuesta por el enunciado.** No fue una decisión nuestra, y conviene registrar el costo: con siete entidades relacionadas y necesidad de agregaciones, una base relacional habría sido más natural. Ese costo se paga en el ADR 0006 y en la denormalización de `ratingAverage` y `orderCount` |
-| Autenticación | Firebase Authentication | **Impuesta por el enunciado.** Coherente con Firestore y sin alternativa razonable dentro del stack |
+| Base de datos | Firestore | **Elegida en la Planificación.** Conviene registrar el costo: con siete entidades relacionadas y necesidad de agregaciones, una base relacional habría sido más natural. Ese costo se paga en el ADR 0006 y en la denormalización de `ratingAverage` y `orderCount` |
+| Autenticación | Firebase Authentication | **Elegida en la Planificación.** Coherente con Firestore y sin alternativa razonable dentro del stack |
 | Autorización por rol | Custom claim espejado desde `users/{uid}` | **Decidida con motivo** → [ADR 0001](adr/0001-roles-con-custom-claims-espejados-desde-firestore.md) |
-| Estado global | Context API + useReducer | **Impuesta por el enunciado** → [ADR 0002](adr/0002-context-api-y-usereducer-para-el-carrito.md) |
-| Tiempo real | **No se usa.** Lecturas puntuales, no suscripciones | **Decidida con motivo.** El enunciado menciona "base de datos en tiempo real", pero ningún criterio de aceptación requiere que un usuario vea el cambio de otro sin recargar. Suscribirse a colecciones cuesta lecturas continuas y complica la limpieza de efectos. Se revisa solo si aparece un criterio que lo pida |
-| Almacenamiento de imágenes | AWS S3 con presigned URLs | **Impuesta por el enunciado** en el qué; el cómo es nuestro → [ADR 0003](adr/0003-imagenes-en-s3-con-presigned-urls.md) |
-| Backend serverless | Vercel Functions | **Impuesta por el enunciado.** Dos funciones: firmar URLs de subida y recalcular el promedio de reseñas |
+| Estado global | Context API + useReducer | **Elegida en la Planificación** → [ADR 0002](adr/0002-context-api-y-usereducer-para-el-carrito.md) |
+| Tiempo real | **No se usa.** Lecturas puntuales, no suscripciones | **Decidida con motivo.** Firestore ofrece suscripciones en tiempo real, pero ningún criterio de aceptación requiere que un usuario vea el cambio de otro sin recargar. Suscribirse a colecciones cuesta lecturas continuas y complica la limpieza de efectos. Se revisa solo si aparece un criterio que lo pida |
+| Almacenamiento de imágenes | AWS S3 con presigned URLs | **Elegida en la Planificación**; el cómo es nuestro → [ADR 0003](adr/0003-imagenes-en-s3-con-presigned-urls.md) |
+| Backend serverless | Vercel Functions | **Elegida en la Planificación.** Dos funciones: firmar URLs de subida y recalcular el promedio de reseñas |
 | Servicios externos | Ninguno | **Decidida con motivo.** El pago es simulado, así que no hay pasarela, ni correo, ni notificaciones |
 | Repositorios | Un repo, un `package.json` | **Decidida con motivo.** Frontend y funciones son del mismo dueño y se despliegan juntos; un monorepo con paquetes sería ceremonia sin función |
 | Dónde vive el contrato | `shared/schemas/` en la raíz | **Decidida con motivo.** Esquemas Zod únicos importados por `src/` y por `api/`, con los tipos derivados por `z.infer`. Evita el esquema duplicado sin pagar el costo de un monorepo. `api/` necesita su propio `tsconfig` con resolución `NodeNext`, porque el de Vite usa `bundler` |
-| Hosting | Vercel | **Impuesta por el enunciado.** Preview por rama, producción en el merge a `main` |
+| Hosting | Vercel | **Elegida en la Planificación.** Preview por rama, producción en el merge a `main` |
 | Datos en desarrollo | Firebase Emulator Suite | **Decidida con motivo.** Es la única forma de testear las security rules de manera automatizada en CI sin tocar datos reales ni consumir cuota. Requiere Java, ya instalado y verificado |
 | Registro de errores | Salida estructurada en JSON desde las funciones, **con una condición escrita** | **Decidida con motivo.** La regla general de Hernán pide pino o winston. Acá no hay un servidor de larga vida sino funciones serverless, donde pino agrega peso de bundle y tiempo de arranque en frío sin aportar lo que lo hace valioso —transporte, rotación, destinos múltiples—, porque Vercel ya captura y agrupa la salida estándar. Se emite un objeto JSON con `timestamp`, `level`, `requestId`, `code` y `message`. **La condición, no la excepción:** el día que este proyecto tenga un backend propio de larga vida, entra pino |
 
