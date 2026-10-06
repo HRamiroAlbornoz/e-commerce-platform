@@ -36,7 +36,12 @@ export function AdminLayout() {
             ))}
           </nav>
         </div>
-        <LogoutButton />
+        <div className="flex items-center gap-4">
+          <Link to="/" className={navLinkClassName({ isActive: false })}>
+            Ver tienda
+          </Link>
+          <LogoutButton />
+        </div>
       </header>
       <Outlet />
     </div>

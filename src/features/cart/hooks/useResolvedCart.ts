@@ -13,18 +13,22 @@ type ResolvedCartState =
   | { status: 'error'; message: string }
   | { status: 'success'; lines: CartLine[]; total: number };
 
-function toItemsKey(items: CartItem[]): string {
-  return items.map((item) => `${item.productId}:${item.quantity}`).join(',');
+function toProductIdsKey(items: CartItem[]): string {
+  return items
+    .map((item) => item.productId)
+    .sort()
+    .join(',');
 }
 
-async function resolveCartLines(items: CartItem[]): Promise<CartLine[]> {
-  if (items.length === 0) {
+async function fetchProductsByIdsKey(productIdsKey: string): Promise<Product[]> {
+  if (productIdsKey === '') {
     return [];
   }
 
-  const products = await getProductsByIds(items.map((item) => item.productId));
-  const productsById = new Map(products.map((product) => [product.id, product]));
+  return getProductsByIds(productIdsKey.split(','));
+}
 
+function buildCartLines(items: CartItem[], productsById: Map<string, Product>): CartLine[] {
   return items.flatMap((item) => {
     const product = productsById.get(item.productId);
     return product
@@ -41,11 +45,11 @@ async function resolveCartLines(items: CartItem[]): Promise<CartLine[]> {
 
 export function useResolvedCart(): ResolvedCartState & { retry: () => void } {
   const { items } = useCart();
-  const itemsKey = toItemsKey(items);
-  const fetchLines = useCallback(() => resolveCartLines(items), [items]);
+  const productIdsKey = toProductIdsKey(items);
+  const fetchProducts = useCallback(() => fetchProductsByIdsKey(productIdsKey), [productIdsKey]);
   const result = useKeyedAsync(
-    itemsKey,
-    fetchLines,
+    productIdsKey,
+    fetchProducts,
     'No pudimos cargar el carrito. Intenta de nuevo.',
   );
 
@@ -53,10 +57,13 @@ export function useResolvedCart(): ResolvedCartState & { retry: () => void } {
     return result;
   }
 
+  const productsById = new Map(result.data.map((product) => [product.id, product]));
+  const lines = buildCartLines(items, productsById);
+
   return {
     status: 'success',
-    lines: result.data,
-    total: roundToCents(result.data.reduce((sum, line) => sum + line.lineTotal, 0)),
+    lines,
+    total: roundToCents(lines.reduce((sum, line) => sum + line.lineTotal, 0)),
     retry: result.retry,
   };
 }

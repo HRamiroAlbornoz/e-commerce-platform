@@ -7,7 +7,7 @@ export function PrivateLayout() {
       <header className="flex items-center justify-between border-b border-ink/15 px-4 py-6 md:px-8 lg:px-12 dark:border-bone/15">
         <Link
           to="/"
-          className="font-display text-xl tracking-widest text-ink uppercase dark:text-bone"
+          className="font-display text-xl tracking-widest text-ink uppercase hover:text-field-magenta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-field-magenta dark:text-bone dark:hover:text-field-cyan dark:focus-visible:outline-field-cyan"
         >
           CLACK
         </Link>
