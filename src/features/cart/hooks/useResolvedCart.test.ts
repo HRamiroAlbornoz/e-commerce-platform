@@ -93,4 +93,22 @@ describe('useResolvedCart', () => {
       message: 'No pudimos cargar el carrito. Intenta de nuevo.',
     });
   });
+
+  it('cambiar la cantidad recalcula el total sin volver a consultar productos ni pasar por carga', async () => {
+    vi.mocked(getProductsByIds).mockResolvedValue([buildProduct({ price: 10 })]);
+    vi.mocked(useCart).mockReturnValue(
+      buildCartContextValue({ items: [{ productId: 'product-1', quantity: 1 }] }),
+    );
+
+    const { result, rerender } = renderHook(() => useResolvedCart());
+    await waitFor(() => expect(result.current.status).toBe('success'));
+
+    vi.mocked(useCart).mockReturnValue(
+      buildCartContextValue({ items: [{ productId: 'product-1', quantity: 2 }] }),
+    );
+    rerender();
+
+    expect(result.current).toMatchObject({ status: 'success', total: 20 });
+    expect(getProductsByIds).toHaveBeenCalledTimes(1);
+  });
 });
