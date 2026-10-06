@@ -53,7 +53,7 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
           className="flex flex-col gap-4"
         >
           <p className="font-body text-sm text-ink/70 dark:text-bone/70">
-            Ingresá tu email y te enviamos un enlace para restablecer la contraseña.
+            Ingresa tu email y te enviamos un enlace para restablecer la contraseña.
           </p>
           <fieldset disabled={isSubmitting} className="contents">
             <TextField

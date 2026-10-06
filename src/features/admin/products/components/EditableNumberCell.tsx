@@ -33,7 +33,7 @@ export function EditableNumberCell({
 
     if (!Number.isFinite(parsed) || parsed < min) {
       setDraft(String(committed));
-      setError('Ingresá un valor válido.');
+      setError('Ingresa un valor válido.');
       return;
     }
 

@@ -140,7 +140,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         if (!expected || expected.quantity !== cartItem.quantity) {
           throw new OrderError(
             'CART_CHANGED',
-            'Tu carrito cambió desde que lo revisaste. Volvé a revisar antes de confirmar.',
+            'Tu carrito cambió desde que lo revisaste. Vuelve a revisar antes de confirmar.',
             product.id,
           );
         }
@@ -148,7 +148,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         if (roundToCents(expected.unitPrice) !== roundToCents(product.price)) {
           throw new OrderError(
             'PRICE_CHANGED',
-            `El precio de "${product.name}" cambió. Revisá el total antes de confirmar.`,
+            `El precio de "${product.name}" cambió. Revisa el total antes de confirmar.`,
             product.id,
           );
         }

@@ -3,8 +3,8 @@ import { z } from 'zod';
 export const MIN_PASSWORD_LENGTH = 8;
 
 export const registerFormSchema = z.object({
-  displayName: z.string().min(1, 'Ingresá tu nombre.').max(80),
-  email: z.email('Ingresá un email válido.'),
+  displayName: z.string().min(1, 'Ingresa tu nombre.').max(80),
+  email: z.email('Ingresa un email válido.'),
   password: z
     .string()
     .min(
@@ -16,14 +16,14 @@ export const registerFormSchema = z.object({
 export type RegisterFormValues = z.infer<typeof registerFormSchema>;
 
 export const loginFormSchema = z.object({
-  email: z.email('Ingresá un email válido.'),
-  password: z.string().min(1, 'Ingresá tu contraseña.'),
+  email: z.email('Ingresa un email válido.'),
+  password: z.string().min(1, 'Ingresa tu contraseña.'),
 });
 
 export type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 export const forgotPasswordFormSchema = z.object({
-  email: z.email('Ingresá un email válido.'),
+  email: z.email('Ingresa un email válido.'),
 });
 
 export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordFormSchema>;

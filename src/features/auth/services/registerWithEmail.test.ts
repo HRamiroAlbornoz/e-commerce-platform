@@ -68,7 +68,7 @@ describe('registerWithEmail', () => {
 
     expect(result).toEqual({
       ok: false,
-      message: 'No pudimos conectar. Revisá tu conexión e intentá de nuevo.',
+      message: 'No pudimos conectar. Revisa tu conexión e intenta de nuevo.',
     });
   });
 

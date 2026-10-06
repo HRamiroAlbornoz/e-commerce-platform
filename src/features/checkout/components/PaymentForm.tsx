@@ -41,7 +41,7 @@ export function PaymentForm({ defaultValues, onSubmit }: PaymentFormProps) {
       <fieldset disabled={isSubmitting} className="contents">
         <legend className="font-display text-xl text-ink dark:text-bone">Pago</legend>
         <p className="font-body text-xs text-ink/70 dark:text-bone/70">
-          Pago simulado: no se procesa ningún cargo real. Elegí un resultado para probar el flujo.
+          Pago simulado: no se procesa ningún cargo real. Elige un resultado para probar el flujo.
         </p>
         <TextField
           label="Nombre del titular"
