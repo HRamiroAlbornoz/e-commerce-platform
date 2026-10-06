@@ -10,15 +10,11 @@ dashboard de analytics) están construidas, mergeadas y en vivo. El release 1 ce
 
 ---
 
-## Contexto del cliente
+## Qué es
 
-Patagonix Tech, una software factory del sector retail, recibe el pedido de una plataforma de
-e-commerce para un cliente que vende periféricos. El pedido explícito es una solución escalable y
-mantenible basada en servicios administrados, para reducir costos de infraestructura y acelerar la
-salida a producción.
-
-De ahí sale el stack: Firebase para autenticación y datos, AWS S3 para imágenes, Vercel para el
-deploy y las funciones serverless. Nada de servidores propios que mantener.
+Una plataforma de e-commerce para periféricos de computadora, construida sobre servicios
+administrados para no mantener servidores propios: Firebase para autenticación y datos, AWS S3 para
+imágenes, y Vercel para el deploy y las funciones serverless.
 
 **Posicionamiento:** CLACK no es un catálogo infinito. Entre 24 y 40 productos elegidos, cada uno
 con una opinión escrita sobre para quién es y para quién no. Esa es la diferencia que una tienda de
@@ -64,7 +60,7 @@ El detalle, con las alternativas descartadas y las consecuencias, está en
 [`docs/adr/`](docs/adr/):
 
 - **[0001]** El rol vive en Firestore y se espeja a un custom claim (lectura sin costo en las rules).
-- **[0002]** Context API + useReducer para el estado global (restricción del enunciado).
+- **[0002]** Context API + useReducer para el estado global, sin librería externa de estado.
 - **[0003]** Imágenes en S3 con presigned URLs firmadas por una Vercel Function autenticada.
 - **[0004]** El carrito admite invitados y se fusiona al iniciar sesión (gana la cantidad mayor).
 - **[0005]** Borrar productos en dos niveles: retirar (reversible) y eliminar (solo sin ventas ni reseñas).
@@ -249,12 +245,11 @@ ausente, es el `console.log` suelto con un mensaje vago.
 la regla reescrita **con su condición explícita**: el día que el proyecto tenga un backend de larga
 vida, entra pino. No es una excepción suelta, es una regla condicionada.
 
-### 6 · Seguridad que el enunciado no pide
+### 6 · Seguridad que el plan inicial no cubría
 
-**La pregunta:** el enunciado describe el flujo de presigned URLs como una forma de no exponer las
-credenciales de AWS. ¿Alcanza con eso?
+**La pregunta:** el flujo de presigned URLs evita exponer las credenciales de AWS. ¿Alcanza con eso?
 
-**Qué cambió la respuesta:** no alcanza. El enunciado resuelve que las credenciales no lleguen al
+**Qué cambió la respuesta:** no alcanza. Presigned URLs resuelve que las credenciales no lleguen al
 navegador, pero no dice nada sobre **quién puede pedir una URL firmada**. Sin autenticar la función,
 el endpoint firma URLs de subida para cualquiera que lo llame, y el bucket se convierte en
 almacenamiento gratuito para desconocidos.

@@ -397,7 +397,7 @@ Seis puntos donde el modelo se aparta de lo que parecería obvio.
 **`Category` no es una colección.** Con un conjunto cerrado de categorías de periféricos, un union
 type de TypeScript valida en compilación lo que una colección validaría en runtime y con una
 lectura extra. El costo es real y aceptado: agregar una categoría requiere cambiar código y
-deployar. El enunciado nunca pide administrar categorías.
+deployar. Administrar categorías nunca fue un requisito del proyecto.
 
 **`DisplayColor` es un segundo conjunto cerrado, igual que `Category`, y no es el color físico de
 la pieza.** El criterio F2.9 de la spec pedía mostrar "el color de la pieza" en la tarjeta, y el
