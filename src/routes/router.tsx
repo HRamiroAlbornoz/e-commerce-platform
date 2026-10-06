@@ -17,6 +17,7 @@ import { PrivateLayout } from '@/layouts/PrivateLayout';
 import { AdminLayout } from '@/layouts/AdminLayout';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
 import { AdminRoute } from '@/routes/AdminRoute';
+import { NotFoundState } from '@/components/states/NotFoundState';
 
 function PrivateAreaPlaceholder() {
   return <p className="p-4 text-gray-500">Area privada: pendiente.</p>;
@@ -32,6 +33,7 @@ export const router = createBrowserRouter([
       { path: 'cart', element: <CartPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
+      { path: '*', element: <NotFoundState /> },
     ],
   },
   {
