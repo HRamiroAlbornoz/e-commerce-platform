@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useCart } from '@/hooks/useCart';
 import { useKeyedAsync } from '@/hooks/useKeyedAsync';
 import { getProductsByIds } from '@/features/products/services/getProductsByIds';
@@ -13,19 +13,28 @@ type ResolvedCartState =
   | { status: 'error'; message: string }
   | { status: 'success'; lines: CartLine[]; total: number };
 
-function toProductIdsKey(items: CartItem[]): string {
+function toMissingIdsKey(items: CartItem[], productsById: Map<string, Product>): string {
   return items
     .map((item) => item.productId)
+    .filter((productId) => !productsById.has(productId))
     .sort()
     .join(',');
 }
 
-async function fetchProductsByIdsKey(productIdsKey: string): Promise<Product[]> {
-  if (productIdsKey === '') {
+async function fetchProductsByIdsKey(missingIdsKey: string): Promise<Product[]> {
+  if (missingIdsKey === '') {
     return [];
   }
 
-  return getProductsByIds(productIdsKey.split(','));
+  return getProductsByIds(missingIdsKey.split(','));
+}
+
+function mergeProducts(current: Map<string, Product>, products: Product[]): Map<string, Product> {
+  const next = new Map(current);
+  for (const product of products) {
+    next.set(product.id, product);
+  }
+  return next;
 }
 
 function buildCartLines(items: CartItem[], productsById: Map<string, Product>): CartLine[] {
@@ -45,20 +54,26 @@ function buildCartLines(items: CartItem[], productsById: Map<string, Product>): 
 
 export function useResolvedCart(): ResolvedCartState & { retry: () => void } {
   const { items } = useCart();
-  const productIdsKey = toProductIdsKey(items);
-  const fetchProducts = useCallback(() => fetchProductsByIdsKey(productIdsKey), [productIdsKey]);
+  const [productsById, setProductsById] = useState<Map<string, Product>>(() => new Map());
+  const missingIdsKey = toMissingIdsKey(items, productsById);
+
+  const fetchMissingProducts = useCallback(async () => {
+    const products = await fetchProductsByIdsKey(missingIdsKey);
+    setProductsById((current) => mergeProducts(current, products));
+    return products;
+  }, [missingIdsKey]);
+
   const result = useKeyedAsync(
-    productIdsKey,
-    fetchProducts,
+    missingIdsKey,
+    fetchMissingProducts,
     'No pudimos cargar el carrito. Intenta de nuevo.',
   );
+  const lines = buildCartLines(items, productsById);
 
-  if (result.status !== 'success') {
+  const isInitialLoad = result.status === 'loading' && lines.length === 0 && items.length > 0;
+  if (result.status === 'error' || isInitialLoad) {
     return result;
   }
-
-  const productsById = new Map(result.data.map((product) => [product.id, product]));
-  const lines = buildCartLines(items, productsById);
 
   return {
     status: 'success',

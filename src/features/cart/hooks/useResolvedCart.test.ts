@@ -111,4 +111,58 @@ describe('useResolvedCart', () => {
     expect(result.current).toMatchObject({ status: 'success', total: 20 });
     expect(getProductsByIds).toHaveBeenCalledTimes(1);
   });
+
+  it('quitar un producto actualiza el carrito sin volver a consultar ni pasar por carga', async () => {
+    vi.mocked(getProductsByIds).mockResolvedValue([
+      buildProduct({ id: 'product-1', price: 10 }),
+      buildProduct({ id: 'product-2', price: 5 }),
+    ]);
+    vi.mocked(useCart).mockReturnValue(
+      buildCartContextValue({
+        items: [
+          { productId: 'product-1', quantity: 1 },
+          { productId: 'product-2', quantity: 1 },
+        ],
+      }),
+    );
+
+    const { result, rerender } = renderHook(() => useResolvedCart());
+    await waitFor(() => expect(result.current.status).toBe('success'));
+
+    vi.mocked(useCart).mockReturnValue(
+      buildCartContextValue({ items: [{ productId: 'product-1', quantity: 1 }] }),
+    );
+    rerender();
+
+    expect(result.current).toMatchObject({ status: 'success', total: 10 });
+    expect(getProductsByIds).toHaveBeenCalledTimes(1);
+  });
+
+  it('agregar un producto mantiene visibles las lineas actuales mientras carga el nuevo', async () => {
+    vi.mocked(getProductsByIds)
+      .mockResolvedValueOnce([buildProduct({ id: 'product-1', price: 10 })])
+      .mockReturnValueOnce(new Promise<Product[]>(() => {}));
+    vi.mocked(useCart).mockReturnValue(
+      buildCartContextValue({ items: [{ productId: 'product-1', quantity: 1 }] }),
+    );
+
+    const { result, rerender } = renderHook(() => useResolvedCart());
+    await waitFor(() => expect(result.current.status).toBe('success'));
+
+    vi.mocked(useCart).mockReturnValue(
+      buildCartContextValue({
+        items: [
+          { productId: 'product-1', quantity: 1 },
+          { productId: 'product-2', quantity: 1 },
+        ],
+      }),
+    );
+    rerender();
+
+    expect(result.current).toMatchObject({ status: 'success', total: 10 });
+    if (result.current.status === 'success') {
+      expect(result.current.lines).toHaveLength(1);
+    }
+    expect(getProductsByIds).toHaveBeenLastCalledWith(['product-2']);
+  });
 });
