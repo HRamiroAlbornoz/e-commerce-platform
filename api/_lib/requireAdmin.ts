@@ -3,7 +3,7 @@ import { verifyRequestToken } from './verifyRequestToken.js';
 
 const INVALID_METHOD_MESSAGE = 'Método no permitido.';
 const UNAUTHENTICATED_MESSAGE = 'Sesión inválida o expirada. Inicia sesión de nuevo.';
-const FORBIDDEN_MESSAGE = 'No tenés permisos para esta acción.';
+const FORBIDDEN_MESSAGE = 'No tienes permisos para esta acción.';
 
 export type RequireAdminErrorCode = 'INVALID_REQUEST' | 'UNAUTHENTICATED' | 'FORBIDDEN';
 

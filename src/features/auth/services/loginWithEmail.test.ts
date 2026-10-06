@@ -47,7 +47,7 @@ describe('loginWithEmail', () => {
 
     expect(result).toEqual({
       ok: false,
-      message: 'Demasiados intentos. Esperá un momento e intentá de nuevo.',
+      message: 'Demasiados intentos. Espera un momento e intenta de nuevo.',
     });
   });
 

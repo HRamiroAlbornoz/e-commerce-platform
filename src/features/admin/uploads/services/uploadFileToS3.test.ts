@@ -109,7 +109,7 @@ describe('uploadFileToS3', () => {
 
     await expect(resultPromise).resolves.toEqual({
       ok: false,
-      message: 'La URL para subir venció. Volvé a intentar.',
+      message: 'La URL para subir venció. Vuelve a intentar.',
     });
   });
 

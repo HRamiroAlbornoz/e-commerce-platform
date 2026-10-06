@@ -59,7 +59,7 @@ export function ReviewForm({ productId, user, existingReview, onSaved }: ReviewF
     >
       <fieldset disabled={isBusy} className="contents">
         <legend className="font-display text-xl text-ink dark:text-bone">
-          {existingReview ? 'Editá tu reseña' : 'Dejá tu reseña'}
+          {existingReview ? 'Edita tu reseña' : 'Deja tu reseña'}
         </legend>
 
         <div className="flex flex-col gap-1">

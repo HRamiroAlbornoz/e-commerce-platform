@@ -10,7 +10,7 @@ import type { CartLine } from '@/features/cart/hooks/useResolvedCart';
 import type { PaymentDraft, ShippingDetails } from '@shared/schemas/checkout';
 
 const REJECTED_PAYMENT_MESSAGE =
-  'El pago simulado fue rechazado. Volvé al paso de pago para intentar de nuevo.';
+  'El pago simulado fue rechazado. Vuelve al paso de pago para intentar de nuevo.';
 
 type ReviewSectionProps = {
   shipping: ShippingDetails;
@@ -65,7 +65,7 @@ export function ReviewSection({
     <div className="flex flex-col gap-4">
       <p className="font-display text-xl text-ink dark:text-bone">Revisión final</p>
       <p className="font-body text-sm text-ink/80 dark:text-bone/80">
-        Revisá el envío y el pago arriba. Envío: {formatPrice(SHIPPING_COST)}. Total a confirmar:{' '}
+        Revisa el envío y el pago arriba. Envío: {formatPrice(SHIPPING_COST)}. Total a confirmar:{' '}
         {formatPrice(total)}.
       </p>
       <div aria-live="polite">

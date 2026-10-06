@@ -79,7 +79,7 @@ export function AdminProductsPage() {
       {products && products.length > 0 && filteredProducts.length === 0 ? (
         <EmptyState
           title="Sin resultados"
-          description="Ningún producto coincide con esta búsqueda o categoría. Probá con otro término o mostrá todas las categorías."
+          description="Ningún producto coincide con esta búsqueda o categoría. Prueba con otro término o muestra todas las categorías."
         />
       ) : null}
 

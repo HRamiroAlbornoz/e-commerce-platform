@@ -55,7 +55,7 @@ describe('ImageUploadField', () => {
   it('cuando la subida falla, muestra el mensaje del estado, no el error de validacion del form (F10.6)', () => {
     const state: ImageUploadState = {
       status: 'error',
-      message: 'La URL para subir venció. Volvé a intentar.',
+      message: 'La URL para subir venció. Vuelve a intentar.',
     };
 
     render(
@@ -68,7 +68,7 @@ describe('ImageUploadField', () => {
     );
 
     expect(screen.getByRole('alert')).toHaveTextContent(
-      'La URL para subir venció. Volvé a intentar.',
+      'La URL para subir venció. Vuelve a intentar.',
     );
   });
 });

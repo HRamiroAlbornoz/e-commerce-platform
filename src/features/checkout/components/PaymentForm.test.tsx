@@ -44,7 +44,7 @@ describe('PaymentForm', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Revisar compra' }));
 
     await waitFor(() => {
-      expect(screen.getByText('Ingresá el nombre del titular.')).toBeInTheDocument();
+      expect(screen.getByText('Ingresa el nombre del titular.')).toBeInTheDocument();
     });
     expect(onSubmit).not.toHaveBeenCalled();
   });

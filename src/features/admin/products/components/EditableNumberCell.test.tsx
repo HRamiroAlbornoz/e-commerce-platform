@@ -104,7 +104,7 @@ describe('EditableNumberCell', () => {
 
     expect(onSave).not.toHaveBeenCalled();
     expect(input).toHaveValue(100);
-    expect(screen.getByRole('alert')).toHaveTextContent('Ingresá un valor válido.');
+    expect(screen.getByRole('alert')).toHaveTextContent('Ingresa un valor válido.');
   });
 
   it('deshabilitada mientras otra accion de la fila esta en curso', () => {

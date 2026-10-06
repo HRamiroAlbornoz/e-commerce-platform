@@ -55,7 +55,7 @@ export function AdminOrdersPage() {
           title={status !== undefined ? 'Sin resultados' : 'Todavía no hay órdenes'}
           description={
             status !== undefined
-              ? 'Ninguna orden coincide con este filtro. Probá con otro estado o mostrá todas.'
+              ? 'Ninguna orden coincide con este filtro. Prueba con otro estado o muestra todas.'
               : 'Cuando alguien complete una compra, la orden va a aparecer acá.'
           }
         />

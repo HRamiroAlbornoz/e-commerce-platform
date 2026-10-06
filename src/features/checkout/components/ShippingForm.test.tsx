@@ -43,7 +43,7 @@ describe('ShippingForm', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Continuar a pago' }));
 
     await waitFor(() => {
-      expect(screen.getByText('Ingresá la dirección.')).toBeInTheDocument();
+      expect(screen.getByText('Ingresa la dirección.')).toBeInTheDocument();
     });
     expect(onSubmit).not.toHaveBeenCalled();
   });
